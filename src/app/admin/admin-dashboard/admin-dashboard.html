@@ -1,0 +1,311 @@
+<!-- Main container for the stats cards -->
+    <div class="" style="margin-left: 1.5rem;
+     margin-right: 1.5rem;
+     margin-bottom: 1.5rem;">
+        <!-- Grid layout for the cards using Bootstrap's grid system -->
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-6 g-4">
+
+            <!-- Card 1: Today's Policy -->
+            <div class="col">
+                <div class="bg-white shadow-sm stat-card h-100">
+                    <h3 class="text-muted">Today's Policy</h3>
+                    <p class="text-dark fw-bold mt-2">22</p>
+                </div>
+            </div>
+
+            <!-- Card 2: This Month's Policy -->
+            <div class="col">
+                <div class="bg-white shadow-sm stat-card h-100">
+                    <h3 class="text-muted">This Month's Policy</h3>
+                    <p class="text-dark fw-bold mt-2">22</p>
+                </div>
+            </div>
+
+            <!-- Card 3: This Year's Policy -->
+            <div class="col">
+                <div class="bg-white shadow-sm stat-card h-100">
+                    <h3 class="text-muted">This Year's Policy</h3>
+                    <p class="text-dark fw-bold mt-2">22</p>
+                </div>
+            </div>
+
+            <!-- Card 4: This Year's Policy (Duplicate for layout) -->
+            <div class="col">
+                <div class="bg-white shadow-sm stat-card h-100">
+                    <h3 class="text-muted">This Year's Policy</h3>
+                    <p class="text-dark fw-bold mt-2">22</p>
+                </div>
+            </div>
+
+            <!-- Card 5: Total Earning -->
+            <div class="col">
+                <div class="bg-white shadow-sm stat-card h-100">
+                    <h3 class="text-muted">Total Earning</h3>
+                    <p class="text-dark fw-bold mt-2">22</p>
+                </div>
+            </div>
+
+            <!-- Card 6: This Months Earning -->
+            <div class="col">
+                <div class="bg-white shadow-sm stat-card h-100">
+                    <h3 class="text-muted">This Months Earning</h3>
+                    <p class="text-dark fw-bold mt-2">22</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+
+<div class="policy-container">
+
+     <div class="policiesHistory-header">
+     <span class="policies-header">
+     <h6 class="policies-heading">Policy History</h6>
+     </span>
+     
+            <div class="header-buttons ">
+        <button type="button" class="button button-export">
+            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 20 20" fill="none"
+                class="button-icon">
+                <g clip-path="url(#clip0_1935_4243)">
+                    <path
+                        d="M17.6468 5.01339L12.8432 0.209821C12.7093 0.0758929 12.5285 0 12.3388 0H2.85662C2.46153 0 2.14233 0.319196 2.14233 0.714286V19.2857C2.14233 19.6808 2.46153 20 2.85662 20H17.1423C17.5374 20 17.8566 19.6808 17.8566 19.2857V5.52009C17.8566 5.33036 17.7807 5.14732 17.6468 5.01339ZM16.2093 5.84821H12.0084V1.64732L16.2093 5.84821ZM16.2495 18.3929H3.74948V1.60714H10.4905V6.42857C10.4905 6.67721 10.5893 6.91567 10.7651 7.09148C10.941 7.2673 11.1794 7.36607 11.428 7.36607H16.2495V18.3929ZM10.0464 11.5201L8.66689 9.23438C8.61778 9.15402 8.53073 9.10491 8.43698 9.10491H7.57983C7.5285 9.10491 7.47939 9.1183 7.43698 9.14732C7.31198 9.22545 7.27403 9.39062 7.35439 9.51786L9.19144 12.4286L7.32983 15.3929C7.30454 15.4335 7.29057 15.4802 7.28936 15.5281C7.28816 15.5759 7.29976 15.6232 7.32298 15.6651C7.34619 15.707 7.38018 15.7419 7.42141 15.7663C7.46264 15.7906 7.50963 15.8035 7.55751 15.8036H8.3276C8.42135 15.8036 8.50617 15.7545 8.55528 15.6763L9.95483 13.4107L11.3455 15.6741C11.3946 15.7545 11.4816 15.8013 11.5731 15.8013H12.4102C12.4615 15.8013 12.5106 15.7857 12.5553 15.7589C12.6803 15.6786 12.716 15.5134 12.6356 15.3884L10.7606 12.4777L12.6647 9.52009C12.6904 9.47955 12.7049 9.43285 12.7065 9.38484C12.7081 9.33683 12.6968 9.28927 12.6738 9.24711C12.6507 9.20495 12.6168 9.16972 12.5756 9.14511C12.5343 9.12049 12.4872 9.10738 12.4392 9.10714H11.6423C11.5486 9.10714 11.4615 9.15625 11.4124 9.23661L10.0464 11.5201Z"
+                        fill="white"></path>
+                </g>
+                <defs>
+                    <clipPath id="clip0_1935_4243">
+                        <rect width="20" height="20" fill="white"></rect>
+                    </clipPath>
+                </defs>
+            </svg>
+            Export
+        </button>
+        <button type="button" class="button button-reset">
+            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 20 20" fill="none"
+                class="button-icon">
+                <path
+                    d="M17.5 10C17.5 5.85786 14.1421 2.5 10 2.5C8.07911 2.5 6.32689 3.22213 5 4.40973M4.16667 2.5V5C4.16667 5.46024 4.53976 5.83333 5 5.83333H7.5M2.5 10C2.5 14.1421 5.85786 17.5 10 17.5C11.9209 17.5 13.6731 16.7779 15 15.5903M15.8333 17.5V15C15.8333 14.5398 15.4602 14.1667 15 14.1667H12.5"
+                    stroke="white" stroke-width="1.5" stroke-linecap="round"></path>
+            </svg>
+            Reset Filters
+        </button>
+    </div>
+    </div>
+
+
+
+
+
+        <div class="note-box">
+            <div class="note-content">
+                <span class="note-text">NOTE : </span>Data loaded for date range 2024-06-20 to 2024-09-13
+            </div>
+        </div>
+
+
+    <!-- <div class="filter-row">
+  <div class="filter-item">
+    <label class="filter-label">Insurance Policy No.</label>
+    <mat-form-field appearance="outline">
+      <input class="custom-input" matInput placeholder="Search..." />
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+  </div>
+
+  <div class="filter-item">
+    <label class="filter-label">
+      <span>Chassis No.</span>
+      <mat-icon matTooltip="Chassis Number Search Info">info</mat-icon>
+    </label>
+    <mat-form-field appearance="outline">
+      <input class="custom-input" matInput placeholder="Search..." />
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+  </div>
+
+  <div class="filter-item">
+    <label class="filter-label">Date Range</label>
+    <mat-form-field appearance="outline">
+      <input class="custom-input" matInput placeholder="Select Date..." />
+      <mat-icon matSuffix>calendar_today</mat-icon>
+    </mat-form-field>
+  </div>
+</div> -->
+
+ <!-- Filter inputs -->
+                    <div class="filter-inputs-row">
+                        <!-- Insurance Policy No. input -->
+                        <div class="filter-input-col">
+                            <label class="label">Insurance Policy No.</label>
+                            <div class="input-group">
+                                <input placeholder="Search..." name="insurancePolicyNo" type="text" class="input-text">
+                                <div class="input-icon-group">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none" class="input-icon"><path d="M17.803 16.3633C18.0959 16.6562 18.5707 16.6562 18.8636 16.3633C19.1565 16.0704 19.1565 15.5956 18.8636 15.3027L17.803 16.3633ZM1.66663 5.08301C1.25241 5.08301 0.916626 5.41879 0.916626 5.83301C0.916626 6.24722 1.25241 6.58301 1.66663 6.58301L1.66663 5.08301ZM6.66663 6.58301C7.08084 6.58301 7.41663 6.24722 7.41663 5.83301C7.41663 5.41879 7.08084 5.08301 6.66663 5.08301V6.58301ZM1.66663 9.24967C1.25241 9.24967 0.916626 9.58546 0.916626 9.99967C0.916626 10.4139 1.25241 10.7497 1.66663 10.7497L1.66663 9.24967ZM4.99996 10.7497C5.41417 10.7497 5.74996 10.4139 5.74996 9.99967C5.74996 9.58546 5.41417 9.24967 4.99996 9.24967V10.7497ZM1.66663 13.4163C1.25241 13.4163 0.916626 13.7521 0.916626 14.1663C0.916626 14.5806 1.25241 14.9163 1.66663 14.9163L1.66663 13.4163ZM6.66663 14.9163C7.08084 14.9163 7.41663 14.5806 7.41663 14.1663C7.41663 13.7521 7.08084 13.4163 6.66663 13.4163V14.9163ZM15.8186 9.95065C15.8186 11.8106 14.3108 13.3183 12.4509 13.3183V14.8183C15.1393 14.8183 17.3186 12.639 17.3186 9.95065H15.8186ZM12.4509 13.3183C10.591 13.3183 9.08329 11.8106 9.08329 9.95065H7.58329C7.58329 12.639 9.76261 14.8183 12.4509 14.8183V13.3183ZM9.08329 9.95065C9.08329 8.09075 10.591 6.58301 12.4509 6.58301V5.08301C9.76261 5.08301 7.58329 7.26233 7.58329 9.95065H9.08329ZM12.4509 6.58301C14.3108 6.58301 15.8186 8.09075 15.8186 9.95065H17.3186C17.3186 7.26233 15.1393 5.08301 12.4509 5.08301V6.58301ZM14.8618 13.4222L17.803 16.3633L18.8636 15.3027L15.9224 12.3615L14.8618 13.4222ZM1.66663 6.58301L6.66663 6.58301V5.08301L1.66663 5.08301L1.66663 6.58301ZM1.66663 10.7497L4.99996 10.7497V9.24967L1.66663 9.24967L1.66663 10.7497ZM1.66663 14.9163L6.66663 14.9163V13.4163L1.66663 13.4163L1.66663 14.9163Z" fill="#6E6B7B"></path></svg>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Chassis No. input -->
+                        <div class="filter-input-col">
+                            <label class="label">
+                                <div style="display: flex; align-items: center; gap: 0.25rem;">
+                                    Chassis No.
+                                    <div id="chassisNumberSearch" style="cursor: pointer;">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                                    </div>
+                                </div>
+                            </label>
+                            <div class="input-group">
+                                <input placeholder="Search..." name="chassisNo" type="text" class="input-text">
+                                <div class="input-icon-group">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none" class="input-icon"><path d="M17.803 16.3633C18.0959 16.6562 18.5707 16.6562 18.8636 16.3633C19.1565 16.0704 19.1565 15.5956 18.8636 15.3027L17.803 16.3633ZM1.66663 5.08301C1.25241 5.08301 0.916626 5.41879 0.916626 5.83301C0.916626 6.24722 1.25241 6.58301 1.66663 6.58301L1.66663 5.08301ZM6.66663 6.58301C7.08084 6.58301 7.41663 6.24722 7.41663 5.83301C7.41663 5.41879 7.08084 5.08301 6.66663 5.08301V6.58301ZM1.66663 9.24967C1.25241 9.24967 0.916626 9.58546 0.916626 9.99967C0.916626 10.4139 1.25241 10.7497 1.66663 10.7497L1.66663 9.24967ZM4.99996 10.7497C5.41417 10.7497 5.74996 10.4139 5.74996 9.99967C5.74996 9.58546 5.41417 9.24967 4.99996 9.24967V10.7497ZM1.66663 13.4163C1.25241 13.4163 0.916626 13.7521 0.916626 14.1663C0.916626 14.5806 1.25241 14.9163 1.66663 14.9163L1.66663 13.4163ZM6.66663 14.9163C7.08084 14.9163 7.41663 14.5806 7.41663 14.1663C7.41663 13.7521 7.08084 13.4163 6.66663 13.4163V14.9163ZM15.8186 9.95065C15.8186 11.8106 14.3108 13.3183 12.4509 13.3183V14.8183C15.1393 14.8183 17.3186 12.639 17.3186 9.95065H15.8186ZM12.4509 13.3183C10.591 13.3183 9.08329 11.8106 9.08329 9.95065H7.58329C7.58329 12.639 9.76261 14.8183 12.4509 14.8183V13.3183ZM9.08329 9.95065C9.08329 8.09075 10.591 6.58301 12.4509 6.58301V5.08301C9.76261 5.08301 7.58329 7.26233 7.58329 9.95065H9.08329ZM12.4509 6.58301C14.3108 6.58301 15.8186 8.09075 15.8186 9.95065H17.3186C17.3186 7.26233 15.1393 5.08301 12.4509 5.08301V6.58301ZM14.8618 13.4222L17.803 16.3633L18.8636 15.3027L15.9224 12.3615L14.8618 13.4222ZM1.66663 6.58301L6.66663 6.58301V5.08301L1.66663 5.08301L1.66663 6.58301ZM1.66663 10.7497L4.99996 10.7497V9.24967L1.66663 9.24967L1.66663 10.7497ZM1.66663 14.9163L6.66663 14.9163V13.4163L1.66663 13.4163L1.66663 14.9163Z" fill="#6E6B7B"></path></svg>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Date Range input -->
+                        <div class="filter-input-col">
+                            <label class="label">Date Range</label>
+                            <div class="input-group">
+                                <input  id="date-range-picker" required="" name="dateRangeFilter" placeholder="Select Date..." class="input-text" type="datetime-local">
+                                <div class="input-icon-group">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none" class="input-icon"><path d="M14.25 3H12.75V2.25C12.75 2.05109 12.671 1.86032 12.5303 1.71967C12.3897 1.57902 12.1989 1.5 12 1.5C11.8011 1.5 11.6103 1.57902 11.4697 1.71967C11.329 1.86032 11.25 2.05109 11.25 2.25V3H6.75V2.25C6.75 2.05109 6.67098 1.86032 6.53033 1.71967C6.38968 1.57902 6.19891 1.5 6 1.5C5.80109 1.5 5.61032 1.57902 5.46967 1.71967C5.32902 1.86032 5.25 2.05109 5.25 2.25V3H3.75C3.15326 3 2.58097 3.23705 2.15901 3.65901C1.73705 4.08097 1.5 4.65326 1.5 5.25V14.25C1.5 14.8467 1.73705 15.419 2.15901 15.841C2.58097 16.2629 1.73705 16.5 3.75 16.5H14.25C14.8467 16.5 15.419 16.2629 15.841 15.841C16.2629 15.419 16.5 14.8467 16.5 14.25V5.25C16.5 4.65326 16.2629 4.08097 15.841 3.65901C15.419 3.23705 14.8467 3 14.25 3ZM15 14.25C15 14.4489 14.921 14.6397 14.7803 14.7803C14.6397 14.921 14.4489 15 14.25 15H3.75C3.55109 15 3.36032 14.921 3.21967 14.7803C3.07902 14.6397 3 14.4489 3 14.25V9H15V14.25ZM15 7.5H3V5.25C3 5.05109 3.07902 4.86032 3.21967 4.71967C3.36032 4.57902 3.55109 4.5 3.75 4.5H5.25V5.25C5.25 5.44891 5.32902 5.63968 5.46967 5.78033C5.61032 5.92098 5.80109 6 6 6C6.19891 6 6.38968 5.92098 6.53033 5.78033C6.67098 5.63968 6.75 5.44891 6.75 5.25V4.5H11.25V5.25C11.25 5.44891 11.329 5.63968 11.4697 5.78033C11.6103 5.92098 11.8011 6 12 6C12.1989 6 12.3897 5.92098 12.5303 5.78033C12.671 5.63968 12.75 5.44891 12.75 5.25V4.5H14.25C14.4489 4.5 14.6397 4.57902 14.7803 4.71967C14.921 4.86032 15 5.05109 15 5.25V7.5Z" fill="#6E6B7B"></path></svg>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        
+                    </div>
+
+
+<!-- Table container for scrolling -->
+    <div class="table-scroll-container">
+    <!-- <table class="requests-table"> -->
+    <!-- Angular Material Table -->
+    <table mat-table [dataSource]="dataSource" matSort class="requests-table">
+
+            <ng-container matColumnDef="uid" sticky>
+                <th mat-header-cell *matHeaderCellDef>UID</th>
+                <td mat-cell *matCellDef="let row">
+                    <span class="badge danger-badge">{{ row.uid }}</span>
+
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="status" sticky>
+                <th mat-header-cell *matHeaderCellDef>Status</th>
+                <td mat-cell *matCellDef="let row">
+                    <span class="badge danger-badge">{{ row.status }}</span>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="policyNo">
+                <th mat-header-cell *matHeaderCellDef>Insurance Policy No.</th>
+                <td mat-cell *matCellDef="let row">
+                    <span class="badge danger-badge">{{ row.policyNo }}</span>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="date">
+                <th mat-header-cell *matHeaderCellDef>Date</th>
+                <td mat-cell *matCellDef="let row">{{ row.date }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="time">
+                <th mat-header-cell *matHeaderCellDef>Time</th>
+                <td mat-cell *matCellDef="let row">{{ row.time }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="insurer">
+                <th mat-header-cell *matHeaderCellDef>Insurer</th>
+                <td mat-cell *matCellDef="let row">{{ row.insurer }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="riskStartDate">
+                <th mat-header-cell *matHeaderCellDef>Risk Start Date</th>
+                <td mat-cell *matCellDef="let row">{{ row.riskStartDate }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="holderName">
+                <th mat-header-cell *matHeaderCellDef>Policy Holder Name</th>
+                <td mat-cell *matCellDef="let row">{{ row.holderName }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="engineNo">
+                <th mat-header-cell *matHeaderCellDef>Engine Number</th>
+                <td mat-cell *matCellDef="let row">{{ row.engineNo }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="chassisNo">
+                <th mat-header-cell *matHeaderCellDef>Chassis Number</th>
+                <td mat-cell *matCellDef="let row">{{ row.chassisNo }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="vehicle">
+                <th mat-header-cell *matHeaderCellDef>Vehicle</th>
+                <td mat-cell *matCellDef="let row">{{ row.vehicle }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="bodyType">
+                <th mat-header-cell *matHeaderCellDef>Body Type</th>
+                <td mat-cell *matCellDef="let row">{{ row.bodyType }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="policyType">
+                <th mat-header-cell *matHeaderCellDef>Policy Type</th>
+                <td mat-cell *matCellDef="let row">{{ row.policyType }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="newVehicle">
+                <th mat-header-cell *matHeaderCellDef>New Vehicle</th>
+                <td mat-cell *matCellDef="let row">
+                    <span class="badge danger-badge">{{ row.newVehicle }}</span>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="idv">
+                <th mat-header-cell *matHeaderCellDef>IDV</th>
+                <td mat-cell *matCellDef="let row">
+                    <span class="badge danger-badge">{{ row.idv }}</span>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="premium">
+                <th mat-header-cell *matHeaderCellDef>Premium</th>
+                <td mat-cell *matCellDef="let row">{{ row.premium }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="dealership">
+                <th mat-header-cell *matHeaderCellDef>Dealership Name</th>
+                <td mat-cell *matCellDef="let row">{{ row.dealership }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="view">
+                <th mat-header-cell *matHeaderCellDef>View</th>
+                <td mat-cell *matCellDef="let row">
+                    <!-- <button mat-icon-button><mat-icon>visibility</mat-icon></button> -->
+                    visibility
+                </td>
+            </ng-container>
+
+
+            <!-- Define the header and row rows -->
+            <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+    </div>
+
+    <div class="pagination-container">
+        @if(paginator)
+        {
+        <span class="pagination-summary">
+            {{ getCustomRangeLabel(paginator.pageIndex, paginator.pageSize, dataSource.data.length) }}
+        </span>
+        }
+        <mat-paginator [pageSizeOptions]="[6]" showFirstLastButtons aria-label="Select page of expiring policies"
+            style="background-color: white;">
+        </mat-paginator>
+    </div>
+</div>

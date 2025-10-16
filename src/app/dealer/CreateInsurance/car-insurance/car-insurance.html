@@ -1,0 +1,536 @@
+<div class="container py-5" *ngIf="isFormReady; else loading">
+
+  <div class="text-center mb-5">
+    <h1 class="fw-bold">Car Insurance Application</h1>
+    <p class="text-muted">Please fill out all the details below to generate your policy.</p>
+  </div>
+
+  <form [formGroup]="insuranceForm" (ngSubmit)="onSubmit()">
+    <div class="row g-4 mb-4">
+      <div class="col-12">
+        <div class="vstack gap-4">
+          <div class="card shadow-sm border-0 rounded-4">
+            <div class="card-header bg-light border-0 py-3 d-flex justify-content-between align-items-center"
+              (click)="toggleCollapse('Coverage Details')">
+              <h5 class="mb-0 fw-semibold">Coverage Details</h5>
+              <i class="fas fa-chevron-up collapse-icon" [class.collapsed]="collapseState['Coverage Details']"></i>
+            </div>
+            <div class="card-body p-4 collapsible-content" [class.collapsed]="collapseState['Coverage Details']">
+              <div class="row g-3">
+                <div class="col-md-4">
+                  <label class="form-label fw-medium">New Vehicle<span class="required-star">*</span></label>
+                  <div class="pt-2 d-flex gap-3">
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" id="isNewVehicleYes" value="Yes"
+                        formControlName="isNewVehicle">
+                      <label class="form-check-label" for="isNewVehicleYes">Yes</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" id="isNewVehicleNo" value="No"
+                        formControlName="isNewVehicle">
+                      <label class="form-check-label" for="isNewVehicleNo">No</label>
+                    </div>
+                  </div>
+                  <div *ngIf="insuranceForm.get('isNewVehicle')?.invalid && insuranceForm.get('isNewVehicle')?.touched"
+                    class="text-danger small mt-1">Required.</div>
+                </div>
+                <div class="col-md-4">
+                  <label for="bodyType" class="form-label fw-medium">Body Type<span class="required-star">*</span></label>
+                  <select formControlName="bodyType" class="form-select">
+                    <option [ngValue]="null" disabled>Select Body Type...</option>
+                    <option value="bike">Bike</option>
+                    <option value="scooter">Scooter</option>
+                    <option value="ev">EV</option>
+                  </select>
+                  <div *ngIf="insuranceForm.get('bodyType')?.invalid && insuranceForm.get('bodyType')?.touched"
+                    class="text-danger small mt-1">Body Type is Required.</div>
+                </div>
+
+                <div class="col-md-4" *ngIf="insuranceForm.get('policyType')?.disabled === false">
+                  <label for="policyType" class="form-label fw-medium">Policy Type<span class="required-star">*</span></label>
+                  <select formControlName="policyType" class="form-select">
+                    <option [ngValue]="null" disabled>Select Policy Type...</option>
+                    @if(insuranceForm.get('isNewVehicle')?.value === 'Yes') {
+                    <option value="bundled1YearOD5YearTP">Bundled-1Year OD+5Year TP</option>
+                    } @else {
+                    <option value="comprehensive1YearOD1YearTP">Comprehensive- 1 Year OD+1 Year TP</option>
+                    <option value="rollOver1YearOD">Roll Over- 1 Year OD</option>
+                    }
+                  </select>
+                  <div
+                    *ngIf="insuranceForm.get('policyType')?.invalid && insuranceForm.get('policyType')?.touched"
+                    class="text-danger small mt-1">Policy Type is Required.</div>
+                </div>
+
+                <div class="col-md-4" *ngIf="insuranceForm.get('previousPolicyExpired')?.disabled === false">
+                  <label for="previousPolicyExpired" class="form-label fw-medium">Previous Policy Expired<span class="required-star">*</span></label>
+                  <select formControlName="previousPolicyExpired" class="form-select">
+                    <option [ngValue]="null" disabled>Select Status...</option>
+                    <option value="notExpired">Not Expired</option>
+                    <option value="within90Days">Within 90 Days</option>
+                    <option value="moreThan90Days">More Than 90 Days</option>
+                  </select>
+                  <div
+                    *ngIf="insuranceForm.get('previousPolicyExpired')?.invalid && insuranceForm.get('previousPolicyExpired')?.touched"
+                    class="text-danger small mt-1">Previous Policy Status is Required.</div>
+                </div>
+
+                <div class="col-md-4" *ngIf="insuranceForm.get('claimInPreviousYear')?.disabled === false">
+                  <label for="claimInPreviousYear" class="form-label fw-medium">Claim in Previous Year<span class="required-star">*</span></label>
+                  <select formControlName="claimInPreviousYear" class="form-select">
+                    <option [ngValue]="null" disabled>Yes or No...</option>
+                    <option value="yes">Yes</option>
+                    <option value="no">No</option>
+                  </select>
+                  <div
+                    *ngIf="insuranceForm.get('claimInPreviousYear')?.invalid && insuranceForm.get('claimInPreviousYear')?.touched"
+                    class="text-danger small mt-1">Claim in Previous Year is Required.</div>
+                </div>
+
+                <div class="col-md-4" *ngIf="insuranceForm.get('previousYearNCB')?.disabled === false">
+                  <label for="previousYearNCB" class="form-label fw-medium">Previous Year NCB<span class="required-star">*</span></label>
+                  <select formControlName="previousYearNCB" class="form-select">
+                    <option [ngValue]="null" disabled>Select NCB %...</option>
+                    <option value="0">0%</option>
+                    <option value="20">20%</option>
+                    <option value="25">25%</option>
+                    <option value="35">35%</option>
+                    <option value="45">45%</option>
+                    <option value="50">50%</option>
+                  </select>
+                  <div
+                    *ngIf="insuranceForm.get('previousYearNCB')?.invalid && insuranceForm.get('previousYearNCB')?.touched"
+                    class="text-danger small mt-1">Previous Year NCB is Required.</div>
+                </div>
+
+                <div class="col-md-4">
+                  <label for="insurer" class="form-label fw-medium">Insurer<span class="required-star">*</span></label>
+                  <select formControlName="insurer" class="form-select">
+                    <option [ngValue]="null" disabled>Select Insurer...</option>
+                    <option value="Insurer1">Insurer 1</option>
+                    <option value="Insurer2">Insurer 2</option>
+                    <option value="Insurer3">Insurer 3</option>
+                  </select>
+                  <div *ngIf="insuranceForm.get('insurer')?.invalid && insuranceForm.get('insurer')?.touched"
+                    class="text-danger small mt-1">Insurer is Required.</div>
+                </div>
+
+
+                <div class="col-md-4">
+                  <label for="riskStartDate" class="form-label fw-medium">Risk Start Date<span class="required-star">*</span></label>
+                  <input type="date" formControlName="riskStartDate" class="form-control">
+                  <div
+                    *ngIf="insuranceForm.get('riskStartDate')?.invalid && insuranceForm.get('riskStartDate')?.touched"
+                    class="text-danger small mt-1">Risk Start Date is Required.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-4 mb-4">
+      <div class="col-12">
+        <div class="vstack gap-4">
+          <div class="card shadow-sm border-0 rounded-4">
+            <div class="card-header bg-light border-0 py-3 d-flex justify-content-between align-items-center"
+              (click)="toggleCollapse('Vehicle Details')">
+              <h5 class="mb-0 fw-semibold">Vehicle Details</h5>
+              <i class="fas fa-chevron-up collapse-icon" [class.collapsed]="collapseState['Vehicle Details']"></i>
+            </div>
+            <div class="card-body p-4 collapsible-content" [class.collapsed]="collapseState['Vehicle Details']">
+              <div class="row g-3">
+                <div class="col-md-4"><label for="registrationDate" class="form-label fw-medium">Registration
+                    Date<span class="required-star">*</span></label><input type="date" formControlName="registrationDate" class="form-control">
+                  <div
+                    *ngIf="insuranceForm.get('registrationDate')?.invalid && insuranceForm.get('registrationDate')?.touched"
+                    class="text-danger small mt-1">Registration Date is Required.</div>
+                </div>
+                <div class="col-md-4"><label for="manufacturingYear" class="form-label fw-medium">Manufacturing
+                    Year<span class="required-star">*</span></label><input type="year" formControlName="manufacturingYear" class="form-control" placeholder="e.g., 2023">
+                  <div
+                    *ngIf="insuranceForm.get('manufacturingYear')?.invalid && insuranceForm.get('manufacturingYear')?.touched"
+                    class="text-danger small mt-1">Manufacturing Year is Required.</div>
+                </div>
+                <div class="col-md-4"><label for="rto" class="form-label fw-medium">RTO<span class="required-star">*</span></label><input type="text"
+                    formControlName="rto" class="form-control" placeholder="Enter RTO Code">
+                  <div *ngIf="insuranceForm.get('rto')?.invalid && insuranceForm.get('rto')?.touched"
+                    class="text-danger small mt-1">RTO is Required.</div>
+                </div>
+                <div class="col-md-4"><label for="vehiclePincode" class="form-label fw-medium">Pincode<span class="required-star">*</span></label><input
+                    type="text" formControlName="vehiclePincode" class="form-control" placeholder="Enter 6-digit Pincode">
+                  <div *ngIf="insuranceForm.get('vehiclePincode')?.invalid && insuranceForm.get('vehiclePincode')?.touched"
+                    class="text-danger small mt-1">Pincode is Required.</div>
+                </div>
+                <div class="col-md-4"><label for="city" class="form-label fw-medium">City<span class="required-star">*</span></label><input type="text"
+                    formControlName="vehicleCity" class="form-control" placeholder="Enter City">
+                  <div *ngIf="insuranceForm.get('vehicleCity')?.invalid && insuranceForm.get('vehicleCity')?.touched"
+                    class="text-danger small mt-1">City is Required.</div>
+                </div>
+                <div class="col-md-4"><label for="state" class="form-label fw-medium">State<span class="required-star">*</span></label><input type="text"
+                    formControlName="vehicleState" class="form-control" placeholder="Enter State">
+                  <div *ngIf="insuranceForm.get('vehicleState')?.invalid && insuranceForm.get('vehicleState')?.touched"
+                    class="text-danger small mt-1">State is Required.</div>
+                </div>
+                <div class="col-md-4"><label for="manufacturer" class="form-label fw-medium">Manufacturer<span class="required-star">*</span></label><input
+                    type="text" formControlName="manufacturer" class="form-control" placeholder="e.g., Honda">
+                  <div *ngIf="insuranceForm.get('manufacturer')?.invalid && insuranceForm.get('manufacturer')?.touched"
+                    class="text-danger small mt-1">Manufacturer is Required.</div>
+                </div>
+                <div class="col-md-4"><label for="model" class="form-label fw-medium">Model<span class="required-star">*</span></label><input type="text"
+                    formControlName="model" class="form-control" placeholder="e.g., Activa 6G">
+                  <div *ngIf="insuranceForm.get('model')?.invalid && insuranceForm.get('model')?.touched"
+                    class="text-danger small mt-1">Model is Required.</div>
+                </div>
+                <div class="col-md-4"><label for="cc" class="form-label fw-medium">CC<span class="required-star">*</span></label><input type="number"
+                    formControlName="cc" class="form-control" placeholder="e.g., 125">
+                  <div *ngIf="insuranceForm.get('cc')?.invalid && insuranceForm.get('cc')?.touched"
+                    class="text-danger small mt-1">CC is Required.</div>
+                </div>
+                <div class="col-md-4"><label for="engineNumber" class="form-label fw-medium">Engine Number<span class="required-star">*</span></label><input
+                    type="text" formControlName="engineNumber" class="form-control" placeholder="Enter Engine Number">
+                  <div *ngIf="insuranceForm.get('engineNumber')?.invalid && insuranceForm.get('engineNumber')?.touched"
+                    class="text-danger small mt-1">Engine Number is Required.</div>
+                </div>
+                <div class="col-md-4"><label for="chassisNumber" class="form-label fw-medium">Chassis
+                    Number<span class="required-star">*</span></label><input type="text" formControlName="chassisNumber" class="form-control" placeholder="Enter Chassis Number">
+                  <div
+                    *ngIf="insuranceForm.get('chassisNumber')?.invalid && insuranceForm.get('chassisNumber')?.touched"
+                    class="text-danger small mt-1">Chassis Number is Required.</div>
+                </div>
+
+
+                <div class="col-md-4">
+                  <label class="form-label fw-medium">Have Registration Number ?<span class="required-star">*</span></label>
+                  <div class="pt-2 d-flex gap-3">
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" id="haveRegNoYes" value="Yes"
+                        formControlName="haveRegistrationNumber">
+                      <label class="form-check-label" for="haveRegNoYes">Yes</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" id="haveRegNoNo" value="No"
+                        formControlName="haveRegistrationNumber">
+                      <label class="form-check-label" for="haveRegNoNo">No</label>
+                    </div>
+                  </div>
+                  <div *ngIf="insuranceForm.get('haveRegistrationNumber')?.invalid && insuranceForm.get('haveRegistrationNumber')?.touched"
+                    class="text-danger small mt-1">Required.</div>
+                </div>
+
+
+                <div class="col-md-4"><label for="exShowroomPrice" class="form-label fw-medium">Ex-Showroom
+                    Price<span class="required-star">*</span></label><input type="number" formControlName="exShowroomPrice" class="form-control" placeholder="Enter Price in INR">
+                  <div
+                    *ngIf="insuranceForm.get('exShowroomPrice')?.invalid && insuranceForm.get('exShowroomPrice')?.touched"
+                    class="text-danger small mt-1">Ex-Showroom Price is Required.</div>
+                </div>
+                <div class="col-md-4"><label for="idv" class="form-label fw-medium">IDV<span class="required-star">*</span></label><input type="number"
+                    formControlName="idv" class="form-control" placeholder="Enter IDV Amount">
+                  <div *ngIf="insuranceForm.get('idv')?.invalid && insuranceForm.get('idv')?.touched"
+                    class="text-danger small mt-1">IDV is Required.</div>
+                </div>
+                <div class="col-12">
+                  <h3 class="fw-semibold">Add Ons</h3>
+                </div>
+                <div class="col-md-4"><div class="form-check form-switch pt-2"><input class="form-check-input" type="checkbox" id="nilDep" formControlName="nilDep"><label class="form-check-label" for="nilDep">Nil Dep?</label></div></div>
+                      <div class="col-md-4"><div class="form-check form-switch pt-2"><input class="form-check-input" type="checkbox" id="handicapped" formControlName="handicapped"><label class="form-check-label" for="handicapped">Handicapped?</label></div></div>
+                      <div class="col-md-4"><div class="form-check form-switch pt-2"><input class="form-check-input" type="checkbox" id="paToUnnamed" formControlName="paToUnnamed"><label class="form-check-label" for="paToUnnamed">PA to Unnamed Person?</label></div></div>
+                      <div class="col-md-4"><div class="form-check form-switch pt-2"><input class="form-check-input" type="checkbox" id="electricalAccessories" formControlName="electricalAccessories"><label class="form-check-label" for="electricalAccessories">Electrical Accessories?</label></div></div>
+                      <div class="col-md-4"><div class="form-check form-switch pt-2"><input class="form-check-input" type="checkbox" id="nonElectricalAccessories" formControlName="nonElectricalAccessories"><label class="form-check-label" for="nonElectricalAccessories">Non-Electrical Accessories?</label></div></div>
+                      <div class="col-md-4"><div class="form-check form-switch pt-2"><input class="form-check-input" type="checkbox" id="rti" formControlName="rti"><label class="form-check-label" for="rti">RTI?</label></div></div>
+                      <div class="col-md-4"><div class="form-check form-switch pt-2"><input class="form-check-input" type="checkbox" id="consumables" formControlName="consumables"><label class="form-check-label" for="consumables">Consumables?</label></div></div>
+                      <div class="col-md-4"><div class="form-check form-switch pt-2"><input class="form-check-input" type="checkbox" id="engineProtect" formControlName="engineProtect"><label class="form-check-label" for="engineProtect">Engine Protect?</label></div></div>
+
+                <div class="col-12">
+                  <div class="d-flex flex-column gap-3"><button type="button" class="btn btn-outline-primary"
+                      (click)="calculatePremium()" [disabled]="isCalculating"><span *ngIf="!isCalculating">Calculate
+                        Premium</span><span *ngIf="isCalculating"><span class="spinner-border spinner-border-sm me-2"
+                          role="status" aria-hidden="true"></span> Calculating...</span></button>
+                    <div *ngIf="premiumAmount !== null" class="alert alert-info mb-0"><strong>Premium Amount:</strong>
+                      {{ premiumAmount | currency:'INR':'symbol':'1.2-2' }}<br><strong>Status:</strong> {{ premiumStatus
+                      }}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+      <div class="col-12">
+        <div class="vstack gap-4">
+          <div class="card shadow-sm border-0 rounded-4">
+            <div class="card-header bg-light border-0 py-3 d-flex justify-content-between align-items-center"
+              (click)="toggleCollapse('Customer Details')">
+              <h5 class="mb-0 fw-semibold">Customer Details</h5>
+              <i class="fas fa-chevron-up collapse-icon" [class.collapsed]="collapseState['Customer Details']"></i>
+            </div>
+            <div class="card-body p-4 collapsible-content" [class.collapsed]="collapseState['Customer Details']">
+              <div class="row g-3">
+                <div class="col-md-4">
+                  <label class="form-label fw-medium">Customer Type<span class="required-star">*</span></label>
+                  <div class="pt-2 d-flex gap-3">
+                    <div class="form-check form-check-inline"><input class="form-check-input" type="radio"
+                        id="customerTypeIndividual" value="individual" formControlName="customerType"><label
+                        class="form-check-label" for="customerTypeIndividual">Individual</label></div>
+                    <div class="form-check form-check-inline"><input class="form-check-input" type="radio"
+                        id="customerTypeCompany" value="company" formControlName="customerType"><label
+                        class="form-check-label" for="customerTypeCompany">Company</label></div>
+                  </div>
+                  <div *ngIf="insuranceForm.get('customerType')?.invalid && insuranceForm.get('customerType')?.touched"
+                    class="text-danger small mt-1">Required.</div>
+                </div>
+
+                @if(insuranceForm.get('customerType')?.value === 'individual') {
+
+                  <ng-container>
+                    
+                      <div class="col-md-4">
+                    <label class="form-label fw-medium">Gender<span class="required-star">*</span></label>
+                    <div class="pt-2 d-flex gap-3">
+                      <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" id="genderMale" value="male"
+                          formControlName="gender">
+                        <label class="form-check-label" for="genderMale">Male</label>
+                      </div>
+                      <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" id="genderFemale" value="female"
+                          formControlName="gender">
+                        <label class="form-check-label" for="genderFemale">Female</label>
+                      </div>
+                    </div>
+                    <div *ngIf="insuranceForm.get('gender')?.invalid && insuranceForm.get('gender')?.touched"
+                      class="text-danger small mt-1">Required.</div>
+                  </div>
+
+                  <div class="col-md-4"><label for="Salutation" class="form-label fw-medium">Salutation<span class="required-star">*</span></label><input
+                          type="text" formControlName="salutation" class="form-control" placeholder="e.g., Mr, Mrs, Ms">
+                        <div
+                          *ngIf="insuranceForm.get('salutation')?.invalid && insuranceForm.get('salutation')?.touched"
+                          class="text-danger small mt-1">Salutation is Required.</div>
+                      </div>
+
+
+                      <div class="col-md-4"><label for="firstName" class="form-label fw-medium">First Name(AS PER AADHAAR)<span class="required-star">*</span></label><input
+                          type="text" formControlName="firstName" class="form-control" placeholder="Enter First Name">
+                        <div
+                          *ngIf="insuranceForm.get('firstName')?.invalid && insuranceForm.get('firstName')?.touched"
+                          class="text-danger small mt-1">First Name is Required.</div>
+                      </div>
+                      <div class="col-md-4"><label for="lastName" class="form-label fw-medium">Last Name(AS PER AADHAAR)<span class="required-star">*</span></label><input
+                          type="text" formControlName="lastName" class="form-control" placeholder="Enter Last Name">
+                        <div
+                          *ngIf="insuranceForm.get('lastName')?.invalid && insuranceForm.get('lastName')?.touched"
+                          class="text-danger small mt-1">Last Name is Required.</div>
+                      </div>
+                      <div class="col-md-4"><label for="dob" class="form-label fw-medium">Date of Birth<span class="required-star">*</span></label><input
+                          type="date" formControlName="dob" class="form-control">
+                        <div *ngIf="insuranceForm.get('dob')?.invalid && insuranceForm.get('dob')?.touched"
+                          class="text-danger small mt-1">Date of Birth is Required.</div>
+                      </div>
+                    </ng-container>
+
+                }
+                  @if(insuranceForm.get('customerType')?.value === 'company') {
+                  <ng-container >
+                    <div class="col-md-4"><label for="companyName" class="form-label fw-medium">Company Name<span class="required-star">*</span></label><input
+                        type="text" formControlName="companyName" class="form-control" placeholder="Enter Full Company Name">
+                      <div *ngIf="insuranceForm.get('companyName')?.invalid && insuranceForm.get('companyName')?.touched"
+                        class="text-danger small mt-1">Company Name is Required.</div>
+                    </div>
+
+                    <div class="col-md-4"><label for="dateOfIncorporation" class="form-label fw-medium">Date of
+                        Incorporation<span class="required-star">*</span></label><input type="date" formControlName="dateOfIncorporation"
+                        class="form-control">
+                      <div
+                        *ngIf="insuranceForm.get('dateOfIncorporation')?.invalid && insuranceForm.get('dateOfIncorporation')?.touched"
+                        class="text-danger small mt-1">Date of Incorporation is Required.</div>
+                    </div>
+
+                    
+                    <div class="col-md-4"><label for="gstin" class="form-label fw-medium">GSTIN<span class="required-star">*</span></label><input type="text"
+                        formControlName="gstin" class="form-control" placeholder="Enter GSTIN">
+                      <div *ngIf="insuranceForm.get('gstin')?.invalid && insuranceForm.get('gstin')?.touched"
+                        class="text-danger small mt-1">GSTIN is Required.</div>
+                    </div>
+                  </ng-container>
+
+                }
+                  <ng-container>
+                  <div class="col-md-4"><label for="mobile" class="form-label fw-medium">Mobile<span class="required-star">*</span></label>
+                    <input type="tel"
+                      formControlName="mobile" class="form-control" placeholder="Enter 10-digit Mobile Number">
+                    <div *ngIf="insuranceForm.get('mobile')?.invalid && insuranceForm.get('mobile')?.touched"
+                      class="text-danger small mt-1">Mobile Number is Required.</div>
+                  </div>
+                  <div class="col-md-4"><label for="email" class="form-label fw-medium">Email<span class="required-star">*</span></label><input type="email"
+                      formControlName="email" class="form-control" placeholder="your.email@example.com">
+                    <div *ngIf="insuranceForm.get('email')?.invalid && insuranceForm.get('email')?.touched"
+                      class="text-danger small mt-1">Email is Required.</div>
+                  </div>
+
+                      <div class="col-md-4"><label for="AddressLine1" class="form-label fw-medium">Address Line 1<span class="required-star">*</span></label><input type="text"
+                          formControlName="addressLine1" class="form-control" placeholder="House No., Building, Street">
+                        <div *ngIf="insuranceForm.get('addressLine1')?.invalid && insuranceForm.get('addressLine1')?.touched"
+                          class="text-danger small mt-1">Address Line 1 is Required.</div>
+                      </div>
+
+                      <div class="col-md-4"><label for="AddressLine2" class="form-label fw-medium">Address Line 2</label>
+                        <input type="text" formControlName="addressLine2" class="form-control" placeholder="Area, Landmark">
+                      <div *ngIf="insuranceForm.get('addressLine2')?.invalid && insuranceForm.get('addressLine2')?.touched"
+                          class="text-danger small mt-1">Address Line 2 is Required.</div>
+                      </div>
+
+                      <div class="col-md-4"><label for="AddressLine3" class="form-label fw-medium">Address Line 3</label>
+                        <input type="text" formControlName="addressLine3" class="form-control" placeholder="Additional Details (Optional)">
+                      </div>
+
+                      <div class="col-md-4"><label for="customerPincode" class="form-label fw-medium">Pincode<span class="required-star">*</span></label><input
+                          type="text" formControlName="customerPincode" class="form-control" placeholder="Enter 6-digit Pincode">
+                        <div *ngIf="insuranceForm.get('customerPincode')?.invalid && insuranceForm.get('customerPincode')?.touched"
+                          class="text-danger small mt-1">Pincode is Required.</div>
+                      </div>
+                      
+                      <div class="col-md-4"><label for="customerCity" class="form-label fw-medium">City<span class="required-star">*</span></label><input type="text"
+                          formControlName="customerCity" class="form-control" placeholder="Enter City">
+                        <div *ngIf="insuranceForm.get('customerCity')?.invalid && insuranceForm.get('customerCity')?.touched"
+                          class="text-danger small mt-1">City is Required.</div>
+                      </div>
+                      <div class="col-md-4"><label for="customerState" class="form-label fw-medium">State<span class="required-star">*</span></label><input type="text"
+                          formControlName="customerState" class="form-control" placeholder="Enter State">
+                        <div *ngIf="insuranceForm.get('customerState')?.invalid && insuranceForm.get('customerState')?.touched"
+                          class="text-danger small mt-1">State is Required.</div>
+                      </div>
+                    </ng-container>
+
+
+              </div>
+            </div>
+          </div>
+
+        <!-- Hypothecation Details Section -->
+          <div class="card shadow-sm border-0 rounded-4">
+            <div class="card-header bg-light border-0 py-3 d-flex justify-content-between align-items-center"
+              (click)="toggleCollapse('Hypothecation Details')">
+              <h5 class="mb-0 fw-semibold">Hypothecation Details</h5>
+              <i class="fas fa-chevron-up collapse-icon" [class.collapsed]="collapseState['Hypothecation Details']"></i>
+            </div>
+            <div class="card-body p-4 collapsible-content" [class.collapsed]="collapseState['Hypothecation Details']">
+              <div class="row g-3">
+                <div class="col-md-2">
+                  <label class="form-label fw-medium">Hypothecated?<span class="required-star">*</span></label>
+                  <div class="pt-2 d-flex gap-3">
+                    <div class="form-check form-check-inline"><input class="form-check-input" type="radio"
+                        id="isHypothecatedYes" value="Yes" formControlName="isHypothecated"><label
+                        class="form-check-label" for="isHypothecatedYes">Yes</label></div>
+                    <div class="form-check form-check-inline"><input class="form-check-input" type="radio"
+                        id="isHypothecatedNo" value="No" formControlName="isHypothecated"><label
+                        class="form-check-label" for="isHypothecatedNo">No</label></div>
+                  </div>
+                  <div
+                    *ngIf="insuranceForm.get('isHypothecated')?.invalid && insuranceForm.get('isHypothecated')?.touched"
+                    class="text-danger small mt-1">isHypothecated is Required.</div>
+                </div>
+                <!-- <div class="col-md-4" *ngIf="insuranceForm.get('financier')?.disabled === false"> -->
+                <div class="col-md-4" *ngIf="insuranceForm.get('isHypothecated')?.value === 'Yes'">
+                  <label for="financier" class="form-label fw-medium">Financier<span class="required-star">*</span></label>
+                  <select formControlName="financier" class="form-select">
+                    <option [ngValue]="null" disabled>Select...</option>
+                    <option style="font-weight: 600;" value="notListed">Not Listed</option>
+                    <option *ngFor="let financer of financers" [value]="financer">{{ financer }}</option>
+                  </select>
+                  <div *ngIf="insuranceForm.get('financier')?.invalid && insuranceForm.get('financier')?.touched"
+                    class="text-danger small mt-1">Financier is Required.</div>
+                </div>
+
+                <div class="col-md-4" *ngIf="insuranceForm.get('financier')?.value === 'notListed' || insuranceForm.get('financier')?.disabled === true">
+                  <label for="ifFinancierNotListed" class="form-label fw-medium">If Financier Not Listed, Specify<span class="required-star">*</span></label><input
+                    type="text" formControlName="ifFinancierNotListed" class="form-control" placeholder="Enter Financier Name">
+                  <div *ngIf="insuranceForm.get('ifFinancierNotListed')?.invalid && insuranceForm.get('ifFinancierNotListed')?.touched"
+                    class="text-danger small mt-1">If Financier Not Listed, Specify is Required.</div>
+                    </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card shadow-sm border-0 rounded-4">
+            <div class="card-header bg-light border-0 py-3 d-flex justify-content-between align-items-center"
+              (click)="toggleCollapse('Nominee Details')">
+              <h5 class="mb-0 fw-semibold">Nominee Details</h5>
+              <i class="fas fa-chevron-up collapse-icon" [class.collapsed]="collapseState['Nominee Details']"></i>
+            </div>
+            <div class="card-body p-4 collapsible-content" [class.collapsed]="collapseState['Nominee Details']">
+              <div class="row g-3">
+
+                                    <div class="col-md-4"><label class="form-label fw-medium">Nominee Gender<span class="required-star">*</span></label>
+                  <div class="pt-2 d-flex gap-3">
+                    <div class="form-check form-check-inline"><input class="form-check-input" type="radio"
+                        id="nomineeGenderMale" value="Male" formControlName="nomineeGender"><label
+                        class="form-check-label" for="nomineeGenderMale">Male</label></div>
+                    <div class="form-check form-check-inline"><input class="form-check-input" type="radio"
+                        id="nomineeGenderFemale" value="Female" formControlName="nomineeGender"><label
+                        class="form-check-label" for="nomineeGenderFemale">Female</label></div>
+                  </div>
+                  <div
+                    *ngIf="insuranceForm.get('nomineeGender')?.invalid && insuranceForm.get('nomineeGender')?.touched"
+                    class="text-danger small mt-1">Nominee Gender is Required.</div>
+                </div>
+
+                <div class="col-md-4"><label for="nomineeName" class="form-label fw-medium">Nominee Name<span class="required-star">*</span></label><input
+                    type="text" formControlName="nomineeName" class="form-control" placeholder="Enter Nominee's Full Name">
+                  <div *ngIf="insuranceForm.get('nomineeName')?.invalid && insuranceForm.get('nomineeName')?.touched"
+                    class="text-danger small mt-1">Nominee Name is Required.</div>
+                </div>
+                
+                
+                <div class="col-md-4"><label for="nomineeAge" class="form-label fw-medium">Nominee Age<span class="required-star">*</span></label><input
+                    type="number" formControlName="nomineeAge" class="form-control" placeholder="e.g., 35">
+                  <div *ngIf="insuranceForm.get('nomineeAge')?.invalid && insuranceForm.get('nomineeAge')?.touched"
+                    class="text-danger small mt-1">Nominee Age is Required.</div>
+                </div>
+                
+                 <div class="col-md-4"><label for="nomineeRelation" class="form-label fw-medium">Nominee
+                    Relation<span class="required-star">*</span></label><select formControlName="nomineeRelation" class="form-select">
+                    <option [ngValue]="null" disabled>Select Relation...</option>
+                    <option value="Spouse">Spouse</option>
+                    <option value="son">Son</option>
+                    <option value="daughter">Daughter</option>
+                    <option value="father">Father</option>
+                    <option value="mother">Mother</option>
+                    <option value="Sibling">Sibling</option>
+                  </select>
+                  <div
+                    *ngIf="insuranceForm.get('nomineeRelation')?.invalid && insuranceForm.get('nomineeRelation')?.touched"
+                    class="text-danger small mt-1">Nominee Relation is Required.</div>
+                </div>
+
+
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row mt-4">
+      <div class="col-12">
+        <div class="card shadow-sm border-0 rounded-4">
+          <div class="card-body text-end p-4">
+            <button type="submit" class="btn btn-primary btn-lg px-5" [disabled]="!insuranceForm.valid">SUBMIT</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+<ng-template #loading>
+  <div class="d-flex justify-content-center align-items-center vh-100">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+</ng-template>

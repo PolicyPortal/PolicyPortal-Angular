@@ -1,0 +1,67 @@
+<div class="login-container">
+  <div class="login-card">
+    <div class="logo-container">
+      <!-- SVG icon matching the professional theme -->
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="logo-icon">
+        <path d="M11.47 3.84a.75.75 0 011.06 0l8.69 8.69a1.5 1.5 0 010 2.12l-8.69 8.69a.75.75 0 01-1.06 0l-8.689-8.69a1.5 1.5 0 010-2.12l8.69-8.69z" />
+      </svg>
+    </div>
+    <h2 class="title">SPPolicyHubPortal</h2>
+    <p class="subtitle">Sign in to your account</p>
+
+    <div *ngIf="error" class="alert-box" role="alert">
+      {{ error }}
+    </div>
+
+    <form class="login-form" (ngSubmit)="onLogin()">
+      <div class="form-group">
+        <label for="email">Email address</label>
+        <input
+          id="email"
+          type="email"
+          name="email"
+          [(ngModel)]="email"
+          required
+          placeholder="Enter your email"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input
+          id="password"
+          type="password"
+          name="password"
+          [(ngModel)]="password"
+          required
+          placeholder="Enter your password"
+        />
+      </div>
+
+      <!-- <div class="flex-row">
+        <div class="checkbox-container">
+          <input
+            id="remember-me"
+            name="remember-me"
+            type="checkbox"
+          />
+          <label for="remember-me">Remember me</label>
+        </div>
+        <div class="text-link">
+          <a href="#">Forgot your password?</a>
+        </div>
+      </div> -->
+
+      <div>
+        <button
+          type="submit"
+          [disabled]="loading"
+          [ngClass]="{'loading': loading}"
+        >
+          <span *ngIf="!loading">Sign in</span>
+          <span *ngIf="loading" class="spinner"></span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

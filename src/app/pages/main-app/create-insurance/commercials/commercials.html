@@ -1,0 +1,368 @@
+    <div class="container py-5">
+      <div class="text-center mb-5">
+        <h1 class="fw-bold">Commercial Vehicle Insurance Application</h1>
+        <p class="text-muted">Please fill out all the details below to generate your policy.</p>
+      </div>
+
+      <form #insuranceForm="ngForm" (ngSubmit)="onSubmit(insuranceForm)">
+        <div class="row g-4">
+          <!-- Left Column -->
+          <div class="col-lg-7">
+            <div class="vstack gap-4">
+              <!-- Coverage Details Card -->
+              <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-header bg-light border-0 py-3 d-flex justify-content-between align-items-center" (click)="toggleCollapse('coverageDetails')">
+                  <h5 class="mb-0 fw-semibold">Coverage Details</h5>
+                  <i class="fas fa-chevron-up collapse-icon" [class.collapsed]="collapseState['coverageDetails']"></i>
+                </div>
+                <div class="card-body p-4 collapsible-content" [class.collapsed]="collapseState['coverageDetails']">
+                  <div class="row g-3">
+                    <div class="col-md-6">
+                      <label class="form-label fw-medium">Registration Type *</label>
+                      <div class="pt-2">
+                        <div class="form-check form-check-inline">
+                          <input class="form-check-input" type="radio" id="Private" name="registrationType" value="Private" [(ngModel)]="formData.coverageDetails.registrationType" required>
+                          <label class="form-check-label" for="Private">Private</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                          <input class="form-check-input" type="radio" id="Commercial" name="registrationType" value="Commercial" [(ngModel)]="formData.coverageDetails.registrationType" required>
+                          <label class="form-check-label" for="Commercial">Commercial</label>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <label class="form-label fw-medium">New Vehicle *</label>
+                      <div class="pt-2">
+                        <div class="form-check form-check-inline">
+                          <input class="form-check-input" type="radio" id="Yes" name="newVehicle" value="yes" [(ngModel)]="formData.coverageDetails.isNewVehicle" (change)="onIsNewVehicleChange()" required>
+                          <label class="form-check-label" for="Yes">Yes</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                          <input class="form-check-input" type="radio" id="No" name="newVehicle" value="no" [(ngModel)]="formData.coverageDetails.isNewVehicle" (change)="onIsNewVehicleChange()" required>
+                          <label class="form-check-label" for="No">No</label>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <label for="policyType" class="form-label fw-medium">Policy Type</label>
+                      <select class="form-select" id="policyType" [(ngModel)]="formData.coverageDetails.policyType" name="policyType" required>
+                        <option value="" disabled selected>Select...</option>
+                        @if(formData.coverageDetails.isNewVehicle === 'yes') {
+                          <option value="bundled1YearOD5YearTP">Bundled-1Year OD+5Year TP</option>
+                          <option value="bundled1YearOD3YearTP">Bundled-1Year OD+3Year TP</option>
+                          <option value="bundled1YearOD1YearTP">Bundled-1Year OD+1Year TP</option>
+                        } @else {
+                          <option value="comprehensive1YearOD1YearTP">Comprehensive- 1 Year OD+1 Year TP</option>
+                          <option value="rollOver1YearOD">Roll Over- 1 Year OD</option>
+                          <option value="rollOver1YearTP">Roll Over- 1 Year TP</option>
+                        }
+                      </select>
+                    </div>
+                    @if(formData.coverageDetails.isNewVehicle === 'no') {
+                      <div class="col-md-6">
+                        <label for="previousPolicyExpired" class="form-label fw-medium">Previous Policy Expired</label>
+                        <select class="form-select" id="previousPolicyExpired" [(ngModel)]="formData.coverageDetails.previousPolicyExpired" name="previousPolicyExpired" required>
+                          <option value="" disabled selected>Select...</option>
+                          <option value="notExpired">Not Expired</option>
+                          <option value="within90Days">Within 90 Days</option>
+                          <option value="moreThan90Days">More Than 90 Days</option>
+                        </select>
+                      </div>
+                      <div class="col-md-6">
+                        <label for="claimInPreviousYear" class="form-label fw-medium">Claim in Previous Year</label>
+                        <select class="form-select" id="claimInPreviousYear" [(ngModel)]="formData.coverageDetails.claimInPreviousYear" name="claimInPreviousYear" (change)="onClaimInPreviousYearChange()" required>
+                          <option value=null disabled selected>Select...</option>
+                          <option value="yes">Yes</option>
+                          <option value="no">No</option>
+                        </select>
+                      </div>
+                    }
+                    @if(formData.coverageDetails.claimInPreviousYear === 'no') {
+                      <div class="col-md-6">
+                        <label for="previousYearNCB" class="form-label fw-medium">Previous Year NCB</label>
+                        <select class="form-select" id="previousYearNCB" [(ngModel)]="formData.coverageDetails.previousYearNCB" name="previousYearNCB" required>
+                          <option value="" disabled selected>Select...</option>
+                          <option value="0">0%</option>
+                          <option value="20">20%</option>
+                          <option value="25">25%</option>
+                          <option value="35">35%</option>
+                          <option value="45">45%</option>
+                          <option value="50">50%</option>
+                        </select>
+                      </div>
+                    }
+                    <div class="col-md-6">
+                      <label for="insurer" class="form-label fw-medium">Insurer</label>
+                      <input type="text" class="form-control" id="insurer" [(ngModel)]="formData.coverageDetails.insurer" name="insurer" required>
+                    </div>
+                    <div class="col-md-6">
+                      <label for="riskStartDate" class="form-label fw-medium">Risk Start Date</label>
+                      <input type="date" class="form-control" id="riskStartDate" [(ngModel)]="formData.coverageDetails.riskStartDate" name="riskStartDate" required>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Vehicle Details Card -->
+              <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-header bg-light border-0 py-3 d-flex justify-content-between align-items-center" (click)="toggleCollapse('vehicleDetails')">
+                  <h5 class="mb-0 fw-semibold">Vehicle Details</h5>
+                  <i class="fas fa-chevron-up collapse-icon" [class.collapsed]="collapseState['vehicleDetails']"></i>
+                </div>
+                <div class="card-body p-4 collapsible-content" [class.collapsed]="collapseState['vehicleDetails']">
+                  <div class="row g-3">
+                    <div class="col-md-6">
+                      <label for="registrationDate" class="form-label fw-medium">Registration Date *</label>
+                      <input type="date" class="form-control" id="registrationDate" [(ngModel)]="formData.vehicleDetails.registrationDate" name="registrationDate" required>
+                    </div>
+                    <div class="col-md-6">
+                      <label for="manufacturingYear" class="form-label fw-medium">Manufacturing Year *</label>
+                      <input type="number" class="form-control" id="manufacturingYear" [(ngModel)]="formData.vehicleDetails.manufacturingYear" name="manufacturingYear" required>
+                    </div>
+                    <div class="col-md-6">
+                      <label for="manufacturer" class="form-label fw-medium">Manufacturer</label>
+                      <input type="text" class="form-control" id="manufacturer" [(ngModel)]="formData.vehicleDetails.manufacturer" name="manufacturer" required>
+                    </div>
+                    <div class="col-md-6">
+                      <label for="model" class="form-label fw-medium">Model</label>
+                      <input type="text" class="form-control" id="model" [(ngModel)]="formData.vehicleDetails.model" name="model" required>
+                    </div>
+                    <div class="col-md-6">
+                      <label for="engineNumber" class="form-label fw-medium">Engine Number *</label>
+                      <input type="text" class="form-control" id="engineNumber" [(ngModel)]="formData.vehicleDetails.engineNumber" name="engineNumber" required>
+                    </div>
+                    <div class="col-md-6">
+                      <label for="chassisNumber" class="form-label fw-medium">Chassis Number *</label>
+                      <input type="text" class="form-control" id="chassisNumber" [(ngModel)]="formData.vehicleDetails.chassisNumber" name="chassisNumber" required>
+                    </div>
+                    <div class="col-md-6">
+                      <label for="exShowroomPrice" class="form-label fw-medium">Ex-Showroom Price *</label>
+                      <input type="number" class="form-control" id="exShowroomPrice" [(ngModel)]="formData.vehicleDetails.exShowroomPrice" name="exShowroomPrice" required>
+                    </div>
+                    <div class="col-md-6">
+                      <label for="idv" class="form-label fw-medium">IDV</label>
+                      <input type="number" class="form-control" id="idv" [(ngModel)]="formData.vehicleDetails.idv" name="idv" required>
+                    </div>
+                    <div class="col-12">
+                      <h6 class="mt-4 fw-semibold border-top pt-3">Addons</h6>
+                    </div>
+                    <div class="col-12 d-flex flex-wrap">
+                      <div class="form-check form-switch me-4 mb-2">
+                        <input class="form-check-input" type="checkbox" id="nilDep" name="nilDep" [(ngModel)]="formData.addons.nilDep">
+                        <label class="form-check-label" for="nilDep">Nil Dep</label>
+                      </div>
+                      <div class="form-check form-switch me-4 mb-2">
+                        <input class="form-check-input" type="checkbox" id="handicapped" name="handicapped" [(ngModel)]="formData.addons.handicapped">
+                        <label class="form-check-label" for="handicapped">Handicapped</label>
+                      </div>
+                      <div class="form-check form-switch me-4 mb-2">
+                        <input class="form-check-input" type="checkbox" id="paToUnnamed" name="paToUnnamed" [(ngModel)]="formData.addons.paToUnnamed">
+                        <label class="form-check-label" for="paToUnnamed">PA to Unnamed Person</label>
+                      </div>
+                      <div class="form-check form-switch me-4 mb-2">
+                        <input class="form-check-input" type="checkbox" id="electricalAccessories" name="electricalAccessories" [(ngModel)]="formData.addons.electricalAccessories">
+                        <label class="form-check-label" for="electricalAccessories">Electrical Accessories</label>
+                      </div>
+                      <div class="form-check form-switch me-4 mb-2">
+                        <input class="form-check-input" type="checkbox" id="nonElectricalAccessories" name="nonElectricalAccessories" [(ngModel)]="formData.addons.nonElectricalAccessories">
+                        <label class="form-check-label" for="nonElectricalAccessories">Non-Electrical Accessories</label>
+                      </div>
+                      <div class="form-check form-switch me-4 mb-2">
+                        <input class="form-check-input" type="checkbox" id="rti" name="rti" [(ngModel)]="formData.addons.rti">
+                        <label class="form-check-label" for="rti">RTI</label>
+                      </div>
+                      <div class="form-check form-switch me-4 mb-2">
+                        <input class="form-check-input" type="checkbox" id="consumables" name="consumables" [(ngModel)]="formData.addons.consumables">
+                        <label class="form-check-label" for="consumables">Consumables</label>
+                      </div>
+                      <div class="form-check form-switch me-4 mb-2">
+                        <input class="form-check-input" type="checkbox" id="engineProtect" name="engineProtect" [(ngModel)]="formData.addons.engineProtect">
+                        <label class="form-check-label" for="engineProtect">Engine Protect</label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="action-container">
+                    <button type="button" class="btn btn-primary" (click)="calculatePremium()">
+                      <i class="fas fa-calculator me-2"></i>Calculate Premium
+                    </button>
+                    <div class="premium-display">
+                      <span class="premium-amount">₹ {{ premiumAmount || '0.00' }}</span>
+                      <span class="premium-status" [ngClass]="{'insufficient-balance': premiumStatus === 'Insufficient Balance'}">{{ premiumStatus }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Hypothecation Details Card -->
+              <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-header bg-light border-0 py-3 d-flex justify-content-between align-items-center" (click)="toggleCollapse('hypothecationDetails')">
+                  <h5 class="mb-0 fw-semibold">Hypothecation Details</h5>
+                  <i class="fas fa-chevron-up collapse-icon" [class.collapsed]="collapseState['hypothecationDetails']"></i>
+                </div>
+                <div class="card-body p-4 collapsible-content" [class.collapsed]="collapseState['hypothecationDetails']">
+                  <div class="row g-3">
+                    <div class="col-md-6">
+                      <label class="form-label fw-medium">Hypothecated? *</label>
+                      <div class="pt-2">
+                        <div class="form-check form-check-inline">
+                          <input class="form-check-input" type="radio" id="hypo-yes" name="hypothecated" value="yes" [(ngModel)]="formData.hypothecationDetails.isHypothecated" (change)="onHypothecatedChange()" required>
+                          <label class="form-check-label" for="hypo-yes">Yes</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                          <input class="form-check-input" type="radio" id="hypo-no" name="hypothecated" value="no" [(ngModel)]="formData.hypothecationDetails.isHypothecated" (change)="onHypothecatedChange()" required>
+                          <label class="form-check-label" for="hypo-no">No</label>
+                        </div>
+                      </div>
+                    </div>
+                    @if(formData.hypothecationDetails.isHypothecated === 'yes') {
+                      <div class="col-md-6">
+                        <label for="financer" class="form-label fw-medium">Financer</label>
+                        <select class="form-select" id="financer" [(ngModel)]="formData.hypothecationDetails.financer" name="financer" required>
+                          <option value="" disabled selected>Select...</option>
+                          <option *ngFor="let financer of financers" [value]="financer">{{ financer }}</option>
+                        </select>
+                      </div>
+                    }
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column -->
+          <div class="col-lg-5">
+            <div class="vstack gap-4">
+              <!-- Customer Details Card -->
+              <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-header bg-light border-0 py-3 d-flex justify-content-between align-items-center" (click)="toggleCollapse('customerDetails')">
+                  <h5 class="mb-0 fw-semibold">Customer Details</h5>
+                  <i class="fas fa-chevron-up collapse-icon" [class.collapsed]="collapseState['customerDetails']"></i>
+                </div>
+                <div class="card-body p-4 collapsible-content" [class.collapsed]="collapseState['customerDetails']">
+                  <div class="row g-3">
+                    <div class="col-12">
+                      <label class="form-label fw-medium">Customer Type *</label>
+                      <div class="pt-2">
+                        <div class="form-check form-check-inline">
+                          <input class="form-check-input" type="radio" id="individual" name="customerType" value="individual" [(ngModel)]="formData.customerDetails.customerType" (change)="onCustomerTypeChange()" required>
+                          <label class="form-check-label" for="individual">Individual</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                          <input class="form-check-input" type="radio" id="company" name="customerType" value="company" [(ngModel)]="formData.customerDetails.customerType" (change)="onCustomerTypeChange()" required>
+                          <label class="form-check-label" for="company">Company</label>
+                        </div>
+                      </div>
+                    </div>
+                    @if(formData.customerDetails.customerType === 'individual') {
+                      <div class="col-md-6">
+                        <label for="individualName" class="form-label fw-medium">Name</label>
+                        <input type="text" class="form-control" id="individualName" [(ngModel)]="formData.customerDetails.name" name="individualName" required>
+                      </div>
+                      <div class="col-md-6">
+                        <label for="dob" class="form-label fw-medium">Date of Birth</label>
+                        <input type="date" class="form-control" id="dob" [(ngModel)]="formData.customerDetails.dob" name="dob" required>
+                      </div>
+                    } @else {
+                      <div class="col-md-6">
+                        <label for="companyName" class="form-label fw-medium">Company Name *</label>
+                        <input type="text" class="form-control" id="companyName" [(ngModel)]="formData.customerDetails.companyName" name="companyName" required>
+                      </div>
+                      <div class="col-md-6">
+                        <label for="dateOfInc" class="form-label fw-medium">Date of Incorporation *</label>
+                        <input type="date" class="form-control" id="dateOfInc" [(ngModel)]="formData.customerDetails.dateOfIncorporation" name="dateOfInc" required>
+                      </div>
+                    }
+                    <div class="col-md-6">
+                      <label for="mobile" class="form-label fw-medium">Mobile</label>
+                      <input type="tel" class="form-control" id="mobile" [(ngModel)]="formData.customerDetails.mobile" name="mobile" required>
+                    </div>
+                    <div class="col-md-6">
+                      <label for="email" class="form-label fw-medium">Email</label>
+                      <input type="email" class="form-control" id="email" [(ngModel)]="formData.customerDetails.email" name="email" required>
+                    </div>
+                    <div class="col-12">
+                      <label for="gstin" class="form-label fw-medium">GSTIN</label>
+                      <input type="text" class="form-control" id="gstin" [(ngModel)]="formData.customerDetails.gstin" name="gstin">
+                    </div>
+                    <div class="col-12">
+                      <label for="address1" class="form-label fw-medium">Address Line 1 *</label>
+                      <input type="text" class="form-control" id="address1" [(ngModel)]="formData.customerDetails.address1" name="address1" required>
+                    </div>
+                    <div class="col-12">
+                      <label for="address2" class="form-label fw-medium">Address Line 2</label>
+                      <input type="text" class="form-control" id="address2" [(ngModel)]="formData.customerDetails.address2" name="address2">
+                    </div>
+                    <div class="col-md-6">
+                      <label for="pincode" class="form-label fw-medium">Pincode *</label>
+                      <input type="text" class="form-control" id="pincode" [(ngModel)]="formData.customerDetails.pincode" name="pincode" required>
+                    </div>
+                    <div class="col-md-6">
+                      <label for="city-cust" class="form-label fw-medium">City</label>
+                      <input type="text" class="form-control" id="city-cust" [(ngModel)]="formData.customerDetails.city" name="city-cust" required>
+                    </div>
+                    <div class="col-md-6">
+                      <label for="state-cust" class="form-label fw-medium">State</label>
+                      <input type="text" class="form-control" id="state-cust" [(ngModel)]="formData.customerDetails.state" name="state-cust" required>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Nominee Details Card -->
+              <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-header bg-light border-0 py-3 d-flex justify-content-between align-items-center" (click)="toggleCollapse('nomineeDetails')">
+                  <h5 class="mb-0 fw-semibold">Nominee Details</h5>
+                  <i class="fas fa-chevron-up collapse-icon" [class.collapsed]="collapseState['nomineeDetails']"></i>
+                </div>
+                <div class="card-body p-4 collapsible-content" [class.collapsed]="collapseState['nomineeDetails']">
+                  <div class="row g-3">
+                    <div class="col-md-6">
+                      <label for="nomineeName" class="form-label fw-medium">Nominee Name *</label>
+                      <input type="text" class="form-control" id="nomineeName" [(ngModel)]="formData.nomineeDetails.nomineeName" name="nomineeName" required>
+                    </div>
+                    <div class="col-md-6">
+                      <label for="nomineeRelation" class="form-label fw-medium">Nominee Relation *</label>
+                      <select class="form-select" id="nomineeRelation" [(ngModel)]="formData.nomineeDetails.nomineeRelation" name="nomineeRelation" required>
+                        <option value="" disabled selected>Select...</option>
+                        <option value="Spouse">Spouse</option>
+                        <option value="Child">Child</option>
+                        <option value="Parent">Parent</option>
+                        <option value="Sibling">Sibling</option>
+                        <option value="Other">Other</option>
+                      </select>
+                    </div>
+                    <div class="col-md-6">
+                      <label for="nomineeAge" class="form-label fw-medium">Nominee Age *</label>
+                      <input type="number" class="form-control" id="nomineeAge" [(ngModel)]="formData.nomineeDetails.nomineeAge" name="nomineeAge" required>
+                    </div>
+                    <div class="col-md-6">
+                      <label class="form-label fw-medium">Nominee Gender</label>
+                      <div class="pt-2">
+                        <div class="form-check form-check-inline">
+                          <input class="form-check-input" type="radio" id="gender-male" name="nomineeGender" value="Male" [(ngModel)]="formData.nomineeDetails.nomineeGender" required>
+                          <label class="form-check-label" for="gender-male">Male</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                          <input class="form-check-input" type="radio" id="gender-female" name="nomineeGender" value="Female" [(ngModel)]="formData.nomineeDetails.nomineeGender" required>
+                          <label class="form-check-label" for="gender-female">Female</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Action Card -->
+              <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-header bg-light border-0 py-3">
+                  <h5 class="mb-0 fw-semibold">Action</h5>
+                </div>
+                <div class="card-body text-end">
+                  <button type="submit" class="btn btn-primary btn-lg px-5" [disabled]="!insuranceForm.valid">SUBMIT</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>

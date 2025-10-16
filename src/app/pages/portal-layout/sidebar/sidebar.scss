@@ -1,0 +1,159 @@
+.app-sidebar {
+  background-color: #ffffff !important;
+  padding: 1px;
+  min-width: fit-content; /* Adjust this value as needed */
+
+}
+
+.sidebar-brand
+{
+     border: 0;
+}
+
+.nav-icon
+{
+  color: #495057;
+  font-size: 1.25rem;
+}
+
+
+
+:root {
+  --lte-sidebar-width: 600px !important; /* Adjust this value as needed */
+}
+
+/* Main container to layout sidebar and content */
+        .page-wrapper {
+            display: flex;
+            height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        .app-sidebar {
+            // width: 260px;
+            background-color: #ffffff;
+            box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.07);
+            display: flex;
+            flex-direction: column;
+            // transition: width 0.3s ease;
+            // min-width: 6rem !important;
+            
+            // min-width: none !important;
+            // max-width: none !important;
+
+            // width: var(--lte-sidebar-width) !important;
+        }
+
+        /* Sidebar Brand (Logo Area) */
+        .sidebar-brand {
+            padding: 1.79rem 1.25rem;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .sidebar-brand .brand-link {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: #212529;
+        }
+
+        .sidebar-brand .brand-image {
+            font-size: 1.5rem;
+            font-weight: 700 !important;
+            color: #0d6efd;
+        }
+
+        .sidebar-brand .brand-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+
+        /* Wrapper for the scrollable menu */
+        .sidebar-wrapper {
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        /* Main navigation menu */
+        .sidebar-menu {
+            padding: 1rem 0.5rem;
+            list-style: none;
+        }
+
+        /* Individual navigation items */
+        .nav-item {
+            margin-bottom: 0.25rem;
+        }
+
+        /* Navigation links */
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            color: #495057;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+
+        .nav-link:hover {
+            background-color: #f0f2f5;
+            color: #212529;
+        }
+        
+        /* Active link state */
+        .nav-link.active {
+            background-color: #0d6efd;
+            color: #ffffff;
+            // font-weight: 600;
+            // box-shadow: 0 4px 8px rgba(13, 110, 253, 0.2);
+        }
+
+        .nav-link .nav-icon {
+            width: 20px;
+            text-align: center;
+            margin-right: 0.75rem;
+            font-size: 1rem;
+        }
+        
+        .nav-link.active .nav-icon {
+            color: #ff5151;
+        }
+
+        /* Submenu arrow */
+        .nav-arrow {
+            margin-left: auto;
+            transition: transform 0.3s ease;
+        }
+
+        .nav-item.menu-open > .nav-link .nav-arrow {
+            transform: rotate(90deg);
+        }
+
+        /* Submenu (treeview) styles */
+        .nav-treeview {
+            list-style: none;
+            padding-left: 1.5rem; /* Indent submenu */
+            margin-top: 0.5rem;
+            display: none; /* Hidden by default */
+        }
+        
+        .nav-item.menu-open > .nav-treeview {
+            display: block; /* Show on menu-open */
+        }
+
+        .nav-treeview .nav-link {
+            padding: 0.5rem 1rem 0.5rem 2rem; /* Adjust padding for nested items */
+        }
+        
+        .nav-treeview .nav-icon {
+            font-size: 0.6rem; /* Smaller icon for submenu items */
+        }
+        
+        /* Just for demonstration */
+        .page-content {
+            flex-grow: 1;
+            padding: 2rem;
+        }
