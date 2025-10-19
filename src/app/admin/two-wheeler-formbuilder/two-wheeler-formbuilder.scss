@@ -1,0 +1,130 @@
+// src/app/admin/form-builder/form-builder.component.scss
+
+.toolbox-item {
+  padding: 8px 12px;
+  border: 1px solid #dee2e6;
+  margin-bottom: 8px;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+}
+
+.toolbox-item-handle {
+    cursor: grab;
+    width: 100%;
+}
+
+.form-canvas {
+  min-height: 600px;
+  border: 2px dashed #ccc;
+  border-radius: 4px;
+  padding: 10px;
+  background-color: #fdfdfd;
+}
+
+.control-item {
+  padding: 10px;
+  border: 1px solid #ddd;
+  margin-bottom: 10px;
+  background-color: #fff;
+  border-radius: 4px;
+  display: flex;
+  align-items: flex-start;
+  cursor: pointer;
+
+  &.selected {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.25);
+  }
+}
+
+.control-item-handle {
+    padding: 10px;
+    cursor: grab;
+    color: #adb5bd;
+}
+
+.control-item-content {
+    flex-grow: 1;
+}
+
+/* CDK Drag & Drop Specific Styles */
+.cdk-drag-preview {
+  box-sizing: border-box;
+  border-radius: 4px;
+  box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
+              0 8px 10px 1px rgba(0, 0, 0, 0.14),
+              0 3px 14px 2px rgba(0, 0, 0, 0.12);
+}
+
+.cdk-drag-placeholder {
+  opacity: 0.3;
+  display: block;
+  border: 2px dashed #6c757d;
+  background: #e9ecef;
+  margin-bottom: 10px;
+}
+
+.cdk-drag-animating {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.form-canvas.cdk-drop-list-dragging .control-item:not(.cdk-drag-placeholder) {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+    .trash-can-container {
+     width: 100%;
+     padding: 1rem;
+     // min-heights: 100px;
+     border: 2px dashed #d1d5db;
+     border-radius: 8px;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     flex-direction: column;
+     color: #6b7280;
+     transition: all 0.2s ease-in-out;
+     
+    }
+    .trash-can-container.cdk-drop-list-dragging {
+     border-color: #ef4444;
+     background-color: #fef2f2;
+     color: #b91c1c;
+
+   }
+
+
+
+
+   // in two-wheeler-formbuilder.scss
+
+// Style the drag handle icon to indicate it's movable
+.drag-handle-icon {
+  cursor: grab;
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+// When dragging a section, the original space gets a placeholder.
+// Let's style it to look like the section that was there.
+.cdk-drag-placeholder {
+  opacity: 0.2;
+  border: 2px dashed #ccc;
+  background-color: #f9f9f9;
+  display: block;
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+// This is the translucent preview of the item you are dragging.
+.cdk-drag-preview {
+  box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
+              0 8px 10px 1px rgba(0, 0, 0, 0.14),
+              0 3px 14px 2px rgba(0, 0, 0, 0.12);
+  border-radius: 8px;
+}
+
+
+   

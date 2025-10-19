@@ -1,0 +1,79 @@
+:root{
+     --background-color:#F4F5F9;
+     --primary-color: #007bff;
+     --secondary-color: #6c757d;
+     --success-color: #28a745;
+     --info-color: #17a2b8;
+     --warning-color: #ffc107;
+     --danger-color: #dc3545;
+     --light-color: #f8f9fa;
+     --dark-color: #343a40;
+
+     --font-size-xs: 0.75rem;
+     --font-size-sm: 0.875rem;
+     --font-size-med: 1rem;
+     --font-size-lg: 1.25rem;
+     --font-size-xl: 1.5rem;
+     --font-size-xxl: 2rem;
+}
+
+.primary-color {
+     color: var(--primary-color);
+}
+
+.secondary-color {
+     color: var(--secondary-color);
+}
+
+.success-color {
+     color: var(--success-color);
+}
+
+.info-color {
+     color: var(--info-color);
+}
+
+.warning-color {
+     color: var(--warning-color);
+}
+
+.danger-color {
+     color: var(--danger-color);
+}
+
+.light-color {
+     color: var(--light-color);
+}
+
+.dark-color {
+     color: var(--dark-color);
+}
+
+.font-size-xs {
+     font-size: var(--font-size-xs);
+}
+
+.font-size-sm {
+     font-size: var(--font-size-sm);
+}
+
+.font-size-med {
+     font-size: var(--font-size-med);
+}
+
+.font-size-lg {
+     font-size: var(--font-size-lg);
+}
+
+.font-size-xl {
+     font-size: var(--font-size-xl);
+}
+
+.font-size-xxl {
+     font-size: var(--font-size-xxl);
+}
+
+
+.bg-color {
+     background-color: var(--background-color) !important;
+}

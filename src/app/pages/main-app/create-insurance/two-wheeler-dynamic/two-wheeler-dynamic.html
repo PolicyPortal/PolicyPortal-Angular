@@ -1,0 +1,109 @@
+<div class="container py-5" *ngIf="isFormReady; else loading">
+
+  <div class="text-center mb-5" *ngIf="formConfig">
+    <h1 class="fw-bold">Two Wheeler Insurance Application</h1>
+    <p class="text-muted">Please fill out all the details below to generate your policy.</p>
+  </div>
+
+  <form [formGroup]="insuranceForm" (ngSubmit)="onSubmit()" *ngIf="formConfig">
+    
+    <ng-container *ngFor="let row of formConfig.rows">
+      
+      <div class="row g-4 mb-4">
+        
+        <div *ngFor="let column of row.columns" [ngClass]="column.className">
+          
+          <div class="vstack gap-4">
+            <div *ngFor="let section of column.sections" class="card shadow-sm border-0 rounded-4">
+              <div class="card-header bg-light border-0 py-3 d-flex justify-content-between align-items-center" (click)="toggleCollapse(section.sectionTitle)">
+                <h5 class="mb-0 fw-semibold">{{ section.sectionTitle }}</h5>
+                <i class="fas fa-chevron-up collapse-icon" [class.collapsed]="collapseState[section.sectionTitle]"></i>
+              </div>
+              <div class="card-body p-4 collapsible-content" [class.collapsed]="collapseState[section.sectionTitle]">
+                <div class="row g-3">
+                  
+                  <ng-container *ngFor="let control of section.controls">
+                    <div [ngClass]="control.layout || 'col-12'" *ngIf="isControlVisible(control)">
+                      
+                      @if (control.controlType !== 'checkbox' && control.controlType !== 'heading' && control.controlType !== 'paragraph' && control.controlType !== 'calculateVehiclePremium') {
+                        <label [for]="control.name" class="form-label fw-medium">{{ control.label }}</label>
+                      }
+                      
+                      <div [ngSwitch]="control.controlType" class="mt-1">
+                        <ng-container *ngSwitchCase="'input'">
+                          <input [type]="control.type" [formControlName]="control.name" class="form-control">
+                        </ng-container>
+                        <ng-container *ngSwitchCase="'select'">
+                           <select [formControlName]="control.name" class="form-select">
+                              <option [ngValue]="null" disabled>Select...</option>
+                              <option *ngFor="let opt of control.options" [value]="opt.value">{{ opt.value }}</option>
+                           </select>
+                        </ng-container>
+                        <ng-container *ngSwitchCase="'radio'">
+                           <div class="pt-2 d-flex gap-3">
+                              <div *ngFor="let opt of control.options" class="form-check form-check-inline">
+                                 <input class="form-check-input" type="radio" [id]="control.name + opt.key" [value]="opt.value" [formControlName]="control.name">
+                                 <label class="form-check-label" [for]="control.name + opt.key">{{ opt.value }}</label>
+                              </div>
+                           </div>
+                        </ng-container>
+                        <ng-container *ngSwitchCase="'checkbox'">
+                           <div class="form-check form-switch pt-2">
+                              <input class="form-check-input" type="checkbox" [id]="control.name" [formControlName]="control.name">
+                              <label class="form-check-label" [for]="control.name">{{ control.label }}</label>
+                           </div>
+                        </ng-container>
+                         <ng-container *ngSwitchCase="'heading'">
+                           <h2 *ngIf="control.type === 'h2'" class="fw-bold">{{ control.label }}</h2>
+                           <h3 *ngIf="control.type === 'h3'" class="fw-semibold">{{ control.label }}</h3>
+                        </ng-container>
+                        <ng-container *ngSwitchCase="'paragraph'">
+                           <p *ngIf="control.type === 'p'" class="text-muted">{{ control.label }}</p>
+                        </ng-container>
+                        <ng-container *ngSwitchCase="'calculateVehiclePremium'">
+                          <div class="d-flex flex-column gap-3">
+                            <button type="button" class="btn btn-outline-primary" (click)="calculatePremium()" [disabled]="isCalculating">
+                              <span *ngIf="!isCalculating">Calculate Premium</span>
+                              <span *ngIf="isCalculating">
+                                <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                Calculating...
+                              </span>
+                            </button>
+                            <div *ngIf="premiumAmount !== null" class="alert alert-info mb-0">
+                              <strong>Premium Amount:</strong> {{ premiumAmount | currency:'INR':'symbol':'1.2-2' }}<br>
+                              <strong>Status:</strong> {{ premiumStatus }}
+                            </div>
+                          </div>
+                        </ng-container>
+                      </div>
+
+                      <div *ngIf="insuranceForm.get(control.name)?.invalid && insuranceForm.get(control.name)?.touched" class="text-danger small mt-1">
+                        <div *ngIf="insuranceForm.get(control.name)?.errors?.['required']">This field is required.</div>
+                      </div>
+                    </div>
+                  </ng-container>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+
+    <div class="row mt-4">
+      <div class="col-12">
+        <div class="card shadow-sm border-0 rounded-4">
+          <div class="card-body text-end p-4">
+            <button type="submit" class="btn btn-primary btn-lg px-5" [disabled]="!insuranceForm.valid">SUBMIT</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+<ng-template #loading>
+  </ng-template>
+
+<ng-template #loadingError>
+  </ng-template>

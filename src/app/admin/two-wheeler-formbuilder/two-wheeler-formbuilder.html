@@ -1,0 +1,290 @@
+<div class="" *ngIf="isFormReady;">
+    <div class="container-fluid">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h1>Two-Wheeler Insurance</h1>
+            <button class="btn btn-success btn-lg" (click)="saveForm()" [disabled]="!formConfig">
+                <i class="fa-solid fa-save me-2"></i>Save Configuration
+            </button>
+        </div>
+        <div class="container-fluid p-4 font-sans bg-gray-50 min-h-screen " cdkDropListGroup>
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div cdkDropList (cdkDropListDropped)="onDropToTrash($event)" id="trash-can"
+                    class="trash-can-container">
+                    <div>
+                        <i class="fa-solid fa-trash-can fa-lg"></i>
+                        <span class="ms-2 d-none d-lg-inline">Drop to delete</span>
+                    </div>
+                </div>
+            </div>
+            <div class="row g-4" *ngIf="formConfig">
+                <div class="col-md-4">
+                    <div class="vstack gap-4">
+                        <div class="card shadow-lg rounded-xl">
+                            <div class="card-header fw-bold bg-gray-100 text-gray-800 p-3 rounded-t-xl">Toolbox</div>
+                            <div class="card-body p-3" id="toolbox-list" cdkDropList #toolboxList="cdkDropList"
+                                [cdkDropListData]="allToolboxControls">
+                                <div class="row g-1">
+<div *ngFor="let control of allToolboxControls" cdkDrag [cdkDragData]="control" 
+     (cdkDragStarted)="isToolboxDragging = true" 
+     (cdkDragEnded)="isToolboxDragging = false">                                       
+      <div class="toolbox-item shadow-sm">
+                                            <div class="toolbox-item-handle"><i
+                                                    class="fa-solid fa-grip-vertical me-2"></i>{{ control.label }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header fw-bold">Properties</div>
+                            <div class="card-body" *ngIf="selectedControl; else noControlSelected">
+                                <div class="mb-3">
+                                    <label class="form-label">Label Text</label>
+                                    <input type="text" class="form-control form-control-sm"
+                                        [(ngModel)]="selectedControl.label">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Control Name (Unique Key)</label>
+                                    <input type="text" class="form-control form-control-sm"
+                                        [(ngModel)]="selectedControl.name" disabled>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Layout</label>
+                                    <select class="form-select form-select-sm" [(ngModel)]="selectedControl.layout">
+                                        <option value="col-md-6">Half Width (Default)</option>
+                                        <option value="col-md-4">One-Third Width</option>
+                                        <option value="col-12">Full Width</option>
+                                    </select>
+                                </div>
+                                <div *ngIf="selectedControl.validators" class="mb-3 form-check">
+                                    <input type="checkbox" class="form-check-input" id="requiredCheck"
+                                        [(ngModel)]="selectedControl.validators.required">
+                                    <label class="form-check-label" for="requiredCheck">Is Required?</label>
+                                </div>
+                                <div *ngIf="selectedControl.controlType === 'select' || selectedControl.controlType === 'radio'">
+                                    <hr>
+                                    <h6 class="mb-3">Options</h6>
+                                    <div *ngFor="let option of selectedControl.options; let i = index"
+                                        class="d-flex align-items-center mb-2">
+                                        <input type="text" class="form-control form-control-sm" placeholder="Key"
+                                            [(ngModel)]="option.key">
+                                        <input type="text" class="form-control form-control-sm mx-2"
+                                            placeholder="Value" [(ngModel)]="option.value">
+                                        <button class="btn btn-sm btn-outline-danger" (click)="removeOption(i)"><i
+                                                class="fa-solid fa-trash"></i></button>
+                                    </div>
+                                    <button class="btn btn-sm btn-outline-primary w-100" (click)="addOption()">+ Add
+                                        Option</button>
+                                </div>
+                                <div class="mt-3 pt-3 border-top">
+                                    <div class="form-check form-switch mb-2">
+                                        <input class="form-check-input" type="checkbox" id="enableCondition"
+                                            [checked]="selectedControl.condition" (change)="toggleCondition($event)">
+                                        <label class="form-check-label" for="enableCondition">Show this field
+                                            conditionally</label>
+                                    </div>
+                                    <div *ngIf="selectedControl.condition" class="vstack gap-2 mt-2">
+                                        <div>
+                                            <label class="form-label small mb-1"><strong>Show when
+                                                    field...</strong></label>
+                                            <select class="form-select form-select-sm"
+                                                [(ngModel)]="selectedControl.condition.fieldName">
+                                                <option [ngValue]="undefined" disabled>Select a field...</option>
+                                                <option *ngFor="let field of getAvailableTriggerFields()"
+                                                    [value]="field.name">{{ field.label }}
+                                                    ({{ field.name }})</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label class="form-label small mb-1"><strong>...is...</strong></label>
+                                            <select class="form-select form-select-sm"
+                                                [(ngModel)]="selectedControl.condition.operator">
+                                                <option value="equals">Equal To</option>
+                                                <option value="notEquals">Not Equal To</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label class="form-label small mb-1"><strong>...this
+                                                    value:</strong></label>
+                                            @if(getAvailableTriggerFieldsValues(selectedControl.condition.fieldName).length > 0) {
+                                            <select class="form-select form-select-sm"
+                                                [(ngModel)]="selectedControl.condition.value">
+                                                <option [ngValue]="undefined" disabled>Select a field Value..</option>
+                                                <option
+                                                    *ngFor="let fieldValue of getAvailableTriggerFieldsValues(selectedControl.condition.fieldName)"
+                                                    [value]="fieldValue">{{ fieldValue }}</option>
+                                            </select>
+                                            } @else {
+                                            <input type="text" class="form-control form-control-sm"
+                                                [(ngModel)]="selectedControl.condition.value"
+                                                placeholder="e.g., scooter or true">
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <ng-template #noControlSelected>
+                                <div class="p-3 text-muted small">Select a control on a canvas to edit its
+                                    properties.</div>
+                            </ng-template>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-8">
+                    <div class="vstack gap-4"
+     cdkDropList
+     [cdkDropListData]="formConfig.rows"
+     (cdkDropListDropped)="onRowDrop($event)"
+     [cdkDropListDisabled]="isToolboxDragging">
+     
+                        <div  class="card">
+                            <div class="card-body d-flex justify-content-center gap-3">
+                                <button class="btn btn-outline-secondary" (click)="addLayoutRow('full')">
+                                    <i class="fa-solid fa-plus me-1"></i> Add Full-Width Row
+                                </button>
+                                <button class="btn btn-outline-secondary" (click)="addLayoutRow('split')">
+                                    <i class="fa-solid fa-plus me-1"></i> Add Two-Column Row
+                                </button>
+                            </div>
+                        </div>
+                        <ng-container *ngFor="let row of formConfig.rows; let rowIndex = index">
+                          <div  class="card">
+                            <div class="card-body row g-4 position-relative" cdkDrag (cdkDragStarted)="isRowDragging = true"
+                                (cdkDragEnded)="isRowDragging = false">
+                                <div class="row-drag-handle" cdkDragHandle>
+                                    <i class="fa-solid fa-grip"></i>
+                                     <button style="float: right;" class=" btn btn-sm btn-outline-danger" (click)="deleteRow(rowIndex)">
+                                                <i class="fa-solid fa-trash"></i> Delete Row
+                                            </button>
+                                </div>
+                                <div *ngFor="let column of row.columns; let colIndex = index"
+                                    [ngClass]="column.className">
+                                    <div class="card h-100">
+                                        <div
+                                            class="card-header fw-bold d-flex justify-content-between align-items-center">
+                                            <button class="btn btn-sm btn-outline-primary" (click)="addSection(rowIndex, colIndex)">
+                                                <i class="fa-solid fa-plus me-1"></i> Add Section
+                                            </button>
+                                             <!-- <button *ngIf="colIndex === 0" class="btn btn-sm btn-outline-danger" (click)="deleteRow(rowIndex)">
+                                                <i class="fa-solid fa-trash"></i> Delete Row
+                                            </button> -->
+                                           
+                                        </div>
+                                        <div class="card-body" cdkDropList
+                                            [id]="'col-' + rowIndex + '-' + colIndex"
+                                            [cdkDropListData]="column.sections"
+                                            (cdkDropListDropped)="onSectionDrop($event)"
+[cdkDropListDisabled]="isRowDragging || isToolboxDragging"          
+                                  [cdkDropListConnectedTo]="getSectionDropListIds">
+                                            <div *ngFor="let section of column.sections; let sectionIndex = index"
+                                                class="section-wrapper mb-3" cdkDrag
+                                                (cdkDragStarted)="isSectionDragging = true"
+                                                (cdkDragEnded)="isSectionDragging = false">
+                                                <div class="section-header" cdkDragHandle>
+                                                    @if(sectionToRename !== section) {
+                                                    <div class="d-flex align-items-center">
+                                                        <i class="fa-solid fa-grip me-2 text-muted drag-handle-icon"></i>
+                                                        <h5 class="mb-0">{{ section.sectionTitle }}</h5>
+                                                        <button class="btn btn-sm btn-light ms-3"
+                                                            (click)="startRenameSection(section)"><i
+                                                                class="fa-solid fa-pen"></i></button>
+                                                        <button class="btn btn-sm btn-light ms-1 text-danger"
+                                                            (click)="deleteSection(rowIndex, colIndex, sectionIndex)"><i
+                                                                class="fa-solid fa-trash"></i></button>
+                                                    </div>
+                                                    } @else {
+                                                        <div class="d-flex align-items-center">
+                                                          <input type="text" class="form-control me-2" [(ngModel)]="newSectionTitle" (keyup.enter)="commitRenameSection()" (keyup.escape)="cancelRename()">
+                                                          <button class="btn btn-sm btn-success" (click)="commitRenameSection()"><i class="fa-solid fa-check"></i></button>
+                                                          <button class="btn btn-sm btn-secondary ms-1" (click)="cancelRename()"><i class="fa-solid fa-times"></i></button>
+                                                        </div>
+                                                    }
+                                                </div>
+                                                <div class="card-body form-canvas" 
+                                                    cdkDropList
+                                                    [id]="'control-list-' + rowIndex + '-' + colIndex + '-' + sectionIndex"
+                                                    [cdkDropListData]="section.controls"
+                                                    (cdkDropListDropped)="drop($event, rowIndex, colIndex, sectionIndex)"
+                                                    [cdkDropListDisabled]="isRowDragging || isSectionDragging"
+                                                    [cdkDropListConnectedTo]="getConnectedControlDropLists">
+                                                    <div *ngFor="let control of section.controls" cdkDrag
+                                                        (click)="selectControl(control)"
+                                                        [class.selected]="control === selectedControl"
+                                                        class="control-item">
+                                                        <div class="control-item-handle" cdkDragHandle><i
+                                                                class="fa-solid fa-grip-vertical me-2"></i></div>
+                                                        <div class="control-item-content"><label
+                                                                class="form-label mb-1">{{ control.label }}</label>
+                                                            <input *ngIf="control.controlType === 'input'"
+                                                                [type]="control.type" class="form-control" disabled>
+                                                            <select *ngIf="control.controlType === 'select'"
+                                                                class="form-select" disabled>
+                                                                <option *ngFor="let opt of control.options">{{ opt.value
+                                                                    }}</option>
+                                                            </select>
+                                                            <div *ngIf="control.controlType === 'radio'"
+                                                                class="d-flex gap-3 pt-1">
+                                                                <div *ngFor="let opt of control.options"
+                                                                    class="form-check">
+                                                                    <input class="form-check-input" type="radio"
+                                                                        disabled>
+                                                                    <label class="form-check-label">{{ opt.value
+                                                                        }}</label>
+                                                                </div>
+                                                            </div>
+                                                            <div *ngIf="control.controlType === 'checkbox'"
+                                                                class="form-check form-switch pt-1">
+                                                                <input class="form-check-input" type="checkbox"
+                                                                    disabled>
+                                                                <label class="form-check-label">{{ control.label
+                                                                    }}</label>
+                                                            </div>
+                                                            <h4 *ngIf="control.controlType === 'heading'"
+                                                                class="text-primary fw-bold mt-1 mb-0">
+                                                                {{ control.label || 'Heading Text' }}
+                                                            </h4>
+                                                            <p *ngIf="control.controlType === 'paragraph'"
+                                                                class="text-muted fst-italic mt-1 mb-0">
+                                                                {{ control.label || 'This is a sample paragraph. Edit its text in the properties panel.' }}
+                                                            </p>
+                                                            <div *ngIf="control.controlType === 'calculateVehiclePremium'" class="action-container">
+                                                                <button type="button" class="btn btn-primary" disabled>
+                                                                    <i class="fas fa-calculator me-2"></i>
+                                                                    Calculate Premium
+                                                                </button>
+                                                                <div class="premium-display mt-2">
+                                                                    <span class="premium-amount">₹ 0.00</span>
+                                                                    <span class="premium-status text-muted">[Result will appear here]</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    @if(section.controls.length === 0) {
+                                                    <div class="text-muted text-center p-3 border-dashed">Drop controls
+                                                        here</div>
+                                                    }
+                                                </div>
+                                            </div>
+                                            @if(column.sections.length === 0) {
+                                            <p class="text-muted text-center p-4">No sections in this column. Add a
+                                                section to begin.</p>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            </div>
+                        </ng-container>
+                        @if(!formConfig.rows || formConfig.rows.length === 0) {
+                        <div class="text-center p-5 border-dashed text-muted">
+                            <h4>Your canvas is empty!</h4>
+                            <p>Start by adding a full-width or two-column row.</p>
+                        </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

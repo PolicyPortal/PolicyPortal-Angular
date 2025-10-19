@@ -1,0 +1,70 @@
+<!--begin::Sidebar-->
+<aside class="app-sidebar bg-body-secondary shadow"  >
+     <!--begin::Sidebar Brand-->
+     <div class="sidebar-brand">
+          <a class='brand-link'>
+               <!-- <img src="./assets/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image opacity-75" /> -->
+               <span class="brand-image opacity-75" style="font-weight: 900;">  SP</span>
+               <span class="brand-text fw-light">PolicyPortal</span>
+          </a>
+     </div>
+     <!--end::Sidebar Brand-->
+     <!--begin::Sidebar Wrapper-->
+     <div class="sidebar-wrapper" data-overlayscrollbars="host">
+          <div data-overlayscrollbars-viewport="scrollbarHidden overflowXHidden overflowYScroll" overlay-scrollbars
+               [options]="{ scrollbars: { 
+               autoHide: 'scroll',
+               } }" [defer]="true">
+               <nav class="mt-2">
+                    <!--begin::Sidebar Menu-->
+                    <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="navigation"
+                         aria-label="Main navigation" data-accordion="false" id="navigation">
+                         
+                         @for(item of menuItems(); track $index){
+                         
+                              @if(item?.isHeader) {
+                                   <!-- <li class="nav-header">{{ item.label }}</li> -->
+                              }
+
+                              @let isActive = activeMenu() === item?.label;
+                              <!-- print isActive in red color-->
+                              <!-- <span style="color: red;"> {{isActive}}</span> -->
+
+                              <li class="nav-item" [ngClass]="{'menu-open': isActive}">
+
+                              @if(!item?.submenus) {
+                                   <a class="nav-link" routerLinkActive="active" [routerLink]="item?.route">
+                                   <i class="nav-icon" [ngClass]="item?.icon"></i>
+                                   <p>{{ item.label }}</p>
+                              </a>
+                              
+                              }
+                              @else {
+                                   <a class="nav-link" (click)="toggleSubmenu(item?.label)">
+                                   <i class="nav-icon" [ngClass]="item?.icon"></i>
+                                   <p>{{ item.label }}
+                                        <i class="nav-arrow bi bi-chevron-right"></i>
+                                   </p>
+                              </a>
+                              }
+
+                              @if(isActive)
+                              {
+                              <ul class="nav nav-treeview">
+                                   @for(subItem of item?.submenus; track $index){
+                                   <li class="nav-item">
+                                        <a class='nav-link' [routerLink]="subItem?.route">
+                                             <i class="nav-icon bi bi-circle"></i>
+                                             <p>{{ subItem?.label }}</p>
+                                        </a>
+                                   </li>
+                                   }
+                              </ul>
+                              }
+                         </li>
+                         }
+                    </ul>
+               </nav>
+          </div>
+     </div>
+</aside>

@@ -1,0 +1,89 @@
+<!-- 
+  This component assumes you have Bootstrap 5 and Font Awesome loaded in your project.
+  If not, you would need to add these links to your main index.html:
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+-->
+
+<style>
+    /* A small custom style to add a smooth "lift" effect on hover, 
+      which isn't a standard Bootstrap utility.
+    */
+    .card-hover {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    /* On hover, lift the card and increase its shadow for a dynamic feel */
+    .card-hover:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 1rem 3rem rgba(31, 45, 61, 0.175) !important; /* A stronger shadow, equivalent to Bootstrap's shadow-lg */
+    }
+
+    /* Ensure the link inside the column takes up the full space */
+    .card-link {
+        text-decoration: none;
+    }
+</style>
+
+<div class="container py-5">
+    <!-- Section Title -->
+    <div class="row mb-5">
+        <div class="col-lg-8 mx-auto text-center">
+            <h2 class="text-uppercase fw-bold">Select Insurance For</h2>
+            <p class="text-muted">Choose the type of vehicle you wish to insure.</p>
+        </div>
+    </div>
+
+    <!-- 
+      Insurance Cards 
+      - `justify-content-center` is added to center the cards nicely when they wrap on medium screens.
+    -->
+    <div class="row g-4 justify-content-center">
+        <!-- Card 1: Car -->
+        <!-- `col-lg-4`: On large screens (laptops), takes up 4 of 12 columns (3 cards fit in one row). -->
+        <!-- `col-md-6`: On medium screens (tablets), takes up 6 of 12 columns (2 cards fit in one row). -->
+        <!-- On small screens (mobile), it defaults to full width (stacking vertically). -->
+        <div class="col-lg-4 col-md-6">
+            <a routerLinkActive="active" [routerLink]="['/app/create-insurance/car']" class="card-link">
+                <div class="card h-100 text-center shadow-sm border-0 rounded-4 card-hover">
+                    <div class="card-body p-5 d-flex flex-column justify-content-center align-items-center">
+                        <div class="mb-4 text-primary">
+                            <i class="fas fa-car fa-3x"></i>
+                        </div>
+                        <h5 class="card-title fw-semibold text-dark">Car Insurance</h5>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <!-- Card 2: Two Wheeler -->
+        <div class="col-lg-4 col-md-6">
+            <a  routerLinkActive="active" [routerLink]="['/app/create-insurance/two-wheeler']" class="card-link">
+                <div class="card h-100 text-center shadow-sm border-0 rounded-4 card-hover">
+                    <div class="card-body p-5 d-flex flex-column justify-content-center align-items-center">
+                        <div class="mb-4 text-success">
+                            <i class="fas fa-motorcycle fa-3x"></i>
+                        </div>
+                        <h5 class="card-title fw-semibold text-dark">Two-Wheeler</h5>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <!-- Card 3: Commercial Vehicle -->
+        <div class="col-lg-4 col-md-6">
+            <a  routerLinkActive="active" [routerLink]="['/app/create-insurance/commercial']" class="card-link">
+                <div class="card h-100 text-center shadow-sm border-0 rounded-4 card-hover">
+                    <div class="card-body p-5 d-flex flex-column justify-content-center align-items-center">
+                        <div class="mb-4 text-warning">
+                            <i class="fas fa-truck fa-3x"></i>
+                        </div>
+                        <h5 class="card-title fw-semibold text-dark">Commercial</h5>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
+
+

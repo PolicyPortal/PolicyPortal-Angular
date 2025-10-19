@@ -1,0 +1,255 @@
+<!-- <!-- <div class="container-fluid p-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1>Form Builder: Cars Insurance</h1>
+    <button class="btn btn-success btn-lg" (click)="saveForm()" [disabled]="!formConfig">
+      <i class="fa-solid fa-save me-2"></i>Save Configuration
+    </button>
+  </div>
+
+  <div class="row g-4" *ngIf="formConfig" cdkDropListGroup>
+    <!-- Column 1: Toolbox & Properties -->
+    <div class="col-md-3">
+      <div class="vstack gap-4">
+        <div class="card">
+          <div class="card-header fw-bold">Toolbox</div>
+          <div class="card-body" cdkDropList #toolboxList="cdkDropList" [cdkDropListData]="toolboxControls">
+            <div *ngFor="let control of toolboxControls" cdkDrag [cdkDragData]="control" class="toolbox-item">
+              <div class="toolbox-item-handle"><i class="fa-solid fa-grip-vertical me-2"></i>{{ control.label }}</div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Properties Panel moved here -->
+        <div class="card">
+          <div class="card-header fw-bold">Properties</div>
+          <div class="card-body" *ngIf="selectedControl; else noControlSelected">
+            <div class="mb-3">
+              <label class="form-label">Label Text</label>
+              <input type="text" class="form-control form-control-sm" [(ngModel)]="selectedControl.label">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Control Name (Unique Key)</label>
+              <input type="text" class="form-control form-control-sm" [(ngModel)]="selectedControl.name" disabled>
+            </div>
+            <div *ngIf="selectedControl.validators" class="mb-3 form-check">
+              <input type="checkbox" class="form-check-input" id="requiredCheck" [(ngModel)]="selectedControl.validators.required">
+              <label class="form-check-label" for="requiredCheck">Is Required?</label>
+            </div>
+            <div *ngIf="selectedControl.controlType === 'select' || selectedControl.controlType === 'radio'">
+              <hr>
+              <h6 class="mb-3">Options</h6>
+              <div *ngFor="let option of selectedControl.options; let i = index" class="d-flex align-items-center mb-2">
+                <input type="text" class="form-control form-control-sm" placeholder="Key" [(ngModel)]="option.key">
+                <input type="text" class="form-control form-control-sm mx-2" placeholder="Value" [(ngModel)]="option.value">
+                <button class="btn btn-sm btn-outline-danger" (click)="removeOption(i)"><i class="fa-solid fa-trash"></i></button>
+              </div>
+              <button class="btn btn-sm btn-outline-primary w-100" (click)="addOption()">+ Add Option</button>
+            </div>
+          </div>
+          <ng-template #noControlSelected>
+            <div class="p-3 text-muted small">Select a control on a canvas to edit its properties.</div>
+          </ng-template>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======================================================= -->
+    <!-- Column 2: LEFT COLUMN CANVAS -->
+    <!-- ======================================================= -->
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-header fw-bold d-flex justify-content-between align-items-center">
+          <span>Left Column</span>
+          <button class="btn btn-sm btn-outline-primary" (click)="addSection('left')">
+            <i class="fa-solid fa-plus me-1"></i> Add Section
+          </button>
+        </div>
+        <div class="card-body">
+          <div *ngFor="let section of formConfig.leftColumnSections; let i = index" class="section-wrapper mb-3">
+            <div class="section-header">
+              <div *ngIf="sectionToRename !== section" class="d-flex align-items-center"><h5 class="mb-0">{{ section.sectionTitle }}</h5><button class="btn btn-sm btn-light ms-3" (click)="startRenameSection(section)"><i class="fa-solid fa-pen"></i></button><button class="btn btn-sm btn-light ms-1 text-danger" (click)="deleteSection(i, 'left')"><i class="fa-solid fa-trash"></i></button></div>
+              <div *ngIf="sectionToRename === section" class="d-flex align-items-center"><input type="text" class="form-control me-2" [(ngModel)]="newSectionTitle" (keyup.enter)="commitRenameSection()" (keyup.escape)="cancelRename()"><button class="btn btn-sm btn-success" (click)="commitRenameSection()"><i class="fa-solid fa-check"></i></button><button class="btn btn-sm btn-secondary ms-1" (click)="cancelRename()"><i class="fa-solid fa-times"></i></button></div>
+            </div>
+            <div class="card-body form-canvas" cdkDropList [cdkDropListData]="section.controls" (cdkDropListDropped)="drop($event, i, 'left')">
+              <div *ngFor="let control of section.controls" cdkDrag (click)="selectControl(control)" [class.selected]="control === selectedControl" class="control-item">
+                <div class="control-item-handle" cdkDragHandle><i class="fa-solid fa-grip-vertical me-2"></i></div>
+                <div class="control-item-content"><label class="form-label mb-1">{{ control.label }}</label><input *ngIf="control.controlType === 'input'" [type]="control.type" class="form-control" disabled><select *ngIf="control.controlType === 'select'" class="form-select" disabled><option *ngFor="let opt of control.options">{{ opt.value }}</option></select><div *ngIf="control.controlType === 'radio'" class="d-flex gap-3 pt-1"><div *ngFor="let opt of control.options" class="form-check"><input class="form-check-input" type="radio" disabled><label class="form-check-label">{{ opt.value }}</label></div></div><div *ngIf="control.controlType === 'checkbox'" class="form-check form-switch pt-1"><input class="form-check-input" type="checkbox" disabled><label class="form-check-label">{{ control.label }}</label></div></div>
+              </div>
+            </div>
+          </div>
+          <p *ngIf="!formConfig.leftColumnSections || formConfig.leftColumnSections.length === 0" class="text-muted text-center p-4">No sections yet. Add a section to begin.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======================================================= -->
+    <!-- Column 3: RIGHT COLUMN CANVAS -->
+    <!-- ======================================================= -->
+    <div class="col-md-5">
+       <div class="card">
+        <div class="card-header fw-bold d-flex justify-content-between align-items-center">
+          <span>Right Column</span>
+          <button class="btn btn-sm btn-outline-primary" (click)="addSection('right')">
+            <i class="fa-solid fa-plus me-1"></i> Add Section
+          </button>
+        </div>
+        <div class="card-body">
+          <div *ngFor="let section of formConfig.rightColumnSections; let i = index" class="section-wrapper mb-3">
+            <div class="section-header">
+              <div *ngIf="sectionToRename !== section" class="d-flex align-items-center"><h5 class="mb-0">{{ section.sectionTitle }}</h5><button class="btn btn-sm btn-light ms-3" (click)="startRenameSection(section)"><i class="fa-solid fa-pen"></i></button><button class="btn btn-sm btn-light ms-1 text-danger" (click)="deleteSection(i, 'right')"><i class="fa-solid fa-trash"></i></button></div>
+              <div *ngIf="sectionToRename === section" class="d-flex align-items-center"><input type="text" class="form-control me-2" [(ngModel)]="newSectionTitle" (keyup.enter)="commitRenameSection()" (keyup.escape)="cancelRename()"><button class="btn btn-sm btn-success" (click)="commitRenameSection()"><i class="fa-solid fa-check"></i></button><button class="btn btn-sm btn-secondary ms-1" (click)="cancelRename()"><i class="fa-solid fa-times"></i></button></div>
+            </div>
+            <div class="card-body form-canvas" cdkDropList [cdkDropListData]="section.controls" (cdkDropListDropped)="drop($event, i, 'right')">
+              <div *ngFor="let control of section.controls" cdkDrag (click)="selectControl(control)" [class.selected]="control === selectedControl" class="control-item">
+                <div class="control-item-handle" cdkDragHandle><i class="fa-solid fa-grip-vertical me-2"></i></div>
+                <div class="control-item-content"><label class="form-label mb-1">{{ control.label }}</label><input *ngIf="control.controlType === 'input'" [type]="control.type" class="form-control" disabled><select *ngIf="control.controlType === 'select'" class="form-select" disabled><option *ngFor="let opt of control.options">{{ opt.value }}</option></select><div *ngIf="control.controlType === 'radio'" class="d-flex gap-3 pt-1"><div *ngFor="let opt of control.options" class="form-check"><input class="form-check-input" type="radio" disabled><label class="form-check-label">{{ opt.value }}</label></div></div><div *ngIf="control.controlType === 'checkbox'" class="form-check form-switch pt-1"><input class="form-check-input" type="checkbox" disabled><label class="form-check-label">{{ control.label }}</label></div></div>
+              </div>
+            </div>
+          </div>
+          <p *ngIf="!formConfig.rightColumnSections || formConfig.rightColumnSections.length === 0" class="text-muted text-center p-4">No sections yet. Add a section to begin.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+ -->
+
+
+
+ 
+    <!-- ======================================================= -->
+    <!-- Column 2: LEFT COLUMN CANVAS -->
+    <!-- ======================================================= -->
+    <div class="col-md-4 ">
+      <div class="card">
+        <div class="card-header fw-bold d-flex justify-content-between align-items-center">
+          <span>Left Column</span>
+          <button class="btn btn-sm btn-outline-primary" (click)="addSection('left')">
+            <i class="fa-solid fa-plus me-1"></i> Add Section
+          </button>
+        </div>
+        <div class="card-body ">
+          <div *ngFor="let section of formConfig.leftColumnSections; let i = index" class="section-wrapper mb-3">
+            <div class="section-header">
+               @if(sectionToRename !== section) {
+              <div class="d-flex align-items-center"><h5 class="mb-0">{{ section.sectionTitle }}</h5><button class="btn btn-sm btn-light ms-3" (click)="startRenameSection(section)"><i class="fa-solid fa-pen"></i></button><button class="btn btn-sm btn-light ms-1 text-danger" (click)="deleteSection(i, 'left')"><i class="fa-solid fa-trash"></i></button></div>
+               }
+               @if(sectionToRename === section) {
+              <div class="d-flex align-items-center"><input type="text" class="form-control me-2" [(ngModel)]="newSectionTitle" (keyup.enter)="commitRenameSection()" (keyup.escape)="cancelRename()"><button class="btn btn-sm btn-success" (click)="commitRenameSection()"><i class="fa-solid fa-check"></i></button><button class="btn btn-sm btn-secondary ms-1" (click)="cancelRename()"><i class="fa-solid fa-times"></i></button></div>
+               }  
+          </div>
+            <div class="card-body form-canvas" cdkDropList [cdkDropListData]="section.controls" (cdkDropListDropped)="drop($event, i, 'left')">
+              <div *ngFor="let control of section.controls" cdkDrag (click)="selectControl(control)" [class.selected]="control === selectedControl" class="control-item">
+                <div class="control-item-handle" cdkDragHandle><i class="fa-solid fa-grip-vertical me-2"></i></div>
+                <div class="control-item-content"><label class="form-label mb-1">{{ control.label }}</label>
+                  <input *ngIf="control.controlType === 'input'" [type]="control.type" class="form-control" disabled>
+                  <select *ngIf="control.controlType === 'select'" class="form-select" disabled>
+                    <option *ngFor="let opt of control.options">{{ opt.value }}</option>
+                  </select>
+                    <div *ngIf="control.controlType === 'radio'" class="d-flex gap-3 pt-1">
+                      <div *ngFor="let opt of control.options" class="form-check">
+                        <input class="form-check-input" type="radio" disabled>
+                        <label class="form-check-label">{{ opt.value }}</label>
+                      </div>
+                    </div>
+                    <div *ngIf="control.controlType === 'checkbox'" class="form-check form-switch pt-1">
+                      <input class="form-check-input" type="checkbox" disabled>
+                      <label class="form-check-label">{{ control.label }}</label>
+                    </div>
+
+<h4 *ngIf="control.controlType === 'heading'" class="text-primary fw-bold mt-1 mb-0">
+      {{ control.label || 'Heading Text' }}
+    </h4>
+
+    <p *ngIf="control.controlType === 'paragraph'" class="text-muted fst-italic mt-1 mb-0">
+      {{ control.label || 'This is a sample paragraph. Edit its text in the properties panel.' }}
+    </p>
+
+
+         <div *ngIf="control.controlType === 'calculateVehiclePremium'" class="action-container">
+  <button type="button" class="btn btn-primary" disabled>
+    <i class="fas fa-calculator me-2"></i>
+    Calculate Premium
+  </button>
+  <div class="premium-display mt-2">
+    <span class="premium-amount">₹ 0.00</span>
+    <span class="premium-status text-muted">[Result will appear here]</span>
+  </div>
+</div>
+
+                  </div>
+              </div>
+            </div>
+          </div>
+
+          
+          @if(!formConfig.leftColumnSections || formConfig.leftColumnSections.length === 0) {
+          <p  class="text-muted text-center p-4">No sections yet. Add a section to begin.</p>
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- ======================================================= -->
+    <!-- Column 3: RIGHT COLUMN CANVAS -->
+    <!-- ======================================================= -->
+    <div class="col-md-4">
+       <div class="card">
+        <div class="card-header fw-bold d-flex justify-content-between align-items-center">
+          <span>Right Column</span>
+          <button class="btn btn-sm btn-outline-primary" (click)="addSection('right')">
+            <i class="fa-solid fa-plus me-1"></i> Add Section
+          </button>
+        </div>
+        <div class="card-body">
+          <div *ngFor="let section of formConfig.rightColumnSections; let i = index" class="section-wrapper mb-3">
+            <div class="section-header">
+              @if(sectionToRename !== section) {
+               <div class="d-flex align-items-center"><h5 class="mb-0">{{ section.sectionTitle }}</h5><button class="btn btn-sm btn-light ms-3" (click)="startRenameSection(section)"><i class="fa-solid fa-pen"></i></button><button class="btn btn-sm btn-light ms-1 text-danger" (click)="deleteSection(i, 'right')"><i class="fa-solid fa-trash"></i></button></div>
+              }
+              @if(sectionToRename === section) {
+               <div class="d-flex align-items-center"><input type="text" class="form-control me-2" [(ngModel)]="newSectionTitle" (keyup.enter)="commitRenameSection()" (keyup.escape)="cancelRename()"><button class="btn btn-sm btn-success" (click)="commitRenameSection()"><i class="fa-solid fa-check"></i></button><button class="btn btn-sm btn-secondary ms-1" (click)="cancelRename()"><i class="fa-solid fa-times"></i></button></div>
+              }  
+          </div>
+            <div class="card-body form-canvas" cdkDropList [cdkDropListData]="section.controls" (cdkDropListDropped)="drop($event, i, 'right')">
+              <div *ngFor="let control of section.controls" cdkDrag (click)="selectControl(control)" [class.selected]="control === selectedControl" class="control-item">                
+                <div class="control-item-handle" cdkDragHandle><i class="fa-solid fa-grip-vertical me-2"></i></div>
+                <div class="control-item-content">
+                  <label class="form-label mb-1">{{ control.label }}</label>
+                  <input *ngIf="control.controlType === 'input'" [type]="control.type" class="form-control" disabled>
+                  <select *ngIf="control.controlType === 'select'" class="form-select" disabled>
+                    <option *ngFor="let opt of control.options">{{ opt.value }}</option>
+                  </select><div *ngIf="control.controlType === 'radio'" class="d-flex gap-3 pt-1">
+                    <div *ngFor="let opt of control.options" class="form-check">
+                      <input class="form-check-input" type="radio" disabled>
+                      <label class="form-check-label">{{ opt.value }}</label>
+                    </div>
+                  </div>
+                  <div *ngIf="control.controlType === 'checkbox'" class="form-check form-switch pt-1">
+                    <input class="form-check-input" type="checkbox" disabled>
+                    <label class="form-check-label">{{ control.label }}</label>
+                  </div>
+
+                   <h4 *ngIf="control.controlType === 'heading'" class="text-primary fw-bold mt-1 mb-0 text-lg">
+                    {{ control.label || 'Heading Text' }}
+                  </h4>
+
+                  <p *ngIf="control.controlType === 'paragraph'" class="text-muted fst-italic mt-1 mb-0 text-sm">
+                    {{ control.label || 'This is a sample paragraph. Edit its text in the properties panel.' }}
+                  </p>
+
+                </div>
+              </div>
+            </div>
+          </div>
+          @if (!formConfig.rightColumnSections || formConfig.rightColumnSections.length === 0) {
+          <p class="text-muted text-center p-4">No sections yet. Add a section to begin.</p>
+          }   
+     </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+ -->
