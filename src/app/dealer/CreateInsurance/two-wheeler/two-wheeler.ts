@@ -53,12 +53,15 @@ insuranceForm!: FormGroup;
       vehiclePincode : ['', Validators.required],
       vehicleCity : ['', Validators.required],
       vehicleState : ['', Validators.required],
-      manufacturer: ['', Validators.required],
-      model: ['', Validators.required],
+      // manufacturer: ['', Validators.required],
+      // model: ['', Validators.required],
+      manufacturer: [null, Validators.required],
+      model: [null, Validators.required],
       cc : [null, Validators.required],
       engineNumber: ['', Validators.required],
       chassisNumber: ['', Validators.required],
-      haveRegistrationNumber: ['No', Validators.required],    
+      haveRegistrationNumber: ['No', Validators.required],   
+      registrationNumber: ['', Validators.required], 
       exShowroomPrice: [null, Validators.required],
       idv: [null, Validators.required],
       // Add Ons
@@ -73,7 +76,9 @@ insuranceForm!: FormGroup;
       // Hypothecation Details
       isHypothecated: ['No', Validators.required],
       financier: [null, Validators.required],
+      branchLocation : ['', Validators.required],
       ifFinancierNotListed: ['', Validators.required],
+
       // Customer Details
       customerType: ['individual', Validators.required],
 
@@ -83,6 +88,9 @@ insuranceForm!: FormGroup;
       firstName: ['', Validators.required],
       lastName: ['', Validators.required],
       dob: ['', Validators.required],
+      customerAadhar: [null, Validators.required], // Regex for a valid 12-digit Aadhaar number
+      customerPAN: [null, Validators.required], // Regex for a valid PAN number
+      customerForm16: [null, Validators.required],
       
       companyName: ['', Validators.required],
       dateOfIncorporation: ['', Validators.required],
@@ -140,6 +148,10 @@ insuranceForm!: FormGroup;
     customerType$.subscribe(value => {
       this.updateControl('individualName', value === 'individual');
       this.updateControl('dob', value === 'individual');
+      this.updateControl('customerAadhar', value === 'individual');
+      this.updateControl('customerPAN', value === 'individual');
+      this.updateControl('customerForm16', value === 'individual');
+
       this.updateControl('companyName', value === 'company');
       this.updateControl('dateOfIncorporation', value === 'company');
     });
@@ -197,7 +209,7 @@ insuranceForm!: FormGroup;
     this.premiumStatus = null;
     setTimeout(() => {
         this.premiumAmount = Math.random() * 5000 + 2000;
-        this.premiumStatus = 'Quote Generated Successfully';
+        this.premiumStatus = 'Quote Calculated Successfully';
         this.isCalculating = false;
     }, 1500);
   }

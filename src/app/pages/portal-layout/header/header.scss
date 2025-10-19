@@ -1,3 +1,77 @@
-// .app-header{
-//   border: 0;   
-// }
+
+.app-header {
+    position: sticky;
+    top: 0;
+    // background-color: #343a40; /* Dark background for header */
+    // color: #ffffff; /* White text color */
+    // box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    // padding: 0.5rem 1rem;
+}
+
+
+/* User Menu Specific Styles */
+    .user-menu .user-image {
+        width: 32px;
+        height: 32px;
+        object-fit: cover;
+    }
+
+    .user-menu .dropdown-menu {
+        width: 280px;
+        padding: 0;
+        border: 1px solid rgba(0,0,0,.1);
+        right: 5px; /* This pulls the dropdown in from the edge */
+    }
+    
+    .user-menu .user-header {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+        text-align: center;
+    }
+
+    .user-menu .user-header img {
+        height: 90px;
+        width: 90px;
+        border: 3px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .user-menu .user-header p {
+        font-size: 1rem;
+        margin-top: 0.5rem;
+        margin-bottom: 0;
+        color: rgba(255,255,255,.85);
+    }
+
+    .user-menu .user-header p small {
+        display: block;
+        font-size: 0.75rem;
+    }
+
+    .user-menu .dropdown-item {
+        display: flex;
+        align-items: center;
+        padding: 0.65rem 1rem;
+    }
+
+    .user-menu .dropdown-item:active {
+        background-color: #e9ecef;
+        color: #212529;
+    }
+    
+    .user-menu .dropdown-item.text-danger:hover {
+        background-color: #f8d7da;
+    }
+
+    /* Notification Badge Styling */
+    .navbar-badge {
+      font-size: 0.6rem;
+      font-weight: 300;
+      padding: 2px 4px;
+      position: absolute;
+      top: 9px;
+      right: 5px;
+      border-radius: 50%;
+    }

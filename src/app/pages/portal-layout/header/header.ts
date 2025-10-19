@@ -1,5 +1,5 @@
 import { NgClass } from '@angular/common';
-import { Component, OnInit, signal, Signal } from '@angular/core';
+import { Component, HostListener, OnInit, signal, Signal } from '@angular/core';
 import { AuthService } from '../../../core/Services/auth.service';
 
 @Component({
@@ -13,31 +13,41 @@ export class Header implements OnInit {
 
   constructor(private authService: AuthService) { }
 
-  isNotificationsDropdownOpen = signal<boolean>(false); // Signal to manage the state of the notifications dropdown
-  isProfileDropdownOpen = signal<boolean>(false); // Signal to manage the state of the profile dropdown
+  // Signals to manage dropdown states
+  isProfileDropdownOpen = signal(false);
+  isNotificationsDropdownOpen = signal(false);
 
   ngOnInit(): void {
         this.user = this.authService.getUserData();
         console.log('User data:', this.user);
   }
 
-  toggleNotificationsDropdown() {
-      this.isProfileDropdownOpen.set(false); // Close profile dropdown when notifications are toggled
-      this.isNotificationsDropdownOpen.set(!this.isNotificationsDropdownOpen()); 
+  toggleProfileDropdown(event: Event) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isProfileDropdownOpen.update(value => !value);
+    this.isNotificationsDropdownOpen.set(false); // Close other dropdown
   }
 
-  toggleProfileDropdown() {
-    this.isNotificationsDropdownOpen.set(false);
-    this.isProfileDropdownOpen.set(!this.isProfileDropdownOpen());
+  toggleNotificationsDropdown(event: Event) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isNotificationsDropdownOpen.update(value => !value);
+    this.isProfileDropdownOpen.set(false); // Close other dropdown
   }
-
+  
   toggleSidebar() {
-    document.body.classList.toggle('sidebar-collapse'); // Toggle the sidebar collapse class on the body element
-    document.body.classList.toggle('sidebar-open'); // Toggle the sidebar open class on the body element
-  }
- 
+    document.body.classList.toggle('sidebar-collapse');
+    document.body.classList.toggle('sidebar-open');
+  }
 
   onLogout(): void {
     this.authService.logout();
+  }
+
+    @HostListener('document:click', ['$event'])
+  onDocumentClick(event: Event) {
+    this.isProfileDropdownOpen.set(false);
+    this.isNotificationsDropdownOpen.set(false);
   }
 }
