@@ -1,11 +1,15 @@
-<span class="policies-header">
+<!-- <span class="policies-header">
 <h6 class="policies-heading">Policy History</h6>
-</span>
+</span> -->
+
 
  <!-- Filter inputs -->
  <div class="form-container">
 
-            <!-- <div class="note-box">
+        <h2 class="h3 mb-2">Filter Policies</h2>
+        <p class="text-muted mb-4">Use the fields below to refine your search results.</p>
+<!-- 
+        <div class="note-box">
             <div class="note-content">
                 <span class="note-text">NOTE : </span>Data loaded for date range 2024-06-20 to 2024-09-13
             </div>
@@ -16,51 +20,128 @@
           I've placed all your columns as direct children of the .filter-row.
           This makes it easier for flexbox to manage their alignment and spacing.
         -->
-        <div class="filter-row">
+        <!-- <div class="filter-row"> -->
             
             
-            <!-- Date Range input -->
+        <form class="filter-row" [formGroup]="filterForm" (ngSubmit)="applyFilters()">
+
+            <!-- <mat-form-field appearance="outline" class="filter-input-col">
+                  <mat-label>From Date</mat-label>
+                  <input matInput [matDatepicker]="fromPicker" placeholder="Select start date" formControlName="fromDate">
+                  <mat-datepicker-toggle matSuffix [for]="fromPicker"></mat-datepicker-toggle>
+                  <mat-datepicker #fromPicker></mat-datepicker>
+                </mat-form-field>
+            <mat-form-field appearance="outline" class="filter-input-col">
+                  <mat-label>To Date</mat-label>
+                  <input matInput [matDatepicker]="toPicker" placeholder="Select end date" formControlName="toDate">
+                  <mat-datepicker-toggle matSuffix [for]="toPicker" ></mat-datepicker-toggle>
+                  <mat-datepicker #toPicker></mat-datepicker>
+                </mat-form-field>
+
+             <mat-form-field appearance="outline" class="filter-input-col">
+                  <mat-label>Policy No.</mat-label>
+                  <input matInput placeholder="Search..." formControlName="policyNo">
+                  <button mat-icon-button matSuffix *ngIf="filterForm.get('policyNo')?.value" (click)="filterForm.get('policyNo')?.setValue('')">
+                    <mat-icon>close</mat-icon>
+                  </button>
+                </mat-form-field>
+            <mat-form-field appearance="outline" class="filter-input-col">
+                  <mat-label>Chassis No.</mat-label>
+                  <input matInput placeholder="Search..." formControlName="chassisNo">
+                  <button mat-icon-button matSuffix *ngIf="filterForm.get('chassisNo')?.value" (click)="filterForm.get('chassisNo')?.setValue('')">
+                    <mat-icon>close</mat-icon>
+                  </button> -->
+                <!-- </mat-form-field> -->
+                
+                
+                <!-- <button type="submit" mat-stroked-button color="primary">
+                    <mat-icon>search</mat-icon>
+                    Search
+                </button> -->
+
             <div class="filter-input-col">
-                <label class="label" for="date-range-picker">Form Date</label>
+                <label class="label" for="fromDate">From Date</label>
                 <div class="input-group">
-                    <!-- This JS trick allows the date picker to show a placeholder -->
-                    <input id="date-range-picker" name="dateRangeFilter" placeholder="Select Date..." class="input-text" type="text" onfocus="this.type='date'" onblur="if(!this.value)this.type='text'">
+                    <input formControlName="fromDate" id="fromDate" name="dateRangeFilter" placeholder="Select Date..." class="input-text" type="text" onfocus="this.type='date'" onblur="if(!this.value)this.type='text'">
+                </div>
+            </div> 
+
+            <div class="filter-input-col">
+                <label class="label" for="toDate">To Date</label>
+                <div class="input-group">
+                    <input formControlName="toDate" id="toDate" name="dateRangeFilter" placeholder="Select Date..." class="input-text" type="text" onfocus="this.type='date'" onblur="if(!this.value)this.type='text'">
                 </div>
             </div>
 
-             <!-- Date Range input -->
             <div class="filter-input-col">
-                <label class="label" for="date-range-picker">To Date</label>
+                <label class="label" for="policyNo">Insurance Policy No.</label>
                 <div class="input-group">
-                    <!-- This JS trick allows the date picker to show a placeholder -->
-                    <input id="date-range-picker" name="dateRangeFilter" placeholder="Select Date..." class="input-text" type="text" onfocus="this.type='date'" onblur="if(!this.value)this.type='text'">
+                    <input formControlName="policyNo" placeholder="Search..." id="policyNo" name="policyNo" type="text" class="input-text">
                 </div>
             </div>
 
-                        <!-- Insurance Policy No. input -->
-            <div class="filter-input-col">
-                <label class="label" for="insurancePolicyNo">Insurance Policy No.</label>
-                <div class="input-group">
-                    <input placeholder="Search..." id="insurancePolicyNo" name="insurancePolicyNo" type="text" class="input-text">
-                </div>
-            </div>
-
-            <!-- Chassis No. input -->
             <div class="filter-input-col">
                 <label class="label" for="chassisNo">Chassis No.</label>
                 <div class="input-group">
-                    <input placeholder="Search..." id="chassisNo" name="chassisNo" type="text" class="input-text">
+                    <input formControlName="chassisNo" placeholder="Search..." id="chassisNo" name="chassisNo" type="text" class="input-text">
                 </div>
             </div>
 
 
-            <!-- Search Action buttons -->
             <div class="filter-action-col">
-                <button class="btn btn-outline-primary">
-                    <span class="button-text">Search</span>
+                <button style="margin-right: 0.5rem;" class="btn btn-outline-primary">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                      <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                    </svg>
+                    <span class="button-text"> Search</span>
+                </button>
+
+                <button class="btn btn-outline-secondary" type="button" (click)="resetFilters()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-counterclockwise" viewBox="0 0 16 16">
+                      <path fill-rule="evenodd" d="M8 3a5 5 0 1 1-4.546 2.914.5.5 0 0 0-.908-.417A6 6 0 1 0 8 2v1z"/>
+                      <path d="M8 4.466V.534a.25.25 0 0 0-.41-.192L5.23 2.308a.25.25 0 0 0 0 .384l2.36 1.966A.25.25 0 0 0 8 4.466z"/>
+                    </svg>
+                    <span class="button-text"> Reset</span>
+                </button>
+            </div> 
+
+            </form>
+
+             <!-- <div class="note-box">
+            <div class="note-content">
+                <span class="note-text">NOTE : </span>Data loaded for date range 2024-06-20 to 2024-09-13
+            </div>
+            <div class="filter-actions">
+                <button type="submit" mat-stroked-button color="primary">
+                    <mat-icon>search</mat-icon>
+                    Search
+                </button>
+                <button type="button" mat-button (click)="resetFilters()">
+                    <mat-icon>refresh</mat-icon>
+                    Reset
                 </button>
             </div>
-        </div>
+            
+        </div> -->
+            
+
+        <!-- <div class="top-bar">
+            
+                    NOTE : Data loaded for date range 2024-06-20 to 2024-09-13
+                <div class="top-bar-actions">
+                    <button type="submit" mat-stroked-button color="primary">
+                    <mat-icon>search</mat-icon>
+                    Search
+                </button>
+                <button type="button" mat-button (click)="resetFilters()">
+                    <mat-icon>refresh</mat-icon>
+                    Reset
+                </button>
+                </div>
+            </div>
+        </div> -->
+        
+        
     </div>
 
 <div class="policy-container">
@@ -136,7 +217,7 @@
     <div class="table-scroll-container">
     <!-- <table class="requests-table"> -->
     <!-- Angular Material Table -->
-    <table mat-table [dataSource]="dataSource" matSort class="requests-table">
+    <table mat-table [dataSource]="dataSource()" matSort class="requests-table">
 
             <ng-container matColumnDef="uid" sticky>
                 <th mat-header-cell *matHeaderCellDef>UID</th>
@@ -247,18 +328,29 @@
             <!-- Define the header and row rows -->
             <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
             <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+            <!-- Row to show when no data matches the filter -->
+            <tr class="mat-row" *matNoDataRow>
+                <td class="mat-cell" [attr.colspan]="displayedColumns.length">
+                    No policies found matching your search criteria.
+                </td>
+            </tr>
         </table>
     </div>
+
 
     <div class="pagination-container">
         @if(paginator)
         {
         <span class="pagination-summary">
-            {{ getCustomRangeLabel(paginator.pageIndex, paginator.pageSize, dataSource.data.length) }}
+            {{ getCustomRangeLabel(paginator.pageIndex, paginator.pageSize, dataSource().data.length) }}
         </span>
         }
-        <mat-paginator [pageSizeOptions]="[6]" showFirstLastButtons aria-label="Select page of expiring policies"
-            style="background-color: white;">
+        <mat-paginator 
+        [pageSizeOptions]="[10, 25, 50]" 
+        showFirstLastButtons 
+        aria-label="Select page of policies"
+        style="background-color: white;">
         </mat-paginator>
     </div>
 </div>

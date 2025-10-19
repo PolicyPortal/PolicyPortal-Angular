@@ -186,7 +186,7 @@
         /* This is the key: it turns the container into a flexbox, aligning children in a row. */
         .filter-row {
             display: flex;
-            align-items: flex-end; /* Aligns items on their bottom edge, perfect for aligning inputs with a button */
+            // align-items: flex-end; /* Aligns items on their bottom edge, perfect for aligning inputs with a button */
             gap: 1rem; /* Adds consistent spacing between all items in the row */
             flex-wrap: wrap; /* Allows items to wrap onto the next line on smaller screens */
         }
@@ -203,6 +203,7 @@
         /* The button's column doesn't need much styling as flexbox handles its position */
         .filter-action-col {
             padding-bottom: 2px; /* Small adjustment for perfect visual alignment */
+            margin-top: auto;
         }
         
         /* --- Form Element Styles --- */
@@ -237,7 +238,7 @@
 
         /* --- Button Styles --- */
         .btn {
-            padding: 0.75rem 1.5rem;
+            padding: .75rem 1.5rem;
             border: none;
             border-radius: 6px;
             font-size: 1rem;
@@ -250,6 +251,12 @@
         .btn-outline-primary {
              background-color: #3b82f6; /* Blue */
              color: white;
+        }
+
+        .btn-outline-secondary{
+             background-color: #6b7280; /* Gray */
+             color: white;
+             border: 1px solid #6b7280;
         }
 
         .btn:hover {
@@ -268,7 +275,7 @@
     }
     .top-bar {
         display: flex;
-        // justify-content: end;
+        justify-content: end;
         // justify-content: space-between;
         align-items: center;
         flex-wrap: wrap;
@@ -285,8 +292,8 @@
         gap: 0.75rem;
     }
 
-    .note-box {
-        color: #664d03;
-        margin-bottom: 0;
-        flex-grow: 1;
-    }
+    // .note-box {
+    //     color: #664d03;
+    //     margin-bottom: 0;
+    //     flex-grow: 1;
+    // }

@@ -1,4 +1,15 @@
-    /* User Menu Specific Styles */
+
+.app-header {
+    position: sticky;
+    top: 0;
+    // background-color: #343a40; /* Dark background for header */
+    // color: #ffffff; /* White text color */
+    // box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    // padding: 0.5rem 1rem;
+}
+
+
+/* User Menu Specific Styles */
     .user-menu .user-image {
         width: 32px;
         height: 32px;
