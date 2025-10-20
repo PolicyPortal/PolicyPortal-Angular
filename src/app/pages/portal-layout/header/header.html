@@ -52,7 +52,7 @@
             <li  class="nav-item dropdown user-menu ">
                 <a href="#"   class="nav-link dropdown-toggle d-flex align-items-center" (click)="toggleProfileDropdown($event)">
                     <img style="margin-top: 0.5px;"
-                        src="{{ 'https://placehold.co/160x160/667eea/white?text=' + (user?.name.split(' ')[0][0]+user?.name.split(' ')[1][0]) }} "
+                        src="{{ 'https://placehold.co/160x160/667eea/white?text=' + user?.name.split(' ')[0][0] }} "
                         class="user-image rounded-circle shadow"
                         alt="User Image"
                     />
@@ -61,7 +61,7 @@
                 <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end" [class.show]="isProfileDropdownOpen()">
                     <li class="user-header text-bg-primary">
                         <img
-                            src="{{ 'https://placehold.co/160x160/667eea/white?text=' + (user?.name.split(' ')[0][0]+user?.name.split(' ')[1][0]) }} "
+                        src="{{ 'https://placehold.co/160x160/667eea/white?text=' + user?.name.split(' ')[0][0] }} "
                             class="rounded-circle shadow"
                             alt="User Image"
                         />
