@@ -1,6 +1,7 @@
 import { NgClass } from '@angular/common';
 import { Component, HostListener, OnInit, signal, Signal } from '@angular/core';
 import { AuthService } from '../../../core/Services/auth.service';
+import { WalletService } from '../../../core/Services/wallet.service';
 
 @Component({
   selector: 'app-header',
@@ -9,10 +10,22 @@ import { AuthService } from '../../../core/Services/auth.service';
   styleUrl: './header.scss'
 })
 export class Header implements OnInit {
+
+  walletBalance = 0;
   user: any;
 
-  constructor(private authService: AuthService) { }
+  constructor(private authService: AuthService, private walletService: WalletService) { }
 
+  fetchBalance() {
+    console.log('Fetching wallet balance');
+    this.walletService.getBalance().subscribe({
+      next: res => {
+        console.log('res', res);
+        this.walletBalance = res.balance;
+      },
+      error: () => this.walletBalance = 0,
+    });
+  }
   // Signals to manage dropdown states
   isProfileDropdownOpen = signal(false);
   isNotificationsDropdownOpen = signal(false);
@@ -37,9 +50,9 @@ export class Header implements OnInit {
   }
   
   toggleSidebar() {
-    document.body.classList.toggle('sidebar-collapse');
-    document.body.classList.toggle('sidebar-open');
-  }
+    document.body.classList.toggle('sidebar-collapse');
+    document.body.classList.toggle('sidebar-open');
+  }
 
   onLogout(): void {
     this.authService.logout();
