@@ -34,14 +34,14 @@ export class DealerManagement {
   onAddNewDealer(): void {
     this.isEditing = false;
     this.selectedDealer = {
-      dealer_id: 0, // A temporary ID for a new dealer
-      Name: '',
-      Role: '',
-      Email: '',
-      Password: '',
-      Phone: '',
-      Location: '',
-      Status: 'Active'
+      user_id: 0, // A temporary ID for a new dealer
+      name: '',
+      role: '',
+      email: '',
+      password: '',
+      phone: '',
+      location: '',
+      status: 'Active'
     };
   }
 
@@ -56,13 +56,14 @@ export class DealerManagement {
 
     if (this.isEditing) {
       // Update existing dealer
-      // this.dealerService.updateDealer(this.selectedDealer).subscribe(() => {
-      //   this.resetForm();
-      //   this.loadDealers();
-      // });
+      this.dealerService.updateDealer(this.selectedDealer).subscribe(() => {
+        this.resetForm();
+        this.loadDealers();
+      });
+
     } else {
       // Add new dealer (we omit the temporary id)
-      const { dealer_id, ...newDealerData } = this.selectedDealer;
+      const { user_id, ...newDealerData } = this.selectedDealer;
       this.dealerService.addDealer(newDealerData).subscribe(() => {
         console.log('New dealer added:', newDealerData);
       });
@@ -80,11 +81,11 @@ export class DealerManagement {
   }
 
   onDelete(id: number): void {
-    // if (confirm('Are you sure you want to delete this dealer?')) {
-    //   this.dealerService.deleteDealer(id).subscribe(() => {
-    //     this.loadDealers();
-    //   });
-    // }
+    if (confirm('Are you sure you want to delete this dealer?')) {
+      this.dealerService.deleteDealer(id).subscribe(() => {
+        this.loadDealers();
+      });
+    }
   }
 
 

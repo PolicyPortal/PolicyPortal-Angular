@@ -15,7 +15,14 @@
           <!--begin::End Navbar Links-->
           <ul class="navbar-nav ms-auto">
 
-            
+            <!--begin:: Wallet Balance-->
+            <!-- <li class="nav-item">
+              <a class="nav-link" href="#" role="button">
+                <i class="bi bi-wallet"></i>
+                <span class="wallet-balance"> {{ this.walletBalance }}</span>
+              </a>
+            </li> -->
+            <!--end:: Wallet Balance-->
 
             <!--begin::Notifications Dropdown Menu-->
             <li style="padding-top: 2px;" class="nav-item dropdown  " [ngClass]="{'show': isNotificationsDropdownOpen()}">
@@ -26,7 +33,7 @@
               <div  class="dropdown-menu dropdown-menu-lg dropdown-menu-end " 
               [ngClass]="{'show': isNotificationsDropdownOpen()}"
               style="right: -4.5rem;">
-                <span class="dropdown-item dropdown-header ">15 Notifications</span>
+                <!-- <span class="dropdown-item dropdown-header ">15 Notifications</span>
                 <div class="dropdown-divider"></div>
                 <a href="#" class="dropdown-item">
                   <i class="bi bi-envelope me-2"></i> 4 new messages
@@ -42,8 +49,8 @@
                   <i class="bi bi-file-earmark-fill me-2"></i> 3 new reports
                   <span class="float-end text-secondary fs-7">2 days</span>
                 </a>
-                <div class="dropdown-divider"></div>
-                <a href="#" class="dropdown-item dropdown-footer"> See All Notifications </a>
+                <div class="dropdown-divider"></div>-->
+                <a href="#" class="dropdown-item dropdown-footer"> See All Notifications </a> 
               </div>
             </li>
             <!--end::Notifications Dropdown Menu-->
@@ -52,7 +59,7 @@
             <li  class="nav-item dropdown user-menu ">
                 <a href="#"   class="nav-link dropdown-toggle d-flex align-items-center" (click)="toggleProfileDropdown($event)">
                     <img style="margin-top: 0.5px;"
-                        src="{{ 'https://placehold.co/160x160/667eea/white?text=' + (user?.name.split(' ')[0][0]+user?.name.split(' ')[1][0]) }} "
+                        src="{{ 'https://placehold.co/160x160/667eea/white?text=' + user?.name.split(' ')[0][0] }} "
                         class="user-image rounded-circle shadow"
                         alt="User Image"
                     />
@@ -61,7 +68,7 @@
                 <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end" [class.show]="isProfileDropdownOpen()">
                     <li class="user-header text-bg-primary">
                         <img
-                            src="{{ 'https://placehold.co/160x160/667eea/white?text=' + (user?.name.split(' ')[0][0]+user?.name.split(' ')[1][0]) }} "
+                        src="{{ 'https://placehold.co/160x160/667eea/white?text=' + user?.name.split(' ')[0][0] }} "
                             class="rounded-circle shadow"
                             alt="User Image"
                         />

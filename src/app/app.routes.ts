@@ -87,7 +87,7 @@ export const routes: Routes = [
                // },
                {
                     path: 'wallet',
-                    loadComponent: () => import('./dealer/wallet/wallet').then(m => m.Wallet),
+                    loadComponent: () => import('./dealer/wallet/wallet').then(m => m.WalletComponent),
                     canActivate: [roleGuard],
                     data: { roles: ['Dealer'] }
                },

@@ -6,14 +6,14 @@ import { HttpClient } from '@angular/common/http';
 import { AuthService } from './auth.service';
 
 export interface Dealer {
-  dealer_id: number;
-  Name: string;
-  Role: string;
-  Email: string;
-  Password: string;
-  Phone: string;
-  Location: string;
-  Status: 'Active' | 'Inactive';
+  user_id: number;
+  name: string;
+  role: string;
+  email: string;
+  password: string;
+  phone: string;
+  location: string;
+  status: 'Active' | 'Inactive';
 }
 
 
@@ -34,8 +34,16 @@ export class DealerService {
      return this.http.get<Dealer>(`${this.serviceApiUrl}/dealers/${id}`);
      }
 
-     addDealer(newDealerData: { Name: string; Role: string; Email: string; Phone: string; Location: string; Status: 'Active' | 'Inactive'; Password: string; }): Observable<Dealer> {
+     addDealer(newDealerData: { name: string; role: string; email: string; phone: string; location: string; status: 'Active' | 'Inactive'; password: string; }): Observable<Dealer> {
           return this.authService.register(newDealerData);
+     }
+
+     updateDealer(dealer: Dealer): Observable<void> {
+     return this.http.put<void>(`${this.serviceApiUrl}/updatedealer/${dealer.user_id}`, dealer);
+     }
+
+     deleteDealer(id: number): Observable<void> {
+     return this.http.delete<void>(`${this.serviceApiUrl}/deletedealer/${id}`);
      }
 
 }
