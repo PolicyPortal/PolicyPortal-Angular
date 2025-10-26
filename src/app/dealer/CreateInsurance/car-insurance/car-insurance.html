@@ -34,8 +34,8 @@
                   <div *ngIf="insuranceForm.get('isNewVehicle')?.invalid && insuranceForm.get('isNewVehicle')?.touched"
                     class="text-danger small mt-1">Required.</div>
                 </div>
-                 <div class="col-md-4">
-                  <label for="bodyType" class="form-label fw-medium">Body Type<span class="required-star">*</span></label>
+                <!-- <div class="col-md-4">
+                   <label for="bodyType" class="form-label fw-medium">Body Type<span class="required-star">*</span></label>
                   <select formControlName="bodyType" class="form-select">
                     <option [ngValue]="null" disabled>Select Body Type...</option>
                     <option value="hatchback">Hatch Back</option>
@@ -60,7 +60,7 @@
                   </select>
                   <div *ngIf="insuranceForm.get('fuelType')?.invalid && insuranceForm.get('fuelType')?.touched"
                     class="text-danger small mt-1">Fuel Type is Required.</div>
-                </div>
+                </div> -->
 
                 <div class="col-md-4">
                   <label for="seatCapacity" class="form-label fw-medium">Seat Capacity<span class="required-star">*</span></label>

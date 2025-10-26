@@ -60,8 +60,9 @@ insuranceForm!: FormGroup;
       cc : [null, Validators.required],
       engineNumber: ['', Validators.required],
       chassisNumber: ['', Validators.required],
-      haveRegistrationNumber: ['No', Validators.required],   
-      registrationNumber: ['', Validators.required], 
+      haveRegistrationNumber: ['No', Validators.required],
+      vehicleNumber: ['', Validators.required],
+      // registrationNumber: ['', Validators.required],
       exShowroomPrice: [null, Validators.required],
       idv: [null, Validators.required],
       // Add Ons
@@ -312,6 +313,11 @@ insuranceForm!: FormGroup;
       // In a real app, you would replace this alert with a modal or toast notification.
       alert('Form submitted successfully! Check the console for the form data.');
     } else {
+      // Show which fields are invalid
+      const invalidFields = Object.keys(this.insuranceForm.controls).filter(field => this.insuranceForm.get(field)?.invalid);
+      console.log('Invalid Fields:', invalidFields);
+
+
       console.error('Form is invalid.');
       this.insuranceForm.markAllAsTouched();
     }
