@@ -111,7 +111,7 @@ export const routes: Routes = [
                },
                {
                     path: 'wallet-management',
-                    loadComponent: () => import('./pages/main-app/wallet-management/wallet-management').then(m => m.WalletManagement),
+                    loadComponent: () => import('./admin/wallet-management/wallet-management').then(m => m.WalletManagement),
                     canActivate: [roleGuard],
                     data: { roles: ['Admin'] }
                },

@@ -21,7 +21,7 @@
   </button>
 </div>
   <div class="requests-table-container mt-3">
-  <div class="filter-section">
+  <!-- <div class="filter-section">
     <div class="filter-group">
       <label for="transactionRefId">Transaction Ref No</label>
       <div class="input-container">
@@ -48,120 +48,40 @@
         </span>
       </div>
     </div>
-  </div>
+  </div> -->
   <div class="table-scroll-container">
     <table class="requests-table">
       <thead>
         <tr>
-          <th>DATE</th>
           <th>TRANSACTION DATE</th>
           <th>TRANSACTION REF NO</th>
           <th>PAYMENT MODE</th>
           <th>AMOUNT</th>
-          <!-- <th>TOP-UP ID</th> -->
-          <th>ATTACHMENT</th>
           <th>STATUS</th>
-          <!-- <th>CANCEL REQ</th> -->
+          <th>ATTACHMENT</th>
+          <th>SUBMIT DATE</th>
+          <th>UPDATE DATE</th>
         </tr>
       </thead>
       <tbody>
-        <tr>
+        <tr *ngFor="let tx of transactions">
           <td>
-            <span class="date-text">08-10-2025</span><br>
-            <span class="time-text">15:30:45</span>
+            <span class="date-text">{{ tx.transaction_date | date: 'MM-dd-yyyy' }}</span><br />
+            <!-- <span class="time-text">{{ tx.transaction_date | date: 'HH:mm:ss' }}</span> -->
           </td>
-          <td>08-10-2025</td>
-          <td>52227958085507</td>
-          <td>UPI</td>
-          <td>₹ 3,000.00</td>
-          <!-- <td>AT00027684</td> -->
-          <td>--</td>
-          <td><span class="status-badge approved">Approved</span></td>
-          <!-- <td>--</td> -->
-        </tr>
-        <tr>
+          <td>{{ tx.transactionrefno }}</td>
+          <td>{{ tx.payment_mode }}</td>
+          <td>₹ {{ tx.amount | number: '1.2-2' }}</td>
+          <td><span class="status-badge" [ngClass]="tx.status.toLowerCase()">{{ tx.status }}</span></td>
+          <td>{{ tx.attachment || '--' }}</td>
           <td>
-            <span class="date-text">07-31-2025</span><br>
-            <span class="time-text">11:52:20</span>
+            <span class="date-text">{{ tx.created_at | date: 'MM-dd-yyyy' }}</span><br />
+            <span class="time-text">{{ tx.created_at | date: 'HH:mm:ss' }}</span>
           </td>
-          <td>07-31-2025</td>
-          <td>5222677802691</td>
-          <td>UPI</td>
-          <td>₹ 4,000.00</td>
-          <!-- <td>AT00027078</td> -->
-          <td>--</td>
-          <td><span class="status-badge approved">Approved</span></td>
-          <!-- <td>--</td> -->
-        </tr>
-        <tr>
           <td>
-            <span class="date-text">07-10-2025</span><br>
-            <span class="time-text">12:24:17</span>
+            <span class="date-text">{{ tx.update_date | date: 'MM-dd-yyyy' }}</span><br />
+            <span class="time-text">{{ tx.update_date | date: 'HH:mm:ss' }}</span>
           </td>
-          <td>07-10-2025</td>
-          <td>51914210439776</td>
-          <td>UPI</td>
-          <td>₹ 2,000.00</td>
-          <!-- <td>AT00025900</td> -->
-          <td>--</td>
-          <td><span class="status-badge approved">Approved</span></td>
-          <!-- <td>--</td> -->
-        </tr>
-        <tr>
-          <td>
-            <span class="date-text">07-09-2025</span><br>
-            <span class="time-text">11:24:45</span>
-          </td>
-          <td>07-09-2025</td>
-          <td>51904086749129</td>
-          <td>UPI</td>
-          <td>₹ 2,000.00</td>
-          <!-- <td>AT00025844</td> -->
-          <td>--</td>
-          <td><span class="status-badge approved">Approved</span></td>
-          <!-- <td>--</td> -->
-        </tr>
-        <tr>
-          <td>
-            <span class="date-text">07-07-2025</span><br>
-            <span class="time-text">12:16:06</span>
-          </td>
-          <td>07-07-2025</td>
-          <td>51883844310169</td>
-          <td>UPI</td>
-          <td>₹ 1,330.00</td>
-          <!-- <td>AT00025714</td> -->
-          <td>--</td>
-          <td><span class="status-badge approved">Approved</span></td>
-          <!-- <td>--</td> -->
-        </tr>
-        <tr>
-          <td>
-            <span class="date-text">07-04-2025</span><br>
-            <span class="time-text">11:03:26</span>
-          </td>
-          <td>07-04-2025</td>
-          <td>51853463289999</td>
-          <td>UPI</td>
-          <td>₹ 1,270.00</td>
-          <!-- <td>AT00025587</td> -->
-          <td>--</td>
-          <td><span class="status-badge approved">Approved</span></td>
-          <!-- <td>--</td> -->
-        </tr>
-        <tr>
-          <td>
-            <span class="date-text">06-16-2025</span><br>
-            <span class="time-text">13:20:56</span>
-          </td>
-          <td>06-16-2025</td>
-          <td>51672417504866</td>
-          <td>UPI</td>
-          <td>₹ 4,000.00</td>
-          <!-- <td>AT00024540</td> -->
-          <td>--</td>
-          <td><span class="status-badge approved">Approved</span></td>
-          <!-- <td>--</td> -->
         </tr>
       </tbody>
     </table>

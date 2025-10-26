@@ -1,9 +1,9 @@
 <div class="container py-5" *ngIf="isFormReady; else loading">
 
-  <div class="text-center mb-5">
+  <!-- <div class="text-center mb-5">
     <h1 class="fw-bold">Car Insurance Application</h1>
     <p class="text-muted">Please fill out all the details below to generate your policy.</p>
-  </div>
+  </div> -->
 
   <form [formGroup]="insuranceForm" (ngSubmit)="onSubmit()">
     <div class="row g-4 mb-4">
@@ -626,9 +626,28 @@
 </div>
 
 <ng-template #loading>
-  <div class="d-flex justify-content-center align-items-center vh-100">
+  <!-- <div class="d-flex justify-content-center align-items-center vh-100">
     <div class="spinner-border text-primary" role="status">
       <span class="visually-hidden">Loading...</span>
+    </div>
+  </div> -->
+
+  <div class="d-flex justify-content-center align-items-center" style="height: 85vh;">
+     <div class="carda  border-0 rounded-4 text-center p-4 p-md-5 " style="max-width: 500px; background-color: transparent; border: none;">
+      <div class="card-bodya">
+        
+        <!-- Icon -->
+        <i class="fas fa-hourglass-half fa-3x text-primary mb-4"></i>
+        
+        <!-- Title -->
+        <h2 class="fw-bold mb-3">Coming Soon!</h2>
+        
+        <!-- Message -->
+        <p class="text-muted fs-5 mb-0">
+          We're working to bring you this. <br/>Please check back later!
+        </p>
+
+      </div>
     </div>
   </div>
 </ng-template>

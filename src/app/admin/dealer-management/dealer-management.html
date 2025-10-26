@@ -1,3 +1,5 @@
+@if(isPageReady)
+{
 <div class="container-fluid">
      <!-- @if(!selectedDealer){ -->
 
@@ -50,9 +52,15 @@
                                         </button>
                                    </td>
                               </tr>
-                              <tr *ngIf="!dealers || dealers.length === 0">
+                              <!-- <tr *ngIf="!dealers || dealers.length === 0">
                                    <td colspan="7" class="text-center">No dealers found.</td>
-                              </tr>
+                              </tr> -->
+                              <tr *ngIf="!dealers || dealers.length === 0" style="height: 100px;">
+                                   <td colspan="7" class="text-center">
+                                        <div class="spinner-border text-primary" role="status">
+                                             <span class="visually-hidden">Loading...</span>
+                                        </div>
+                                   </td>
                          </tbody>
                     </table>
                </div>
@@ -143,3 +151,13 @@
      </div>
 }
 </div>
+}
+
+@else
+{
+     <div class="d-flex justify-content-center align-items-center vh-100">
+          <div class="spinner-border text-primary" role="status">
+               <span class="visually-hidden">Loading...</span>
+          </div>
+     </div>
+}

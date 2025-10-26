@@ -1,19 +1,21 @@
-import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { delay, Observable, of } from 'rxjs';
 import { Dealer, DealerService } from '../../core/Services/dealer.service';
+import { CdkDragPlaceholder } from "@angular/cdk/drag-drop";
+import { CommonModule } from '@angular/common';
 
 
 
 @Component({
   selector: 'app-dealer-management',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule],
   templateUrl: './dealer-management.html',
   styleUrl: './dealer-management.scss'
 })
 export class DealerManagement {
 
+  isPageReady = false;
   dealers: Dealer[] = [];
   selectedDealer: Dealer | null = null;
   isEditing = false;
@@ -22,6 +24,8 @@ export class DealerManagement {
 
   ngOnInit(): void {
     this.loadDealers();
+
+    this.isPageReady = true;
   }
 
   loadDealers(): void {

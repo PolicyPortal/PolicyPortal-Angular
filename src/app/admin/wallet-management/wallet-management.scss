@@ -251,6 +251,14 @@
   background-color: #38a169;
 }
 
+.status-badge.pending {
+  background-color: #ed8936;
+}
+
+.status-badge.rejected {
+  background-color: #e53e3e;
+}
+
 
 /* Modal and Form Styles */
 .modal-overlay {
