@@ -111,7 +111,7 @@ insuranceForm!: FormGroup;
     //     this.collapseState[title] = false;
     // });
 
-    this.isFormReady = true;
+    // this.isFormReady = true;
   }
   
   /**

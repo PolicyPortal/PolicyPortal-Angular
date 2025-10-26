@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { InsuranceService } from '../../../core/Services/insurance.service';
 import { first } from 'rxjs';
 
@@ -89,8 +89,8 @@ insuranceForm!: FormGroup;
       lastName: ['', Validators.required],
       dob: ['', Validators.required],
       customerAadhar: [null, Validators.required], // Regex for a valid 12-digit Aadhaar number
-      customerPAN: [null, Validators.required], // Regex for a valid PAN number
-      customerForm16: [null, Validators.required],
+      customerPAN: [null], // Regex for a valid PAN number
+      customerForm16: [null],
       
       companyName: ['', Validators.required],
       dateOfIncorporation: ['', Validators.required],
@@ -110,6 +110,8 @@ insuranceForm!: FormGroup;
       nomineeRelation: [null, Validators.required],
       nomineeAge: [null, Validators.required],
       nomineeGender: [null, Validators.required],
+    },{
+      validators: this.panOrForm16RequiredValidator.bind(this)
     });
 
     // Initialize collapse states
@@ -123,6 +125,31 @@ insuranceForm!: FormGroup;
     this.isFormReady = true;
   }
   
+  /**
+   * Custom validator to check if either PAN or Form16 is provided for individuals.
+   */
+  panOrForm16RequiredValidator(group: AbstractControl): ValidationErrors | null {
+    const customerType = group.get('customerType')?.value;
+    const pan = group.get('customerPAN');
+    const form16 = group.get('customerForm16');
+  
+    // Only apply logic if customer is 'individual' and controls exist
+    if (customerType === 'individual' && pan && form16) {
+      // This validator runs when controls are enabled.
+      // The `customerType$` logic will disable them for 'company', so this is safe.
+      const panValue = pan.value;
+      const form16Value = form16.value;
+  
+      if (!panValue && !form16Value) {
+        // Both are empty. Return a group-level error.
+        return { eitherOrRequired: true };
+      }
+    }
+  
+    // Not individual, or at least one has a value.
+    return null;
+  }
+
   /**
    * Sets up listeners for form controls that have conditional visibility logic.
    */
@@ -145,17 +172,40 @@ insuranceForm!: FormGroup;
     });
 
     
-    customerType$.subscribe(value => {
-      this.updateControl('individualName', value === 'individual');
-      this.updateControl('dob', value === 'individual');
-      this.updateControl('customerAadhar', value === 'individual');
-      this.updateControl('customerPAN', value === 'individual');
-      this.updateControl('customerForm16', value === 'individual');
+    // customerType$.subscribe(value => {
+    //   this.updateControl('individualName', value === 'individual');
+    //   this.updateControl('dob', value === 'individual');
+    //   this.updateControl('customerAadhar', value === 'individual');
+    //   this.updateControl('customerPAN', value === 'individual');
+    //   this.updateControl('customerForm16', value === 'individual');
 
-      this.updateControl('companyName', value === 'company');
-      this.updateControl('dateOfIncorporation', value === 'company');
-    });
+    //   this.updateControl('companyName', value === 'company');
+    //   this.updateControl('dateOfIncorporation', value === 'company');
+    // });
     
+
+
+    customerType$.subscribe(value => {
+      const isIndividual = (value === 'individual');
+      const isCompany = (value === 'company');
+
+      // Individual fields
+      ['gender', 'salutation', 'firstName', 'lastName', 'dob', 'customerAadhar'] // Removed PAN/Form16
+        .forEach(name => this.updateControl(name, isIndividual));
+
+      // UPDATED: Handle PAN/Form16 separately to not add Validators.required
+      this.updateControl('customerPAN', isIndividual, false); // isRequired = false
+      this.updateControl('customerForm16', isIndividual, false); // isRequired = false
+
+      // // Company fields
+      ['companyName', 'dateOfIncorporation', 'gstin']
+        .forEach(name => this.updateControl(name, isCompany, name === 'gstin' ? false : true)); // gstin is optional
+
+      // Re-validate the whole form to apply the new custom validator status
+      this.insuranceForm.updateValueAndValidity();
+    });
+
+
     // isHypothecated$.subscribe(value => {
     //     this.updateControl('financier', value === 'Yes');
     // });
@@ -178,12 +228,34 @@ insuranceForm!: FormGroup;
   /**
    * Updates the validation and enabled/disabled state of a control.
    */
-  updateControl(controlName: string, isEnabled: boolean) {
+  // updateControl(controlName: string, isEnabled: boolean, isRequired: boolean = true): void {
+  //   const control = this.insuranceForm.get(controlName);
+  //   if (control) {
+  //       if (isEnabled) {
+  //           control.enable();
+  //           control.setValidators(isRequired ? Validators.required : null); // or more complex validators if needed
+  //       } else {
+  //           control.disable();
+  //           control.clearValidators();
+  //           control.reset();
+  //       }
+  //       control.updateValueAndValidity();
+  //   }
+  // }
+
+  /**
+   * Updates the validation and enabled/disabled state of a control.
+   */
+  updateControl(controlName: string, isEnabled: boolean, isRequired: boolean = true) {
     const control = this.insuranceForm.get(controlName);
     if (control) {
         if (isEnabled) {
             control.enable();
-            control.setValidators(Validators.required); // or more complex validators if needed
+            if (isRequired) {
+              control.setValidators(Validators.required);
+            } else {
+              control.clearValidators(); // Clear validators if enabled but not required (like PAN)
+            }
         } else {
             control.disable();
             control.clearValidators();
@@ -192,6 +264,8 @@ insuranceForm!: FormGroup;
         control.updateValueAndValidity();
     }
   }
+
+
 
   /**
    * Toggles the collapsed state of a form section.
