@@ -34,7 +34,7 @@
                   <div *ngIf="insuranceForm.get('isNewVehicle')?.invalid && insuranceForm.get('isNewVehicle')?.touched"
                     class="text-danger small mt-1">Required.</div>
                 </div>
-                <!-- <div class="col-md-4">
+                <div class="col-md-4">
                   <label for="bodyType" class="form-label fw-medium">Body Type<span class="required-star">*</span></label>
                   <select formControlName="bodyType" class="form-select">
                     <option [ngValue]="null" disabled>Select Body Type...</option>
@@ -44,7 +44,7 @@
                   </select>
                   <div *ngIf="insuranceForm.get('bodyType')?.invalid && insuranceForm.get('bodyType')?.touched"
                     class="text-danger small mt-1">Body Type is Required.</div>
-                </div> -->
+                </div>
 
                 <div class="col-md-4" *ngIf="insuranceForm.get('policyType')?.disabled === false">
                   <label for="policyType" class="form-label fw-medium">Policy Type<span class="required-star">*</span></label>
@@ -247,7 +247,8 @@
                 </div>
 
                  <div class="col-md-4" *ngIf="insuranceForm.get('haveRegistrationNumber')?.value === 'Yes'">
-                  <label for="vehicleNumber" class="form-label fw-medium">Vehicle Number<span class="required-star">*</span></label><input type="number" formControlName="vehicleNumber" class="form-control" placeholder="Enter Vehicle Number">
+                  <label for="vehicleNumber" class="form-label fw-medium">Vehicle Number<span class="required-star">*</span></label>
+                  <input type="number" formControlName="vehicleNumber" class="form-control" placeholder="Enter Vehicle Number">
                   <div
                     *ngIf="insuranceForm.get('vehicleNumber')?.invalid && insuranceForm.get('vehicleNumber')?.touched"
                     class="text-danger small mt-1">Vehicle Number is Required.</div>
@@ -629,11 +630,14 @@
       </div>
     </div>
 
+    <!-- [disabled]="!insuranceForm.valid"  -->
+
     <div class="row mt-4">
       <div class="col-12">
         <div class="card shadow-sm border-0 rounded-4">
           <div class="card-body text-end p-4">
-            <button type="submit" class="btn btn-primary btn-lg px-5" [disabled]="!insuranceForm.valid">SUBMIT</button>
+            <button type="submit" class="btn btn-primary btn-lg px-5" 
+            >SUBMIT</button>
           </div>
         </div>
       </div>
