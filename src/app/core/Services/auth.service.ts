@@ -26,9 +26,13 @@ export class AuthService {
     return !!token;
   }
 
-  register(userData: any): Observable<any> {
-    return this.http.post(`${this.serviceApiUrl}/register`, userData);
+  // register(userData: any): Observable<any> {
+  //   return this.http.post(`${this.serviceApiUrl}/register`, userData);
+  // }
+    addDealer(dealerData: any): Observable<any> {
+    return this.http.post(`${this.serviceApiUrl}/register`, dealerData);
   }
+
 
   login(credentials: any): Observable<any> {
     return this.http.post(`${this.serviceApiUrl}/login`, credentials).pipe(

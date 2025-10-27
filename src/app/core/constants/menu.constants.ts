@@ -21,6 +21,11 @@ export const MENU_ITEMS_DEALER = [
     route: '/app/wallet',
   },
   {
+    label: 'INVOICE',
+    icon: 'bi bi-receipt',
+    route: '/app/invoice',  
+  },
+  {
     label: 'TICKETS',
     icon: 'bi bi-ticket-perforated',
     route: '/app/tickets',
@@ -49,6 +54,11 @@ export const MENU_ITEMS_ADMIN = [
     label: 'WALLET MANAGEMENT',
     icon: 'bi bi-wallet2',
     route: '/app/wallet-management',
+  },
+  {
+    label: 'INVOICE MANAGEMENT',
+    icon: 'bi bi-receipt',
+    route: '/app/invoice-management',  
   },
   {
     label: 'TICKETS MANAGEMENT',

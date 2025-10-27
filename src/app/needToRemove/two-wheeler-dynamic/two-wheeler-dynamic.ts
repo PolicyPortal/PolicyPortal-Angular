@@ -4,8 +4,8 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 // IMPORTANT: Make sure your import includes the new interfaces
-import { FormConfig, FormFieldConfig, SectionConfig, LayoutRow, LayoutColumn } from '../../../../core/models/form-control';
-import { FormConfigService } from '../../../../core/Services/form-config.service';
+import { FormConfig, FormFieldConfig, SectionConfig, LayoutRow, LayoutColumn } from '../../core/models/form-control';
+import { FormConfigService } from '../../core/Services/form-config.service';
 import { HttpClient } from '@angular/common/http';
 
 @Component({

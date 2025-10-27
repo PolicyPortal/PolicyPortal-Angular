@@ -78,7 +78,7 @@ insuranceForm!: FormGroup;
       isHypothecated: ['No', Validators.required],
       financier: [null, Validators.required],
       branchLocation : ['', Validators.required],
-      ifFinancierNotListed: ['', Validators.required],
+      NotListedFinancier: ['', Validators.required],
 
       // Customer Details
       customerType: ['individual', Validators.required],
@@ -157,9 +157,9 @@ insuranceForm!: FormGroup;
   setupConditionalLogic(): void {
     const isNewVehicle$ = this.insuranceForm.get('isNewVehicle')!.valueChanges;
     const claimInPreviousYear$ = this.insuranceForm.get('claimInPreviousYear')!.valueChanges;
-    const isHypothecated$ = this.insuranceForm.get('isHypothecated')!.valueChanges;
     const customerType$ = this.insuranceForm.get('customerType')!.valueChanges;
-    const ifFinancierNotListed$ = this.insuranceForm.get('ifFinancierNotListed')!.valueChanges;
+    const isHypothecated$ = this.insuranceForm.get('isHypothecated')!.valueChanges;
+    const financier$ = this.insuranceForm.get('financier')!.valueChanges;
 
     isNewVehicle$.subscribe(value => {
         // this.updateControl('policyType', value === 'Yes');
@@ -172,18 +172,7 @@ insuranceForm!: FormGroup;
         this.updateControl('previousYearNCB', this.insuranceForm.get('isNewVehicle')?.value === 'No' && value === 'no');
     });
 
-    
-    // customerType$.subscribe(value => {
-    //   this.updateControl('individualName', value === 'individual');
-    //   this.updateControl('dob', value === 'individual');
-    //   this.updateControl('customerAadhar', value === 'individual');
-    //   this.updateControl('customerPAN', value === 'individual');
-    //   this.updateControl('customerForm16', value === 'individual');
-
-    //   this.updateControl('companyName', value === 'company');
-    //   this.updateControl('dateOfIncorporation', value === 'company');
-    // });
-    
+  
 
 
     customerType$.subscribe(value => {
@@ -207,16 +196,18 @@ insuranceForm!: FormGroup;
     });
 
 
-    // isHypothecated$.subscribe(value => {
-    //     this.updateControl('financier', value === 'Yes');
-    // });
+    isHypothecated$.subscribe(value => {
+        this.updateControl('financier', value === 'Yes');
+        this.updateControl('branchLocation', value === 'Yes');
 
-    // ifFinancierNotListed$.subscribe(value => {
-    //     this.updateControl('financier', this.insuranceForm.get('ifFinancierNotListed')?.value.trim() === '');
-    //             // this.insuranceForm.get('financier')?.setValue('not Listed');
+      });
 
-    // });
+    financier$.subscribe(value => {
+        // this.updateControl('branchLocation', this.insuranceForm.get('isHypothecated')?.value === 'Yes');
+        this.updateControl('NotListedFinancier', value === 'notListed');
+    });
 
+    // this.updateControl('NotListedFinancier', value === 'Yes' && this.insuranceForm.get('financier')?.value === 'notListed');
 
     // Initial check
     this.insuranceForm.get('isNewVehicle')?.updateValueAndValidity({ emitEvent: true });
@@ -224,6 +215,8 @@ insuranceForm!: FormGroup;
     this.insuranceForm.get('isHypothecated')?.updateValueAndValidity({ emitEvent: true });
     this.insuranceForm.get('customerType')?.updateValueAndValidity({ emitEvent: true });
     // this.insuranceForm.get('ifFinancierNotListed')?.updateValueAndValidity({ emitEvent: true });
+    this.insuranceForm.get('financier')?.updateValueAndValidity({ emitEvent: true });
+
   }
 
   /**
@@ -304,22 +297,45 @@ insuranceForm!: FormGroup;
     }
   }
 
-  /**
-   * Handles the form submission event.
-   */
+  // /**
+  //  * Handles the form submission event.
+  //  */
+  // onSubmit(): void {
+  //   if (this.insuranceForm.valid) {
+  //     console.log('Form Submitted!', this.insuranceForm.getRawValue());
+  //     // In a real app, you would replace this alert with a modal or toast notification.
+  //     alert('Form submitted successfully! Check the console for the form data.');
+  //   } else {
+  //     // Show which fields are invalid
+  //     const invalidFields = Object.keys(this.insuranceForm.controls).filter(field => this.insuranceForm.get(field)?.invalid);
+  //     console.log('Invalid Fields:', invalidFields);
+
+
+  //     console.error('Form is invalid.');
+  //     this.insuranceForm.markAllAsTouched();
+  //   }
+  // }
+
+
   onSubmit(): void {
     if (this.insuranceForm.valid) {
-      console.log('Form Submitted!', this.insuranceForm.getRawValue());
-      // In a real app, you would replace this alert with a modal or toast notification.
-      alert('Form submitted successfully! Check the console for the form data.');
+      // It's best to preprocess fields locally, e.g. convert value types if needed,
+      // but the backend code provided already handles conversion for Yes/No, etc.
+      this.insuranceService.createTwoWheelerInsurance(this.insuranceForm.getRawValue())
+        .subscribe({
+          next: res => {
+            alert('Submitted successfully! Insurance ID: ' + res.insurance_id);
+            this.insuranceForm.reset();
+          },
+          error: err => {
+            alert('Could not submit insurance: ' + (err.error?.error || err.message));
+          }
+        });
     } else {
-      // Show which fields are invalid
       const invalidFields = Object.keys(this.insuranceForm.controls).filter(field => this.insuranceForm.get(field)?.invalid);
       console.log('Invalid Fields:', invalidFields);
-
-
-      console.error('Form is invalid.');
       this.insuranceForm.markAllAsTouched();
+      alert('Form is invalid. Please check your entries.');
     }
   }
 }
