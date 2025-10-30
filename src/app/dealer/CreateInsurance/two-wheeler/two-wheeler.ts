@@ -160,6 +160,19 @@ insuranceForm!: FormGroup;
     const customerType$ = this.insuranceForm.get('customerType')!.valueChanges;
     const isHypothecated$ = this.insuranceForm.get('isHypothecated')!.valueChanges;
     const financier$ = this.insuranceForm.get('financier')!.valueChanges;
+    const exShowroomPrice$ = this.insuranceForm.get('exShowroomPrice')!.valueChanges;
+
+    exShowroomPrice$.subscribe(value => {
+      if (value) {
+        const idv = value ? value * 0.05 : null; // Example: IDV is 5% of ex-showroom price
+        this.insuranceForm.get('idv')?.setValue(idv);
+        this.insuranceForm.get('idv')?.disable();
+
+      } else {
+        this.insuranceForm.get('idv')?.setValue(null);
+        this.insuranceForm.get('idv')?.enable();
+      }
+    });
 
     isNewVehicle$.subscribe(value => {
         // this.updateControl('policyType', value === 'Yes');
@@ -216,6 +229,7 @@ insuranceForm!: FormGroup;
     this.insuranceForm.get('customerType')?.updateValueAndValidity({ emitEvent: true });
     // this.insuranceForm.get('ifFinancierNotListed')?.updateValueAndValidity({ emitEvent: true });
     this.insuranceForm.get('financier')?.updateValueAndValidity({ emitEvent: true });
+    
 
   }
 
