@@ -61,7 +61,7 @@
                     } @empty {
                       <tr style="height: 100px;">
                         <td colspan="9" class="text-center">
-                          @if (dealers().length === 0) {
+                          @if (dealers().length === 0 && !this.isloadingDealers) {
                             <span>No dealers found.</span>
                           } @else {
                             <div class="spinner-border text-primary" role="status">

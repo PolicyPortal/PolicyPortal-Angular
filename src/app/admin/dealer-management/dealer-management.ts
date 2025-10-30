@@ -84,23 +84,24 @@ export interface ExpandedDealer extends Dealer {
 
 //   // Get details by id
 //   getDealerById(id: number): Observable<any> {
-//     return this.http.get<any>(`${this.baseUrl}/dealers/${id}`);
-//   }
+  //     return this.http.get<any>(`${this.baseUrl}/dealers/${id}`);
+  //   }
   
-// }
-@Component({
-  selector: 'app-dealer-management',
-  imports: [CommonModule, ReactiveFormsModule, FormsModule],
-  templateUrl: './dealer-management.html',
+  // }
+  @Component({
+    selector: 'app-dealer-management',
+    imports: [CommonModule, ReactiveFormsModule, FormsModule],
+    templateUrl: './dealer-management.html',
   styleUrl: './dealer-management.scss'
 })
 export class DealerManagement {
- // --- State Signals ---
+  // --- State Signals ---
   isPageReady = signal(false);
   dealers: WritableSignal<ExpandedDealer[]> = signal([]);
   selectedDealer: WritableSignal<ExpandedDealer | null> = signal(null); // For Edit/Add Form
   viewingDealer: WritableSignal<ExpandedDealer | null> = signal(null); // For Details Popup
   isEditing = signal(false);
+  isloadingDealers: boolean = true;
 
   // --- Computed Signals ---
   isFormValid: Signal<boolean> = computed(() => {
@@ -139,7 +140,8 @@ export class DealerManagement {
   ngOnInit(): void {
     this.loadDealers();
     // Simulate page load readiness
-    setTimeout(() => this.isPageReady.set(true), 500); 
+    // setTimeout(() => this.isPageReady.set(true), 500); 
+    this.isPageReady.set(true);
   }
 
   // --- Data Methods ---
@@ -147,6 +149,7 @@ export class DealerManagement {
     this.dealerService.getDealers().subscribe(data => {
       console.log('Dealers loaded:', data);
       this.dealers.set(data);
+      this.isloadingDealers = false;
     });
   }
 
