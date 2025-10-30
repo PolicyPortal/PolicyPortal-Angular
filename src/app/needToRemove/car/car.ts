@@ -1,15 +1,15 @@
+import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule, NgForm, ReactiveFormsModule } from '@angular/forms';
-import { InsuranceService } from '../../../../core/Services/insurance.service';
-import { CommonModule } from '@angular/common';
+import { InsuranceService } from '../../core/Services/insurance.service';
 
 @Component({
-  selector: 'app-commercials',
+  selector: 'app-car',
   imports: [CommonModule, FormsModule, ReactiveFormsModule],
-  templateUrl: './commercials.html',
-  styleUrl: './commercials.scss'
+  templateUrl: './car.html',
+  styleUrl: './car.scss'
 })
-export class Commercials {
+export class Car {
 
   constructor(private insuranceService: InsuranceService) {
     this.getFinancers();
@@ -148,5 +148,4 @@ formData = {
       );
     }
   }
-
 }

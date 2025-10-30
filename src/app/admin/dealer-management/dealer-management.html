@@ -1,163 +1,553 @@
-@if(isPageReady)
-{
-<div class="container-fluid">
-     <!-- @if(!selectedDealer){ -->
+ @if (isPageReady()) {
+      <div classs="container-fluid p-4 font-inter">
 
-     <div>
-          <div class="d-flex justify-content-between align-items-center mb-3">
-               <h3 class="Dealer-header">Dealer Management</h3>
-               
-               <button class="btn btn-primary" (click)="onAddNewDealer()">
-                    <i class="bi bi-plus-circle me-2"></i>Add New Dealer
-               </button>
+        <!-- Main Dealer List View -->
+        @if (!selectedDealer() && !viewingDealer()) {
+          <div>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h3 class="dealer-header">Dealer Management</h3>
+              <button class="btn btn-primary" (click)="onAddNewDealer()">
+                <i class="bi bi-plus-circle me-2"></i>Add New Dealer
+              </button>
+            </div>
+
+            <div class="card shadow-sm">
+              <div class="table-scroll-container">
+                <table class="requests-table">
+                  <thead>
+                    <tr>
+                      <th>Dealer Name</th>
+                      <th>OEM</th>
+                      <th>Dealership Phone</th>
+                      <th>Dealership Email</th>
+                      <!-- <th>Role</th> -->
+                      <th>Dealership Address</th>
+                      <th>Owner Name</th>
+                      <th>Status</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (dealer of dealers(); track dealer.user_id) {
+                      <tr>
+                        <td>
+                          <button class="btn-link" (click)="onViewDetails(dealer)">
+                            {{ dealer.name }}
+                          </button>
+                        </td>
+                        <td>{{ dealer.oem }}</td>
+                        <td>{{ dealer.phone }}</td>
+                        <td>{{ dealer.email }}</td>
+                        <!-- <td>{{ dealer.role }}</td> -->
+                        <td>{{ dealer.location }}</td>
+                        <td>{{ dealer.owner_name }}</td>
+                        <td>
+                          <span 
+                            class="badge"
+                            [class.bg-success]="dealer.status === 'Active'"
+                            [class.bg-secondary]="dealer.status !== 'Active'">
+                            {{ dealer.status }}
+                          </span>
+                        </td>
+                        <td>
+                          <button class="btn btn-sm btn-outline-primary me-2" (click)="onEdit(dealer)" title="Edit">
+                            <i class="bi bi-pencil-square"></i>
+                          </button>
+                          <button class="btn btn-sm btn-outline-danger" (click)="onDelete(dealer.user_id)" title="Delete">
+                            <i class="bi bi-trash"></i>
+                          </button>
+                        </td>
+                      </tr>
+                    } @empty {
+                      <tr style="height: 100px;">
+                        <td colspan="9" class="text-center">
+                          @if (dealers().length === 0 && !this.isloadingDealers) {
+                            <span>No dealers found.</span>
+                          } @else {
+                            <div class="spinner-border text-primary" role="status">
+                              <span class="visually-hidden">Loading...</span>
+                            </div>
+                          }
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
+        }
 
-          <div class="card">
-                 <div class="table-scroll-container">
-                    <table class="requests-table">
-                         <thead>
-                              <tr>
-                                   <th>ID</th>
-                                   <th>Name</th>
-                                   <th>Role</th>
-                                   <th>Email</th>
-                                   <!-- <th>Password</th> -->
-                                   <th>Phone</th>
-                                   <th>Status</th>
-                                   <th>Actions</th>
-                              </tr>
-                         </thead>
-                         <tbody>
-                              <tr *ngFor="let dealer of dealers">
-                                   <td>{{ dealer.user_id }}</td>
-                                   <td>{{ dealer.name }}</td>
-                                   <td>{{ dealer.role }}</td>
-                                   <td>{{ dealer.email }}</td>
-                                   <!-- <td>{{ dealer.password }}</td> -->
-                                   <td>{{ dealer.phone }}</td>
-                                   <td>
-                                        <span class="badge"
-                                             [ngClass]="dealer.status === 'Active' ? 'bg-success' : 'bg-secondary'">
-                                             {{ dealer.status }}
-                                        </span>
-                                   </td>
-                                   <td>
-                                        <button class="btn btn-sm btn-outline-primary me-2" (click)="onEdit(dealer)"
-                                             title="Edit">
-                                             <i class="bi bi-pencil-square"></i>
-                                        </button>
-                                        <button class="btn btn-sm btn-outline-danger"
-                                             (click)="onDelete(dealer.user_id)" title="Delete">
-                                             <i class="bi bi-trash"></i>
-                                        </button>
-                                   </td>
-                              </tr>
-                              <!-- <tr *ngIf="!dealers || dealers.length === 0">
-                                   <td colspan="7" class="text-center">No dealers found.</td>
-                              </tr> -->
-                              <tr *ngIf="!dealers || dealers.length === 0" style="height: 100px;">
-                                   <td colspan="7" class="text-center">
-                                        <div class="spinner-border text-primary" role="status">
-                                             <span class="visually-hidden">Loading...</span>
-                                        </div>
-                                   </td>
-                         </tbody>
-                    </table>
-               </div>
-          </div>
-     </div>
-     <!-- } -->
-     @if(selectedDealer)
-     {
-     <div [class.hidden]="selectedDealer" class="modal-overlay" style="justify-content: center;">
+        <!-- Add/Edit Modal View -->
+        @if (selectedDealer(); as dealer) {
+          <div class="modal-overlay">
+            <div class="modal1">
+              <div class="modal-header">
+                <h3 class="modal-title">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
+                  </svg>
+                  {{ isEditing() ? 'Edit Dealer' : 'Add New Dealer' }}
+                </h3>
+                <button class="modal-close" (click)="closeModal()">&times;</button>
+              </div>
 
-          <div class="modal1">
-               <div class="">
-               <div class="modal-header">
-                    <h3 class="modal-title">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                         <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
-                    </svg>
-                    {{ isEditing ? 'Edit Dealer' : 'Add New Dealer' }}</h3>
-                    <button class="modal-close" (click)="closeModal()">&times;</button>
-               </div>
-
-                    <div class="card-body">
-                         <form (ngSubmit)="onSave()" #dealerForm="ngForm">
-                              <div class="mb-3">
-                                   <label for="name" class="form-label">Dealer Name</label>
-                                   <input type="text" id="name" name="name" class="form-control"
-                                        [(ngModel)]="selectedDealer.name" required>
-                              </div>
-
-                              <div class="row">
-                                   <div class="col-md-6 mb-3">
-                                        <label for="email" class="form-label">Email Address</label>
-                                        <input type="email" id="email" name="email" class="form-control"
-                                             [(ngModel)]="selectedDealer.email" required email [disabled]="isEditing">
-                                   </div>
-                                   <div class="col-md-6 mb-3" *ngIf="!isEditing">
-                                        <label for="password" class="form-label">Password</label>
-                                        <input type="password" id="password" name="password" class="form-control"
-                                             [(ngModel)]="selectedDealer.password" required>
-                                   </div>
-                              </div>
-
-                              <div class="row">
-                                   <div class="col-md-6 mb-3">
-                                        <label for="role" class="form-label">Role</label>
-                                        <select id="role" name="role" class="form-select"
-                                             [(ngModel)]="selectedDealer.role" required>
-                                             <option value="" [disabled]="true" selected>Select Role</option>
-                                             <option value="Admin">Admin</option>
-                                             <option value="Dealer">Dealer</option>
-                                        </select>
-                                   </div>
-                                   <div class="col-md-6 mb-3">
-                                        <label for="phone" class="form-label">Phone Number</label>
-                                        <input type="tel" id="phone" name="phone" class="form-control"
-                                             [(ngModel)]="selectedDealer.phone" required>
-                                   </div>
-                              </div>
-
-
-
-
-                              <div class="mb-3">
-                                   <label for="location" class="form-label">Location</label>
-                                   <textarea id="location" name="location" class="form-control"
-                                        [(ngModel)]="selectedDealer.location" rows="3"></textarea>
-                              </div>
-
-                              <div class="mb-3">
-                                   <label for="status" class="form-label">Status</label>
-                                   <select id="status" name="status" class="form-select"
-                                        [(ngModel)]="selectedDealer.status" required>
-                                        <option value="Active">Active</option>
-                                        <option value="Inactive">Inactive</option>
-                                   </select>
-                              </div>
-
-                              <div class="d-flex justify-content-end">
-                                   <!-- <button type="button" class="btn btn-secondary me-2"
-                                        (click)="onCancel()">Cancel</button> -->
-                                   <button type="submit" class="btn btn-primary" [disabled]="dealerForm.invalid">Save
-                                        Dealer</button>
-                              </div>
-                         </form>
+              <div class="card-body">
+                <!-- 
+                  Removed <form> and ngSubmit. Validation and save are handled 
+                  on the button click.
+                -->
+                <div>
+                  <fieldset class="mb-3">
+                    <legend class="fs-6 fw-bold">Dealership Info and Access</legend>
+                    <div class="row">
+                      <div class="col-md-4 mb-3">
+                        <label for="name" class="form-label">Dealer Name</label>
+                        <input type="text" id="name" class="form-control"
+                               [value]="dealer.name"
+                               (input)="updateField($event, 'name')" required>
+                      </div>
+                      <div class="col-md-4 mb-3">
+                        <label for="oem" class="form-label">OEM</label>
+                        <select id="oem" class="form-select"
+                                [value]="dealer.oem"
+                                (change)="updateField($event, 'oem')" required>
+                          <option value="" [disabled]="true" selected>Select OEM</option>
+                          <option value="Bajaj">Bajaj</option>
+                          <option value="Yamaha">Yamaha</option>
+                          <option value="Hero">Hero</option>
+                          <option value="Honda">Honda</option>
+                          <option value="Maruti">Maruti</option>
+                          <option value="Tata">Tata</option>
+                          <option value="Mahindra">Mahindra</option>
+                          <option value="Other">Other</option>
+                        </select>
+                      </div>
+                      <div class="col-md-4 mb-3">
+                        <label for="phone" class="form-label">Dealership Phone</label>
+                        <input type="tel" id="phone" class="form-control"
+                               [value]="dealer.phone"
+                               (input)="updateField($event, 'phone')" required>
+                      </div>
                     </div>
-               </div>
-          </div>
-     </div>
-}
-</div>
-}
+                    <div class="row">
+                      <div class="col-md-4 mb-3">
+                        <label for="email" class="form-label">Dealership Email</label>
+                        <input type="email" id="email" class="form-control"
+                               [value]="dealer.email"
+                               (input)="updateField($event, 'email')" required
+                               >
+                      </div>
+                      <div class="col-md-4 mb-3">
+                        <label for="loginId" class="form-label">Login ID</label>
+                        <input type="email" id="loginId" class="form-control"
+                               [value]="dealer.email"
+                               [disabled]="true">
+                      </div>
+                      @if (!isEditing()) {
+                        <div class="col-md-4 mb-3">
+                          <label for="password" class="form-label">Assign Password</label>
+                          <input type="password" id="password" class="form-control"
+                                 [value]="dealer.password || ''"
+                                 (input)="updateField($event, 'password')" required>
+                        </div>
+                      }
+                    </div>
+                    <div class="mb-3">
+                      <label for="location" class="form-label">Dealership Address</label>
+                      <textarea id="location" class="form-control" rows="2"
+                                [value]="dealer.location"
+                                (input)="updateField($event, 'location')" required></textarea>
+                    </div>
+                  </fieldset>
 
-@else
-{
-     <div class="d-flex justify-content-center align-items-center vh-100">
-          <div class="spinner-border text-primary" role="status">
-               <span class="visually-hidden">Loading...</span>
+                  <fieldset class="mb-3">
+                    <legend class="fs-6 fw-bold">Owner Details</legend>
+                    <div class="row">
+                      <div class="col-md-4 mb-3">
+                        <label for="ownerName" class="form-label">Owner Name</label>
+                        <input type="text" id="ownerName" class="form-control"
+                               [value]="dealer.owner_name"
+                               (input)="updateField($event, 'owner_name')" required>
+                      </div>
+                      <div class="col-md-4 mb-3">
+                        <label for="ownerContact" class="form-label">Owner Contact Number</label>
+                        <input type="tel" id="ownerContact" class="form-control"
+                               [value]="dealer.owner_contact"
+                               (input)="updateField($event, 'owner_contact')" required>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-4 mb-3">
+                        <label for="panNumber" class="form-label">PAN Number</label>
+                        <input type="text" id="panNumber" class="form-control"
+                               [value]="dealer.pan_number"
+                               (input)="updateField($event, 'pan_number')" required>
+                      </div>
+                      <div class="col-md-4 mb-3">
+                        <label for="aadhaarNumber" class="form-label">Aadhaar Number</label>
+                        <input type="text" id="aadhaarNumber" class="form-control"
+                               [value]="dealer.aadhaar_number"
+                               (input)="updateField($event, 'aadhaar_number')" required>
+                      </div>
+                      <div class="col-md-4 mb-3">
+                        <label for="gstNumber" class="form-label">GST Number</label>
+                        <input type="text" id="gstNumber" class="form-control"
+                               [value]="dealer.gst_number"
+                               (input)="updateField($event, 'gst_number')" required>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-4 mb-3">
+                        <label for="panFile" class="form-label">PAN File</label>
+                        <input type="file" id="panFile" class="form-control" 
+                               (change)="handleFile($event, 'pan_file')" required>
+                        @if(dealer.pan_file) { <span class="file-info">{{ dealer.pan_file.name }}</span> }
+                      </div>
+                      <div class="col-md-4 mb-3">
+                        <label for="aadhaarFile" class="form-label">Aadhaar File</label>
+                        <input type="file" id="aadhaarFile" class="form-control" 
+                               (change)="handleFile($event, 'aadhaar_file')" required>
+                        @if(dealer.aadhaar_file) { <span class="file-info">{{ dealer.aadhaar_file.name }}</span> }
+                      </div>
+                      <div class="col-md-4 mb-3">
+                        <label for="gstFile" class="form-label">GST File</label>
+                        <input type="file" id="gstFile" class="form-control" 
+                               (change)="handleFile($event, 'gst_file')" required>
+                        @if(dealer.gst_file) { <span class="file-info">{{ dealer.gst_file.name }}</span> }
+                      </div>
+                    </div>
+                  </fieldset>
+
+                  <fieldset class="mb-3">
+                    <legend class="fs-6 fw-bold">Bank Account Details</legend>
+                    <div class="row">
+                      <div class="col-md-4 mb-3">
+                        <label for="bankName" class="form-label">Bank Name</label>
+                        <input type="text" id="bankName" class="form-control"
+                               [value]="dealer.bank_name"
+                               (input)="updateField($event, 'bank_name')" required>
+                      </div>
+                      <div class="col-md-4 mb-3">
+                        <label for="bankBranch" class="form-label">Bank Branch</label>
+                        <input type="text" id="bankBranch" class="form-control"
+                               [value]="dealer.bank_branch"
+                               (input)="updateField($event, 'bank_branch')" required>
+                      </div>
+                      <div class="col-md-4 mb-3">
+                        <label for="ifscCode" class="form-label">IFSC Code</label>
+                        <input type="text" id="ifscCode" class="form-control"
+                               [value]="dealer.ifsc_code"
+                               (input)="updateField($event, 'ifsc_code')" required>
+                      </div>
+                    </div>
+                  </fieldset>
+
+                  <fieldset class="mb-3">
+                    <legend class="fs-6 fw-bold">Payouts</legend>
+                    <div class="row">
+
+                      <!-- IN Column -->
+                      <div class="col-md-6 border-end">
+                        <h5 class="fw-bold text-center mb-3 text-uppercase text-success">IN</h5>
+                        
+                        <!-- 2-Wheeler IN -->
+                        <h6 class="fw-semibold mt-3">2-Wheeler</h6>
+                        <div class="mb-2 ps-3">
+                          <div class="input-group">
+                            <span class="input-group-text uniform-cc-label">0-150 cc</span>
+                            <input type="number" class="form-control"
+                                   [value]="dealer.payouts.twoWheeler.in['0-150']"
+                                   (input)="updateField($event, 'payouts', 'twoWheeler', 'in', '0-150')">
+                          </div>
+                        </div>
+                        <div class="mb-2 ps-3">
+                          <div class="input-group">
+                            <span class="input-group-text uniform-cc-label">150-350 cc</span>
+                            <input type="number" class="form-control"
+                                   [value]="dealer.payouts.twoWheeler.in['150-350']"
+                                   (input)="updateField($event, 'payouts', 'twoWheeler', 'in', '150-350')">
+                          </div>
+                        </div>
+                        <div class="mb-2 ps-3">
+                          <div class="input-group">
+                            <span class="input-group-text uniform-cc-label">350 cc & Above</span>
+                            <input type="number" class="form-control"
+                                   [value]="dealer.payouts.twoWheeler.in['350+']"
+                                   (input)="updateField($event, 'payouts', 'twoWheeler', 'in', '350+')">
+                          </div>
+                        </div>
+
+                        <!-- Car IN -->
+                        <h6 class="fw-semibold mt-3">Car</h6>
+                        <div class="mb-2 ps-3">
+                          <div class="input-group">
+                            <span class="input-group-text uniform-cc-label">0-150 cc</span>
+                            <input type="number" class="form-control"
+                                   [value]="dealer.payouts.car.in['0-150']"
+                                   (input)="updateField($event, 'payouts', 'car', 'in', '0-150')">
+                          </div>
+                        </div>
+                        <div class="mb-2 ps-3">
+                          <div class="input-group">
+                            <span class="input-group-text uniform-cc-label">150-350 cc</span>
+                            <input type="number" class="form-control"
+                                   [value]="dealer.payouts.car.in['150-350']"
+                                   (input)="updateField($event, 'payouts', 'car', 'in', '150-350')">
+                          </div>
+                        </div>
+                        <div class="mb-2 ps-3">
+                          <div class="input-group">
+                            <span class="input-group-text uniform-cc-label">350 cc & Above</span>
+                            <input type="number" class="form-control"
+                                   [value]="dealer.payouts.car.in['350+']"
+                                   (input)="updateField($event, 'payouts', 'car', 'in', '350+')">
+                          </div>
+                        </div>
+
+                        <!-- Commercial IN -->
+                        <h6 class="fw-semibold mt-3">Commercial</h6>
+                        <div class="mb-2 ps-3">
+                          <div class="input-group">
+                            <span class="input-group-text uniform-cc-label">0-150 cc</span>
+                            <input type="number" class="form-control"
+                                   [value]="dealer.payouts.commercial.in['0-150']"
+                                   (input)="updateField($event, 'payouts', 'commercial', 'in', '0-150')">
+                          </div>
+                        </div>
+                        <div class="mb-2 ps-3">
+                          <div class="input-group">
+                            <span class="input-group-text uniform-cc-label">150-350 cc</span>
+                            <input type="number" class="form-control"
+                                   [value]="dealer.payouts.commercial.in['150-350']"
+                                   (input)="updateField($event, 'payouts', 'commercial', 'in', '150-350')">
+                          </div>
+                        </div>
+                        <div class="mb-2 ps-3">
+                          <div class="input-group">
+                            <span class="input-group-text uniform-cc-label">350 cc & Above</span>
+                            <input type="number" class="form-control"
+                                   [value]="dealer.payouts.commercial.in['350+']"
+                                   (input)="updateField($event, 'payouts', 'commercial', 'in', '350+')">
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- OUT Column -->
+                      <div class="col-md-6">
+                        <h5 class="fw-bold text-center mb-3 text-uppercase text-danger">OUT</h5>
+                        
+                        <!-- 2-Wheeler OUT -->
+                        <h6 class="fw-semibold mt-3">2-Wheeler</h6>
+                        <div class="mb-2 ps-3">
+                          <div class="input-group">
+                            <span class="input-group-text uniform-cc-label">0-150 cc</span>
+                            <input type="number" class="form-control"
+                                   [value]="dealer.payouts.twoWheeler.out['0-150']"
+                                   (input)="updateField($event, 'payouts', 'twoWheeler', 'out', '0-150')">
+                          </div>
+                        </div>
+                        <div class="mb-2 ps-3">
+                          <div class="input-group">
+                            <span class="input-group-text uniform-cc-label">150-350 cc</span>
+                            <input type="number" class="form-control"
+                                   [value]="dealer.payouts.twoWheeler.out['150-350']"
+                                   (input)="updateField($event, 'payouts', 'twoWheeler', 'out', '150-350')">
+                          </div>
+                        </div>
+                        <div class="mb-2 ps-3">
+                          <div class="input-group">
+                            <span class="input-group-text uniform-cc-label">350 cc & Above</span>
+                            <input type="number" class="form-control"
+                                   [value]="dealer.payouts.twoWheeler.out['350+']"
+                                   (input)="updateField($event, 'payouts', 'twoWheeler', 'out', '350+')">
+                          </div>
+                        </div>
+
+                        <!-- Car OUT -->
+                        <h6 class="fw-semibold mt-3">Car</h6>
+                        <div class="mb-2 ps-3">
+                          <div class="input-group">
+                            <span class="input-group-text uniform-cc-label">0-150 cc</span>
+                            <input type="number" class="form-control"
+                                   [value]="dealer.payouts.car.out['0-150']"
+                                   (input)="updateField($event, 'payouts', 'car', 'out', '0-150')">
+                          </div>
+                        </div>
+                        <div class="mb-2 ps-3">
+                          <div class="input-group">
+                            <span class="input-group-text uniform-cc-label">150-350 cc</span>
+                            <input type="number" class="form-control"
+                                   [value]="dealer.payouts.car.out['150-350']"
+                                   (input)="updateField($event, 'payouts', 'car', 'out', '150-350')">
+                          </div>
+                        </div>
+                        <div class="mb-2 ps-3">
+                          <div class="input-group">
+                            <span class="input-group-text uniform-cc-label">350 cc & Above</span>
+                            <input type="number" class="form-control"
+                                   [value]="dealer.payouts.car.out['350+']"
+                                   (input)="updateField($event, 'payouts', 'car', 'out', '350+')">
+                          </div>
+                        </div>
+                        
+                        <!-- Commercial OUT -->
+                        <h6 class="fw-semibold mt-3">Commercial</h6>
+                        <div class="mb-2 ps-3">
+                          <div class="input-group">
+                            <span class="input-group-text uniform-cc-label">0-150 cc</span>
+                            <input type="number" class="form-control"
+                                   [value]="dealer.payouts.commercial.out['0-150']"
+                                   (input)="updateField($event, 'payouts', 'commercial', 'out', '0-150')">
+                          </div>
+                        </div>
+                        <div class="mb-2 ps-3">
+                          <div class="input-group">
+                            <span class="input-group-text uniform-cc-label">150-350 cc</span>
+                            <input type="number" class="form-control"
+                                   [value]="dealer.payouts.commercial.out['150-350']"
+                                   (input)="updateField($event, 'payouts', 'commercial', 'out', '150-350')">
+                          </div>
+                        </div>
+                        <div class="mb-2 ps-3">
+                          <div class="input-group">
+                            <span class="input-group-text uniform-cc-label">350 cc & Above</span>
+                            <input type="number" class="form-control"
+                                   [value]="dealer.payouts.commercial.out['350+']"
+                                   (input)="updateField($event, 'payouts', 'commercial', 'out', '350+')">
+                          </div>
+                        </div>
+
+                      </div>
+                    </div>
+                  </fieldset>
+
+                  <div class="d-flex justify-content-end">
+                    <button type="button" class="btn btn-primary" 
+                            (click)="onSave()" 
+                            >
+                      {{ isEditing() ? 'Save Changes' : 'Save Dealer' }}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-     </div>
-}
+        }
+
+        <!-- Details Popup Modal -->
+        @if (viewingDealer(); as dealer) {
+          <div class="modal-overlay">
+            <div class="modal1">
+              <div class="modal-header">
+                <h3 class="modal-title">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" class="me-2 text-primary">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+                  </svg>
+                  Dealer Details
+                </h3>
+                <button class="modal-close" (click)="closeDetailsModal()">&times;</button>
+              </div>
+              <div class="card-body">
+                <div class="details-grid">
+                  
+                  <!-- Dealership Info -->
+                  <div class="details-section">
+                    <h5 class="details-header">Dealership Info</h5>
+                    <dl>
+                      <dt>Dealer Name</dt><dd>{{ dealer.name }}</dd>
+                      <dt>OEM</dt><dd>{{ dealer.oem }}</dd>
+                      <dt>Dealership Phone</dt><dd>{{ dealer.phone }}</dd>
+                      <dt>Dealership Email</dt><dd>{{ dealer.email }}</dd>
+                      <!-- <dt>Role</dt><dd>{{ dealer.role }}</dd> -->
+                      <dt>Status</dt><dd><span 
+                            class="badge"
+                            [class.bg-success]="dealer.status === 'Active'"
+                            [class.bg-secondary]="dealer.status !== 'Active'">
+                            {{ dealer.status }}
+                          </span></dd>
+                      <dt>Dealership Address</dt><dd>{{ dealer.location }}</dd>
+                    </dl>
+                  </div>
+
+                  <!-- Owner Details -->
+                  <div class="details-section">
+                    <h5 class="details-header">Owner Details</h5>
+                    <dl>
+                      <dt>Owner Name</dt><dd>{{ dealer.owner_name }}</dd>
+                      <dt>Owner Contact</dt><dd>{{ dealer.owner_contact }}</dd>
+                      <dt>PAN Number</dt><dd>{{ dealer.pan_number }}</dd>
+                      <dt>Aadhaar Number</dt><dd>{{ dealer.aadhaar_number }}</dd>
+                      <dt>GST Number</dt><dd>{{ dealer.gst_number }}</dd>
+                    </dl>
+                  </div>
+
+                  <!-- Bank Details -->
+                  <div class="details-section">
+                    <h5 class="details-header">Bank Details</h5>
+                    <dl>
+                      <dt>Bank Name</dt><dd>{{ dealer.bank_name }}</dd>
+                      <dt>Bank Branch</dt><dd>{{ dealer.bank_branch }}</dd>
+                      <dt>IFSC Code</dt><dd>{{ dealer.ifsc_code }}</dd>
+                    </dl>
+                  </div>
+
+                  <!-- File Details -->
+                  <div class="details-section">
+                    <h5 class="details-header">Uploaded Files</h5>
+                    <dl>
+                      <dt>PAN File</dt><dd>{{ dealer.pan_file?.name || 'Not Uploaded' }}</dd>
+                      <dt>Aadhaar File</dt><dd>{{ dealer.aadhaar_file?.name || 'Not Uploaded' }}</dd>
+                      <dt>GST File</dt><dd>{{ dealer.gst_file?.name || 'Not Uploaded' }}</dd>
+                    </dl>
+                  </div>
+                </div>
+
+                <!-- Payouts Section -->
+                <div class="details-section mt-3">
+                  <h5 class="details-header">Payouts</h5>
+                  <div class="table-scroll-container">
+                    <table class="requests-table payout-details-table">
+                      <thead>
+                        <tr>
+                          <th>Vehicle Type</th>
+                          <th>CC Range</th>
+                          <th class="text-success">IN</th>
+                          <th class="text-danger">OUT</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <!-- 2-Wheeler -->
+                        <tr><td rowspan="3"><strong>2-Wheeler</strong></td><td>0-150 cc</td><td class="text-success">{{ dealer.payouts.twoWheeler.in['0-150'] }}</td><td class="text-danger">{{ dealer.payouts.twoWheeler.out['0-150'] }}</td></tr>
+                        <tr><td>150-350 cc</td><td class="text-success">{{ dealer.payouts.twoWheeler.in['150-350'] }}</td><td class="text-danger">{{ dealer.payouts.twoWheeler.out['150-350'] }}</td></tr>
+                        <tr><td>350 cc & Above</td><td class="text-success">{{ dealer.payouts.twoWheeler.in['350+'] }}</td><td class="text-danger">{{ dealer.payouts.twoWheeler.out['350+'] }}</td></tr>
+                        <!-- Car -->
+                        <tr><td rowspan="3"><strong>Car</strong></td><td>0-150 cc</td><td class="text-success">{{ dealer.payouts.car.in['0-150'] }}</td><td class="text-danger">{{ dealer.payouts.car.out['0-150'] }}</td></tr>
+                        <tr><td>150-350 cc</td><td class="text-success">{{ dealer.payouts.car.in['150-350'] }}</td><td class="text-danger">{{ dealer.payouts.car.out['150-350'] }}</td></tr>
+                        <tr><td>350 cc & Above</td><td class="text-success">{{ dealer.payouts.car.in['350+'] }}</td><td class="text-danger">{{ dealer.payouts.car.out['350+'] }}</td></tr>
+                        <!-- Commercial -->
+                        <tr><td rowspan="3"><strong>Commercial</strong></td><td>0-150 cc</td><td class="text-success">{{ dealer.payouts.commercial.in['0-150'] }}</td><td class="text-danger">{{ dealer.payouts.commercial.out['0-150'] }}</td></tr>
+                        <tr><td>150-350 cc</td><td class="text-success">{{ dealer.payouts.commercial.in['150-350'] }}</td><td class="text-danger">{{ dealer.payouts.commercial.out['150-350'] }}</td></tr>
+                        <tr><td>350 cc & Above</td><td class="text-success">{{ dealer.payouts.commercial.in['350+'] }}</td><td class="text-danger">{{ dealer.payouts.commercial.out['350+'] }}</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                <div class="d-flex justify-content-end mt-3">
+                  <button type="button" class="btn btn-primary" (click)="closeDetailsModal()">Close</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+
+      </div>
+    } @else {
+      <!-- Initial Page Loader -->
+      <div class="d-flex justify-content-center align-items-center vh-100">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+    }

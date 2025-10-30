@@ -20,6 +20,10 @@ export class InsuranceService {
   getAllFinancer(): Observable<any> {
     return this.http.get<any>(this.serviceApiUrl + 'financers/getAllfinancer');
   }
+
+  createTwoWheelerInsurance(data: any): Observable<any> {
+    return this.http.post(`${this.serviceApiUrl}insurance/two-wheeler`, data);
+  }
 }
 
 

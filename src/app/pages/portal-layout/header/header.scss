@@ -2,6 +2,7 @@
 .app-header {
     position: sticky;
     top: 0;
+    z-index: 10000;
     // background-color: #343a40; /* Dark background for header */
     // color: #ffffff; /* White text color */
     // box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */

@@ -542,7 +542,7 @@
                     class="text-danger small mt-1">isHypothecated is Required.</div>
                 </div>
                 <!-- <div class="col-md-4" *ngIf="insuranceForm.get('financier')?.disabled === false"> -->
-                <div class="col-md-4" *ngIf="insuranceForm.get('isHypothecated')?.value === 'Yes'">
+                <div class="col-md-4" *ngIf="insuranceForm.get('financier')?.disabled === false">
                   <label for="financier" class="form-label fw-medium">Financier<span class="required-star">*</span></label>
                   <select formControlName="financier" class="form-select">
                     <option [ngValue]="null" disabled>Select...</option>
@@ -553,14 +553,15 @@
                     class="text-danger small mt-1">Financier is Required.</div>
                 </div>
 
-                <div class="col-md-4" *ngIf="insuranceForm.get('financier')?.value === 'notListed' || insuranceForm.get('financier')?.disabled === true">
-                  <label for="ifFinancierNotListed" class="form-label fw-medium">If Financier Not Listed, Specify<span class="required-star">*</span></label><input
-                    type="text" formControlName="ifFinancierNotListed" class="form-control" placeholder="Enter Financier Name">
-                  <div *ngIf="insuranceForm.get('ifFinancierNotListed')?.invalid && insuranceForm.get('ifFinancierNotListed')?.touched"
+                <div class="col-md-4" *ngIf="insuranceForm.get('NotListedFinancier')?.disabled === false">
+                  <label for="NotListedFinancier" class="form-label fw-medium">If Financier Not Listed, Specify<span class="required-star">*</span></label>
+                  <input
+                    type="text" formControlName="NotListedFinancier" class="form-control" placeholder="Enter Financier Name">
+                  <div *ngIf="insuranceForm.get('NotListedFinancier')?.invalid && insuranceForm.get('NotListedFinancier')?.touched"
                     class="text-danger small mt-1">If Financier Not Listed, Specify is Required.</div>
                     </div>
 
-                    <div class="col-md-4" *ngIf="insuranceForm.get('isHypothecated')?.value === 'Yes'">
+                    <div class="col-md-4" *ngIf="insuranceForm.get('branchLocation')?.disabled === false">
                   <label for="branchLocation" class="form-label fw-medium">Branch Location<span class="required-star">*</span></label><input
                     type="text" formControlName="branchLocation" class="form-control" placeholder="Enter Branch Location">
                   <div *ngIf="insuranceForm.get('branchLocation')?.invalid && insuranceForm.get('branchLocation')?.touched"

@@ -2,8 +2,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, NgForm, ReactiveFormsModule } from '@angular/forms'; // Import NgForm here
-import { InsuranceService } from '../../../core/Services/insurance.service';
-import { routes } from '../../../app.routes';
+import { InsuranceService } from '../../core/Services/insurance.service';
+import { routes } from '../../app.routes';
 import { ActivatedRoute, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
 @Component({

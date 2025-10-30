@@ -126,13 +126,13 @@ export const routes: Routes = [
                // =============================================================
                {
                     path: 'form-management', // This is the new URL: /app/form-management
-                    loadComponent: () => import('./admin/form-management/form-management').then(m => m.FormManagement),
+                    loadComponent: () => import('./needToRemove/form-management/form-management').then(m => m.FormManagement),
                     canActivate: [roleGuard],
                     data: { roles: ['Admin'] }
                },
                {
                     path: 'two-wheeler-formbuilder',
-                    loadComponent: () => import('./admin/two-wheeler-formbuilder/two-wheeler-formbuilder').then(m => m.TwoWheelerFormbuilder),
+                    loadComponent: () => import('./needToRemove/two-wheeler-formbuilder/two-wheeler-formbuilder').then(m => m.TwoWheelerFormbuilder),
                     canActivate: [roleGuard],
                     data: { roles: ['Admin'] }
                }
