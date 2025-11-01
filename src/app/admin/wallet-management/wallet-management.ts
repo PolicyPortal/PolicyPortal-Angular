@@ -1,157 +1,116 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, OnInit, signal } from '@angular/core';
+import { Component, computed, signal } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-
-// Mock Data for Transactions - Now includes dealer info
-const TRANSACTIONDATA = [
-  {
-    transaction_date: '2024-06-01T10:15:30Z',
-    transactionrefno: 'TXN123456',
-    payment_mode: 'UPI',
-    amount: 5000,
-    status: 'approved',
-    attachment: 'receipt1.pdf',
-    created_at: '2024-06-01T10:20:00Z',
-    update_date: '2024-06-02T12:00:00Z',
-    dealerName: 'Sunrise Electronics'
-  },
-  {
-    transaction_date: '2024-06-05T14:30:00Z',
-    transactionrefno: 'TXN123457',
-    payment_mode: 'Net Banking',
-    amount: 7500,
-    status: 'Pending',
-    attachment: null,
-    created_at: '2024-06-05T14:35:00Z',
-    update_date: '2024-06-06T09:00:00Z',
-    dealerName: 'Gadget World'
-  },
-  {
-    transaction_date: '2024-06-10T09:00:00Z',
-    transactionrefno: 'TXN123458',
-    payment_mode: 'Cheque',
-    amount: 10000,
-    status: 'Rejected',
-    attachment: 'cheque_image.jpg',
-    created_at: '2024-06-10T09:05:00Z',
-    update_date: '2024-06-11T11:30:00Z',
-    dealerName: 'Sunrise Electronics'
-  },
-  {
-    transaction_date: '2024-06-12T11:00:00Z',
-    transactionrefno: 'TXN123459',
-    payment_mode: 'Credit Card',
-    amount: 2500,
-    status: 'approved',
-    attachment: 'receipt2.pdf',
-    created_at: '2024-06-12T11:05:00Z',
-    update_date: '2024-06-12T11:30:00Z',
-    dealerName: 'Tech Hub'
-  },
-  {
-    transaction_date: '2024-06-13T15:00:00Z',
-    transactionrefno: 'TXN123460',
-    payment_mode: 'UPI',
-    amount: 3000,
-    status: 'Pending',
-    attachment: 'receipt3.pdf',
-    created_at: '2024-06-13T15:05:00Z',
-    update_date: '2024-06-13T15:05:00Z',
-    dealerName: 'Gadget World'
-  }
-];
-
-
+import { WalletService, TopupRequest } from '../../core/Services/wallet.service';
 
 @Component({
   selector: 'app-wallet-management',
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './wallet-management.html',
-  styleUrl: './wallet-management.scss'
+  styleUrls: ['./wallet-management.scss'],
+  standalone: true,
 })
 export class WalletManagement {
-
-  // Use signals for reactive state management
-  transactions = signal(TRANSACTIONDATA);
+  // Signals for state
+  transactions = signal<TopupRequest[]>([]);
+  dealerBalances = signal<{ dealers: { name: string; balance: number; }[] }>({ dealers: [] });
 
   // Signals for filter inputs
   filterRefNo = signal('');
   filterStatus = signal('All');
-  filterDate = signal(''); // Will store YYYY-MM-DD
-  filterDealer = signal('All'); // New signal for dealer filter
+  filterDate = signal('');
+  filterDealer = signal('All');
 
-   // NEW: Signal for the dealer balance dropdown
+  // Signal for applied filters
+  activeFilters = signal({ refNo: '', status: 'All', date: '', dealer: 'All' });
+  
+  // Signal for the balance card dropdown
   selectedDealerBalance = signal('All');
 
-  // Signal to hold the *active* filters, applied on "Search"
-  activeFilters = signal({ refNo: '', status: 'All', date: '', dealer: 'All' });
+  constructor(private walletService: WalletService) {
+    // Fetch all dealer balances on init
+    this.walletService.getAllDealerWithBalance().subscribe({
+      next: (data) => {
+        // FIX: Normalize the API response to match the signal's type
+        const normalizedData = Array.isArray(data)
+          ? { dealers: data } // If data is [], wrap it to { dealers: [] }
+          : (data || { dealers: [] }); // Otherwise, use data or default
 
-  // Computed signal to get unique dealer names for the filter dropdown
+        console.log('Loaded dealer balances:', normalizedData);
+        this.dealerBalances.set(normalizedData); // Now this sets the correct object shape
+      },
+      error: (err) => {
+        console.error('Failed to load dealer balances:', err);
+        this.dealerBalances.set({ dealers: [] });
+      }
+    });
+
+    // Fetch all transactions on init
+    this.fetchTransactions();
+  }
+
+  // Get unique dealer names from the master dealer balance list
   dealers = computed(() => {
-    const dealerNames = this.transactions().map(tx => tx.dealerName);
-    return [...new Set(dealerNames)]; // Unique list of dealers
+    const dealerData = this.dealerBalances(); // This is { dealers: [...] }
+    if (!dealerData || !dealerData.dealers) {
+      return [];
+    }
+    // Map the array of {name, balance} objects to just an array of names
+    return dealerData.dealers.map(d => d.name).filter(name => name);
   });
 
-   // NEW: Computed signal for dealer balances
-  dealerBalances = computed(() => {
-    const approvedTxs = this.transactions().filter(tx => tx.status.toLowerCase() === 'approved');
-    const allDealers = this.dealers(); // Get the unique list of all dealers
-
-    return allDealers.map(dealerName => {
-      // Calculate balance for this specific dealer
-      const balance = approvedTxs
-        .filter(tx => tx.dealerName === dealerName)
-        .reduce((acc, tx) => acc + tx.amount, 0);
-      
-      return { name: dealerName, balance: balance };
-    }).sort((a, b) => a.name.localeCompare(b.name)); // Sort alphabetically
-  });
-
-  // NEW: Computed signal to get the balance for the selected dealer
+  // Get the info for the dealer selected in the balance card
   selectedDealerInfo = computed(() => {
     const dealerName = this.selectedDealerBalance();
-    if (dealerName === 'All') {
+    const dealers = this.dealerBalances()?.dealers;
+    
+    console.log('Selected dealer info:', dealers, dealerName);
+    
+    if (!dealers || dealerName === 'All') {
       return null;
     }
-    return this.dealerBalances().find(d => d.name === dealerName) || null;
+    
+    const dealer = dealers.find(d => d.name === dealerName);
+    return dealer ? { dealerName: dealer.name, dealerBalance: dealer.balance } : null;
   });
 
-
-  // Computed signal to filter transactions based on activeFilters
+  // Filter the transactions based on the active filters
   filteredTransactions = computed(() => {
     const { refNo, status, date, dealer } = this.activeFilters();
     const lowerRefNo = refNo.toLowerCase();
     const lowerStatus = status.toLowerCase();
     const lowerDealer = dealer.toLowerCase();
 
-    // If no filters are active, return all transactions
-    if (!lowerRefNo && lowerStatus === 'all' && !date && lowerDealer === 'all') {
-      return this.transactions();
-    }
-
     return this.transactions().filter(tx => {
-      const txRefNo = tx.transactionrefno.toLowerCase();
-      const txStatus = tx.status.toLowerCase();
-      const txDate = tx.transaction_date.substring(0, 10); // Get 'YYYY-MM-DD'
-      const txDealer = tx.dealerName.toLowerCase();
+      const txRefNo = (tx.transaction_ref_no || '').toLowerCase();
+      const txStatus = (tx.status || '').toLowerCase();
+      const txDate = (tx.transaction_date || '').substring(0, 10);
+      const txDealer = (tx.dealer_name || '').toLowerCase();
 
-      // Check each filter condition
-      const matchRefNo = lowerRefNo ? txRefNo.includes(lowerRefNo) : true;
-      const matchStatus = lowerStatus !== 'all' ? txStatus === lowerStatus : true;
-      const matchDate = date ? txDate === date : true;
-      const matchDealer = lowerDealer !== 'all' ? txDealer === lowerDealer : true;
+      const matchesRefNo = lowerRefNo ? txRefNo.includes(lowerRefNo) : true;
+      const matchesStatus = lowerStatus !== 'all' ? txStatus === lowerStatus : true;
+      const matchesDate = date ? txDate === date : true;
+      const matchesDealer = lowerDealer !== 'all' ? txDealer === lowerDealer : true;
 
-      // Return true only if all conditions match
-      return matchRefNo && matchStatus && matchDate && matchDealer;
+      return matchesRefNo && matchesStatus && matchesDate && matchesDealer;
     });
   });
 
-  constructor() {}
+  // Fetch all transactions from backend
+  fetchTransactions(): void {
+    this.walletService.getTransactions().subscribe({
+      next: (data) => {
+        const txs = Array.isArray(data) ? data : data?.transactions || [];
+        this.transactions.set(txs);
+      },
+      error: (err) => {
+        console.error('Failed to load transactions:', err);
+        this.transactions.set([]);
+      }
+    });
+  }
 
-  /**
-   * Applies the current filter input values to the activeFilters signal,
-   * triggering the computed filteredTransactions to update.
-   */
+  // Apply the current filter values
   applyFilters(): void {
     this.activeFilters.set({
       refNo: this.filterRefNo(),
@@ -161,10 +120,7 @@ export class WalletManagement {
     });
   }
 
-  /**
-   * Resets all filter inputs and the activeFilters,
-   * showing all transactions again.
-   */
+  // Reset all filters to their default state
   resetFilters(): void {
     this.filterRefNo.set('');
     this.filterStatus.set('All');
@@ -173,39 +129,33 @@ export class WalletManagement {
     this.activeFilters.set({ refNo: '', status: 'All', date: '', dealer: 'All' });
   }
 
-  /**
-   * Approves a transaction by its reference number.
-   */
+  // Approve a pending transaction
   approveTransaction(refNo: string): void {
-    //confirm('Are you sure you want to approve this transaction?'); ask for confirmation or cancel
-    if (!confirm('Are you sure you want to approve this transaction?')) {
-      return; // Exit if user cancels
-    }
-    this.transactions.update(currentTxs => 
-      currentTxs.map(tx => 
-        tx.transactionrefno === refNo 
-          ? { ...tx, status: 'approved', update_date: new Date().toISOString() } 
-          : tx
-      )
-    );
+    if (!confirm('Are you sure to approve this transaction?')) return;
+    const tx = this.transactions().find(tx => tx.transaction_ref_no === refNo);
+    if (!tx) return;
+
+    this.walletService.updateTopupStatus(tx.requestid!, 'Approved').subscribe({
+      next: () => {
+        this.fetchTransactions(); // Refresh the transaction list
+        // You might also want to re-fetch dealer balances here if approval changes it
+        // this.walletService.getAllDealerWithBalance().subscribe(data => this.dealerBalances.set(data));
+      },
+      error: err => console.error('Failed to approve transaction:', err)
+    });
   }
 
-  /**
-   * Rejects a transaction by its reference number.
-   */
+  // Reject a pending transaction
   rejectTransaction(refNo: string): void {
-    //confirm('Are you sure you want to reject this transaction?'); ask for confirmation or cancel
-    if (!confirm('Are you sure you want to reject this transaction?')) {
-      return; // Exit if user cancels
-    }
-    this.transactions.update(currentTxs => 
-      currentTxs.map(tx => 
-        tx.transactionrefno === refNo 
-          ? { ...tx, status: 'Rejected', update_date: new Date().toISOString() } 
-          : tx
-      )
-    );
+    if (!confirm('Are you sure to reject this transaction?')) return;
+    const tx = this.transactions().find(tx => tx.transaction_ref_no === refNo);
+    if (!tx) return;
+
+    this.walletService.updateTopupStatus(tx.requestid!, 'Rejected').subscribe({
+      next: () => {
+        this.fetchTransactions(); // Refresh the transaction list
+      },
+      error: err => console.error('Failed to reject transaction:', err)
+    });
   }
 }
-
-

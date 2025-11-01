@@ -4,7 +4,7 @@
     <div class="wallet-card">
       <div class="balance-info">
         <span class="balance-label">Your Balance</span>
-        <span class="balance-amount">₹ {{ walletBalance | number:'1.2-2' }}</span>
+        <span class="balance-amount">₹ {{ walletBalance() | number:'1.2-2' }}</span>
       </div>
       <button class="add-balance-button" (click)="openModal()">+ Add Balance</button>
     </div>
@@ -80,11 +80,9 @@
             Search
           </button>
           <!-- Export Button Moved Here -->
-          <button class="export-button btn btn-dark px-4 py-2 rounded-pill fw-medium d-flex align-items-center gap-2">
-            <!-- Using Bootstrap Icon instead of inline SVG -->
-            <!-- <i class="bi bi-box-arrow-down"></i> -->
+          <!-- <button class="export-button btn btn-dark px-4 py-2 rounded-pill fw-medium d-flex align-items-center gap-2">
             <span>Export</span>
-          </button>
+          </button> -->
         </div>
       </div>
 
@@ -108,32 +106,32 @@
             </thead>
             <tbody>
               <!-- Updated @for to use filteredTransactions() -->
-              @for (tx of filteredTransactions(); track tx.transactionrefno) {
+              @for (tx of filteredTransactions(); track tx.transaction_ref_no) {
                 <tr>
                   <td class="p-3 align-middle text-nowrap">
                     <span class="date-text d-block">{{ tx.transaction_date | date: 'MM-dd-yyyy' }}</span>
                     <span class="time-text small text-muted d-block">{{ tx.transaction_date | date: 'HH:mm:ss' }}</span>
                   </td>
-                  <td class="p-3 align-middle text-nowrap">{{ tx.transactionrefno }}</td>
+                  <td class="p-3 align-middle text-nowrap">{{ tx.transaction_ref_no }}</td>
                   <!-- <td class="p-3 align-middle fw-medium text-nowrap">{{ tx.dealerName }}</td> -->
                   <td class="p-3 align-middle text-nowrap">{{ tx.payment_mode }}</td>
                   <td class="p-3 align-middle fw-medium text-nowrap">₹ {{ tx.amount | number: '1.2-2' }}</td>
                   <td class="p-3 align-middle text-nowrap">
                     <!-- Using Bootstrap Badges -->
                     <span class="badge rounded-pill fs-7 fw-medium"
-                          [class]="tx.status.toLowerCase() === 'approved' ? 'bg-success-subtle text-success-emphasis' : 
-                                   (tx.status.toLowerCase() === 'pending' ? 'bg-warning-subtle text-warning-emphasis' : 
+                          [class]="tx.status?.toLowerCase() === 'approved' ? 'bg-success-subtle text-success-emphasis' : 
+                                   (tx.status?.toLowerCase() === 'pending' ? 'bg-warning-subtle text-warning-emphasis' : 
                                    'bg-danger-subtle text-danger-emphasis')">
                       {{ tx.status }}
                     </span>
                   </td>
                   <td class="p-3 align-middle text-nowrap">
                     <!-- Using a link for the attachment -->
-                    <a href="#" class="text-decoration-none">{{ tx.attachment || '--' }}</a>
+                    <a href="#" class="text-decoration-none">{{ tx.payment_proof_url || '--' }}</a>
                   </td>
                   <td class="p-3 align-middle text-nowrap">
-                    <span class="date-text d-block">{{ tx.created_at | date: 'MM-dd-yyyy' }}</span>
-                    <span class="time-text small text-muted d-block">{{ tx.created_at | date: 'HH:mm:ss' }}</span>
+                    <span class="date-text d-block">{{ tx.submit_date | date: 'MM-dd-yyyy' }}</span>
+                    <span class="time-text small text-muted d-block">{{ tx.submit_date | date: 'HH:mm:ss' }}</span>
                   </td>
                   <td class="p-3 align-middle text-nowrap">
                     <span class="date-text d-block">{{ tx.update_date | date: 'MM-dd-yyyy' }}</span>
@@ -150,7 +148,7 @@
   <!-- </div> -->
 
 <!-- Modal -->
-<div class="modal-overlay" [class.hidden]="!isModalVisible">
+<div class="modal-overlay" [class.hidden]="!isModalVisible()">
   <div class="modal1">
     <div class="modal-header">
       <h3 class="modal-title">

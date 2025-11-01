@@ -18,13 +18,14 @@ export class Header implements OnInit {
 
   fetchBalance() {
     console.log('Fetching wallet balance');
-    this.walletService.getBalance().subscribe({
-      next: res => {
-        console.log('res', res);
-        this.walletBalance = res.balance;
-      },
-      error: () => this.walletBalance = 0,
-    });
+    this.walletBalance = 5000; // Mock balance
+    // this.walletService.getBalance().subscribe({
+    //   next: res => {
+    //     console.log('res', res);
+    //     this.walletBalance = res.balance;
+    //   },
+    //   error: () => this.walletBalance = 0,
+    // });
   }
   // Signals to manage dropdown states
   isProfileDropdownOpen = signal(false);
