@@ -1,185 +1,149 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, OnInit, signal } from '@angular/core';
-import { FormBuilder, Validators, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { WalletService } from '../../core/Services/wallet.service';
-
-// Mock Data for Transactions - Kept here for context, though you fetch from service
-const TRANSACTIONDATA = [
- {
-  transaction_date: '2024-06-01T10:15:30Z',
-  transactionrefno: 'TXN123456',
-  payment_mode: 'UPI',
-  amount: 5000,
-  status: 'approved',
-  attachment: 'receipt1.pdf',
-  created_at: '2024-06-01T10:20:00Z',
-  update_date: '2024-06-02T12:00:00Z',
-  dealerName: 'Sunrise Electronics'
- },
- // ... other mock data ...
-];
-
+import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { WalletService, TopupRequest } from '../../core/Services/wallet.service';
 
 @Component({
- selector: 'app-wallet',
- templateUrl: './wallet.html',
- styleUrls: ['./wallet.scss'],
- imports: [CommonModule, ReactiveFormsModule],
+  selector: 'app-wallet',
+  templateUrl: './wallet.html',
+  styleUrls: ['./wallet.scss'],
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule]
 })
 export class WalletComponent implements OnInit {
- paymentModes: string[] = ['Cash Deposit', 'Cheque', 'UPI', 'Net Banking'];
-  // Signals for filter inputs
- filterRefNo = signal('');
- filterStatus = signal('All');
- filterDate = signal(''); // Will store YYYY-MM-DD
- 
-  // Signal to hold the *active* filters, applied on "Search"
-  // Removed 'dealer'
- activeFilters = signal({ refNo: '', status: 'All', date: ''});
- 
-  // Initialize as empty array, will be populated by fetchTransactions
- transactions = signal<any[]>([]);
- 
+  paymentModes: string[] = ['Cash Deposit', 'Cheque', 'UPI', 'Net Banking'];
 
- isModalVisible = false;
- walletBalance = 0;
- walletForm: FormGroup;
+  filterRefNo = signal('');
+  filterStatus = signal('All');
+  filterDate = signal(''); // YYYY-MM-DD format
 
- constructor(private walletService: WalletService, private fb: FormBuilder) {
-  this.walletForm = this.fb.group({
-   paymentMode: [null, Validators.required],
-   paymentProof: [null, Validators.required],
-   transactionDate: ['', Validators.required],
-   updateDate: ['', Validators.required],
-   transactionRefNo: ['', Validators.required],
-   amount: ['', [Validators.required, Validators.pattern('^[0-9]+$')]],
-  });
- }
+  activeFilters = signal({ refNo: '', status: 'All', date: '' });
+  transactions = signal<TopupRequest[]>([]);
 
- ngOnInit() {
-  console.log('WalletComponent initialized');
-  this.fetchBalance();
-  this.fetchTransactions();
- }
+  isModalVisible = signal(false);
+  walletBalance = signal(0);
+  walletForm;
 
- fetchBalance() {
-  console.log('Fetching wallet balance');
-  this.walletService.getBalance().subscribe({
-   next: res => {
-    console.log('res', res);
-    this.walletBalance = res.balance;
-   },
-   error: () => this.walletBalance = 0,
-  });
- }
-
-  fetchTransactions() {
-   this.walletService.getTransactions().subscribe({
-    next: (data: any) => {
-     // Support both an array response and an object with a 'transactions' property
-        const txData = Array.isArray(data) ? data : (data?.transactions || []);
-     this.transactions.set(txData); // Use .set() to update the signal
-     console.log('Fetched transactions:', this.transactions());
-    },
-  
-    error: (err) => {
-     console.error('Error fetching transactions:', err);
-     this.transactions.set([]);
-    },
-   });
+  constructor(private walletService: WalletService, private fb: FormBuilder) {
+    this.walletForm = this.fb.group({
+      paymentMode: [null, Validators.required],
+      paymentProof: [null as File | null, Validators.required],
+      transactionDate: ['', Validators.required],
+      updateDate: ['', Validators.required],
+      transactionRefNo: ['', Validators.required],
+      amount: ['', [Validators.required, Validators.pattern(/^\d+(\.\d{1,2})?$/)]]
+    });
   }
 
 
- openModal(): void {
-  this.isModalVisible = true;
- }
-
- closeModal(): void {
-  this.isModalVisible = false;
-  this.walletForm.reset();
- }
-
- onFileChange(event: any) {
-  const file = event.target.files[0];
-  if (file) {
-   this.walletForm.patchValue({ paymentProof: file });
-  }
- }
-
- submitTopup() {
-  console.log('Submitting top-up with form data:', this.walletForm.value);
-  if (this.walletForm.invalid) return;
-  const form = this.walletForm.value;
-  // Construct FormData if uploading file
-  const formData = new FormData();
-  Object.keys(form).forEach(key => formData.append(key, form[key]));
-  
-  this.walletService.topup(formData)
-   .subscribe({
-    next: () => {
-     this.fetchBalance();
-     this.fetchTransactions();
-     this.closeModal();
-     // NOTE: alert() is blocking and not recommended.
-          // Consider a toast notification service instead.
-     console.log('Top-up successful'); 
-    },
-    error: () => console.error('Top-up failed'),
-   });
- }
-
-
-
-  // Computed signal to filter transactions based on activeFilters
-  // Removed 'dealer' logic
- filteredTransactions = computed(() => {
-  const { refNo, status, date } = this.activeFilters();
-  const lowerRefNo = refNo.toLowerCase();
-  const lowerStatus = status.toLowerCase();
-
-  // If no filters are active, return all transactions
-  if (!lowerRefNo && lowerStatus === 'all' && !date ) {
-   return this.transactions();
+  ngOnInit(): void {
+    this.fetchBalance();
+    this.fetchTransactions();
   }
 
-  return this.transactions().filter(tx => {
-   const txRefNo = tx.transactionrefno?.toLowerCase() || '';
-   const txStatus = tx.status?.toLowerCase() || '';
-   const txDate = tx.transaction_date?.substring(0, 10) || ''; // Get 'YYYY-MM-DD'
+  fetchBalance(): void {
+    this.walletService.getBalance().subscribe({
+      next: (res) => {
+        this.walletBalance.set(res.balance);
+      },
+      error: () => this.walletBalance.set(0)
+    });
+  }
 
-   // Check each filter condition
-   const matchRefNo = lowerRefNo ? txRefNo.includes(lowerRefNo) : true;
-   const matchStatus = lowerStatus !== 'all' ? txStatus === lowerStatus : true;
-   const matchDate = date ? txDate === date : true;
+  fetchTransactions(): void {
+    this.walletService.getTransactions().subscribe({
+      next: (data: { transactions?: TopupRequest[] } | TopupRequest[]) => {
+        const txData = Array.isArray(data) ? data : data?.transactions || [];
+        this.transactions.set(txData);
+      },
+      error: (err) => {
+        console.error('Error fetching transactions:', err);
+        this.transactions.set([]);
+      }
+    });
+  }
 
-   // Return true only if all conditions match
-   return matchRefNo && matchStatus && matchDate;
+  openModal(): void {
+    this.isModalVisible.set(true);
+  }
+
+  closeModal(): void {
+    this.isModalVisible.set(false);
+    this.walletForm.reset();
+  }
+
+  onFileChange(event: Event): void {
+    const target = event.target as HTMLInputElement;
+    if (target.files && target.files.length > 0) {
+      const file = target.files[0];
+      this.walletForm.patchValue({ paymentProof: file });
+    }
+  }
+
+  submitTopup(): void {
+    if (this.walletForm.invalid) return;
+
+    const formData = new FormData();
+    const formValue = this.walletForm.value;
+    formData.append('amount', formValue.amount!);
+    formData.append('payment_mode', formValue.paymentMode!);
+    formData.append('payment_proof_url', formValue.paymentProof!);
+    formData.append('transaction_ref_no', formValue.transactionRefNo!);
+    formData.append('transaction_date', formValue.transactionDate!);
+
+    this.walletService.submitTopupRequest({
+      amount: parseFloat(formValue.amount!),
+      payment_mode: formValue.paymentMode!,
+      payment_proof: formValue.paymentProof!,
+      transaction_ref_no: formValue.transactionRefNo!,
+      transaction_date: formValue.transactionDate!
+    }).subscribe({
+      next: () => {
+        this.fetchBalance();
+        this.fetchTransactions();
+        this.closeModal();
+        console.log('Top-up successful');
+      },
+      error: (err) => {
+        console.error('Top-up failed', err);
+      }
+    });
+  }
+
+  filteredTransactions = computed(() => {
+    const { refNo, status, date } = this.activeFilters();
+    const lowerRefNo = refNo.toLowerCase();
+    const lowerStatus = status.toLowerCase();
+
+    if (!lowerRefNo && lowerStatus === 'all' && !date) {
+      return this.transactions();
+    }
+
+    return this.transactions().filter((tx) => {
+      const txRefNo = tx.transaction_ref_no?.toLowerCase() ?? '';
+      const txStatus = (tx.status ?? '').toLowerCase();
+      const txDate = tx.transaction_date?.substring(0, 10) ?? '';
+
+      const matchRefNo = lowerRefNo ? txRefNo.includes(lowerRefNo) : true;
+      const matchStatus = lowerStatus !== 'all' ? txStatus === lowerStatus : true;
+      const matchDate = date ? txDate === date : true;
+
+      return matchRefNo && matchStatus && matchDate;
+    });
   });
- });
 
- 
- /**
- * Applies the current filter input values to the activeFilters signal,
- * triggering the computed filteredTransactions to update.
- */
- applyFilters(): void {
-    // Removed 'dealer'
-  this.activeFilters.set({
-   refNo: this.filterRefNo(),
-   status: this.filterStatus(),
-   date: this.filterDate(),
-  });
- }
+  applyFilters(): void {
+    this.activeFilters.set({
+      refNo: this.filterRefNo(),
+      status: this.filterStatus(),
+      date: this.filterDate()
+    });
+  }
 
- /**
- * Resets all filter inputs and the activeFilters,
- * showing all transactions again.
- */
- resetFilters(): void {
-  this.filterRefNo.set('');
-  this.filterStatus.set('All');
-  this.filterDate.set('');
-    // Removed 'dealer'
-  this.activeFilters.set({ refNo: '', status: 'All', date: ''});
- }
+  resetFilters(): void {
+    this.filterRefNo.set('');
+    this.filterStatus.set('All');
+    this.filterDate.set('');
+    this.activeFilters.set({ refNo: '', status: 'All', date: '' });
+  }
 }
