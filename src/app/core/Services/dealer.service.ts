@@ -33,10 +33,17 @@ export class DealerService {
      return dealers;
   }
 
-  // Update dealer
-  updateDealer(dealer: any): Observable<any> {
-    return this.http.put(`${this.serviceApiUrl}/updatedealer/${dealer.id}`, dealer);
-  }
+// In dealer.service.ts
+updateDealer(user_id: number, dealerData: FormData): Observable<any> {
+  return this.http.put(`${this.serviceApiUrl}/updatedealer/${user_id}`, dealerData);
+  // NO Content-Type header
+}
+
+  // // Update dealer
+  // updateDealer(dealer: any): Observable<any> {
+  //   console.log('Updating dealer with ID:', dealer.id, 'Data:', dealer);
+  //   return this.http.put(`${this.serviceApiUrl}/updatedealer/${dealer.id}`, dealer);
+  // }
 
   // Delete dealer
   deleteDealer(id: number): Observable<void> {

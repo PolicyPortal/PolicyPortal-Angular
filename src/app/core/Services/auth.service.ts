@@ -29,10 +29,14 @@ export class AuthService {
   // register(userData: any): Observable<any> {
   //   return this.http.post(`${this.serviceApiUrl}/register`, userData);
   // }
-    addDealer(dealerData: any): Observable<any> {
+
+  //   addDealer(dealerData: any): Observable<any> {
+  //   return this.http.post(`${this.serviceApiUrl}/register`, dealerData);
+  // }
+  addDealer(dealerData: FormData): Observable<any> {
+    console.log('Dealer Data being sent:', dealerData.getAll(''));
     return this.http.post(`${this.serviceApiUrl}/register`, dealerData);
   }
-
 
   login(credentials: any): Observable<any> {
     return this.http.post(`${this.serviceApiUrl}/login`, credentials).pipe(
@@ -51,6 +55,13 @@ export class AuthService {
         }
       })
     );
+  }
+
+
+  getDealerId(): number {
+    const userData = this.getUserData();
+    console.log('User Data in getDealerId():', userData);
+    return userData.id;
   }
 
   logout(): void {

@@ -1,1 +1,162 @@
-<p>invoice-management works!</p>
+<h3 class="heading">Invoice Management</h3>
+<div class="row g-4 bg-light">
+
+
+  <div class="col-lg-4">
+    <div class="card shadow-sm rounded-3 border-0 ">
+         <!-- <h4 class="card-title mb-4">Create New Invoice</h4> -->
+      <div class="card-body p-4 ">
+        <form (ngSubmit)="onFormSubmit()">
+             
+             <div class="mb-3">
+             <label class="form-label small">Dealer</label>
+             <select [(ngModel)]="adminForm.dealerId" name="dealerId" required class="form-select">
+                  <option value="" disabled>Select a dealer</option>
+                  @for (dealer of dealers(); track dealer.uid) {
+                       <option [value]="dealer.uid">{{ dealer.name }}</option>
+                    } @empty {
+                <option value="" disabled>Loading dealers...</option>
+              }
+            </select>
+          </div>
+
+          <div class="row g-3 mb-3">
+            <div class="col">
+              <label class="form-label small">Month</label> <input type="number" [(ngModel)]="adminForm.month" name="month" required
+                min="1" max="12" placeholder="MM" class="form-control">
+            </div>
+            <div class="col">
+              <label class="form-label small">Year</label> <input type="number" [(ngModel)]="adminForm.year" name="year" required
+                min="2020" max="2030" placeholder="YYYY" class="form-control">
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label small">Net Business</label> <input type="number" [(ngModel)]="adminForm.netBusiness" name="netBusiness" required class="form-control">
+          </div>
+          <div class="mb-3">
+            <label class="form-label small">Payout</label> <input type="number" [(ngModel)]="adminForm.payout" name="payout" required class="form-control">
+          </div>
+          <div class="mb-3">
+            <label class="form-label small">IGST</label> <input type="number" [(ngModel)]="adminForm.igst" name="igst" required class="form-control">
+          </div>
+          <div class="mb-3">
+            <label class="form-label small">Invoice Number</label> <input type="text" [(ngModel)]="adminForm.invoiceNumber" name="invoiceNumber" required class="form-control">
+          </div>
+
+          <button type="submit" [disabled]="loading() || !isFormValid()" class="btn btn-primary w-100 btn-lg mt-3"> @if (loading()) {
+              <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+              <span class="ms-1">Submitting...</span>
+            } @else {
+              <span>Submit Invoice Request</span>
+            }
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-8">
+    <div class="card shadow-sm rounded-3 border-0 overflow-hidden">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0" style="font-size: 0.9rem;">
+          <thead class="table-light">
+            <tr>
+              <th class="p-3 text-start text-uppercase small fw-semibold text-muted text-nowrap">Dealer</th>
+              <th class="p-3 text-start text-uppercase small fw-semibold text-muted text-nowrap">Status</th>
+              <th class="p-3 text-start text-uppercase small fw-semibold text-muted text-nowrap">Month/Year</th>
+              <th class="p-3 text-start text-uppercase small fw-semibold text-muted text-nowrap">Invoice Number</th>
+              <th class="p-3 text-start text-uppercase small fw-semibold text-muted text-nowrap">Payout</th>
+              <th class="p-3 text-start text-uppercase small fw-semibold text-muted text-nowrap">NetBusiness</th>
+              <th class="p-3 text-start text-uppercase small fw-semibold text-muted text-nowrap">IGST</th>
+              <!-- <th class="p-3 text-start text-uppercase small fw-semibold text-muted text-nowrap">NetPayout</th>
+              <th class="p-3 text-start text-uppercase small fw-semibold text-muted text-nowrap">ClaimedPayout</th>
+              <th class="p-3 text-start text-uppercase small fw-semibold text-muted text-nowrap">UnClaimedPayout</th> -->
+              <!-- <th class="p-3 text-start text-uppercase small fw-semibold text-muted text-nowrap">Admin Date</th>
+              <th class="p-3 text-start text-uppercase small fw-semibold text-muted text-nowrap">Dealer Date</th> -->
+            </tr>
+          </thead>
+          <tbody>
+            @for (invoice of allInvoices(); track invoice.invoiceid) {
+              <tr class="border-top">
+                <td class="p-3 text-nowrap fw-medium">{{ invoice.dealername }}</td>
+                <td class="p-3 text-nowrap">
+                     <span class="badge rounded-pill px-3 py-2 small fw-medium" [ngClass]="{
+                    'text-bg-warning-subtle border border-warning-subtle': invoice.status === 'Sent to Dealer',
+                    'text-bg-success-subtle border border-success-subtle': invoice.status === 'Submitted by Dealer'
+                  }">
+                    {{ invoice.status }}
+               </span>
+          </td>
+          <td class="p-3 text-nowrap">{{ invoice.invoicemonthyear }}</td>
+          <td class="p-3 text-nowrap">{{ invoice.invoicenumber }}</td>
+                    <td class="p-3 text-nowrap">{{ invoice.payout }}</td>
+                    <td class="p-3 text-nowrap">{{ invoice.netbusiness }}</td>
+                    <td class="p-3 text-nowrap">{{ invoice.igst }}</td>
+                    <!-- <td class="p-3 text-nowrap">{{ invoice.netPayout }}</td>
+                    <td class="p-3 text-nowrap">{{ invoice.claimedPayout }}</td>
+                    <td class="p-3 text-nowrap">{{ invoice.unClaimedPayout }}</td> -->
+                
+                <!-- <td class="p-3 text-nowrap">{{ formatDate(invoice.adminsubmissiondate) }}</td>
+                <td class="p-3 text-nowrap">{{ formatDate(invoice.dealersubmissiondate) }}</td> -->
+              </tr>
+            } 
+            @empty {
+                      <tr style="height: 100px;">
+                        <td colspan="9" class="text-center">
+                          @if (allInvoices().length === 0 && !this.loading()) {
+                            <span>No invoices found.</span>
+                          } @else {
+                            <div class="spinner-border text-primary" role="status">
+                              <span class="visually-hidden">Loading...</span>
+                            </div>
+                          }
+                        </td>
+                      </tr>
+                    }
+            <!-- @empty {
+              <tr>
+                <td [attr.colspan]="6" class="text-center p-5 text-muted">
+                  No invoices found.
+                </td>
+              </tr>
+            } -->
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card-footer bg-white d-flex flex-wrap align-items-center p-3">
+        <div class="text-muted small mb-2 mb-md-0">
+          {{ paginationInfo() }}
+        </div>
+        <div class="flex-grow-1"></div>
+        <div class="d-flex align-items-center gap-2 mb-2 mb-md-0 me-4">
+          <label for="pageSize" class="form-label small text-nowrap mb-0">Rows:</label>
+          <select id="pageSize" [value]="pageSize()" (change)="onPageSizeChange($event)" class="form-select form-select-sm" style="width: 75px;">
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="25">25</option>
+            <option value="50">50</option>
+          </select>
+        </div>
+
+        <nav aria-label="Policy pagination">
+          <ul class="pagination pagination-sm mb-0">
+            <li class="page-item" [class.disabled]="currentPage() === 1">
+              <button class="page-link" (click)="goToPage(1)" aria-label="First">&laquo;</button>
+            </li>
+            <li class="page-item" [class.disabled]="currentPage() === 1">
+              <button class="page-link" (click)="prevPage()" aria-label="Previous">&lsaquo;</button>
+            </li>
+            <li class="page-item" [class.disabled]="currentPage() === totalPages()">
+              <button class="page-link" (click)="nextPage()" aria-label="Next">&rsaquo;</button>
+            </li>
+            <li class="page-item" [class.disabled]="currentPage() === totalPages()">
+              <button class="page-link" (click)="goToPage(totalPages())" aria-label="Last">&raquo;</button>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+</div>

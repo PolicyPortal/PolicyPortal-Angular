@@ -31,10 +31,12 @@
     .border-end { border-right: 1px solid #dee2e6 !important; }
 
     /* Custom App Styles */
-    .dealer-header {
-      color: #333;
-      font-weight: 700;
-    }
+    .heading {     
+     padding-left: 5px;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0 0 16px 0;
+}
 
     .card {
       background-color: #ffffff;

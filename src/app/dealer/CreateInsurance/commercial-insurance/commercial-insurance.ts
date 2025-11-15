@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { InsuranceService } from '../../../core/Services/insurance.service';
 
 @Component({
@@ -37,8 +37,13 @@ insuranceForm!: FormGroup;
 
     this.insuranceForm = this.fb.group({
       // Coverage Details
-      bodyType: [null, Validators.required],
       isNewVehicle: ['No', Validators.required],
+      vehicleClass: [null, Validators.required],
+      bodyType: [null, Validators.required],
+      seatingCapacity: [null, Validators.required],
+      noOfWheels: [null, Validators.required],
+      gvw: [null, Validators.required],
+      fuelType: [null, Validators.required],
       policyType: [null, Validators.required],
       previousPolicyExpired: [null, Validators.required],
       claimInPreviousYear: [null, Validators.required],
@@ -52,12 +57,16 @@ insuranceForm!: FormGroup;
       vehiclePincode : ['', Validators.required],
       vehicleCity : ['', Validators.required],
       vehicleState : ['', Validators.required],
-      manufacturer: ['', Validators.required],
-      model: ['', Validators.required],
+      // manufacturer: ['', Validators.required],
+      // model: ['', Validators.required],
+      manufacturer: [null, Validators.required],
+      model: [null, Validators.required],
       cc : [null, Validators.required],
       engineNumber: ['', Validators.required],
       chassisNumber: ['', Validators.required],
-      haveRegistrationNumber: ['No', Validators.required],    
+      haveRegistrationNumber: ['No', Validators.required],
+      vehicleNumber: ['', Validators.required],
+      // registrationNumber: ['', Validators.required],
       exShowroomPrice: [null, Validators.required],
       idv: [null, Validators.required],
       // Add Ons
@@ -72,7 +81,9 @@ insuranceForm!: FormGroup;
       // Hypothecation Details
       isHypothecated: ['No', Validators.required],
       financier: [null, Validators.required],
-      ifFinancierNotListed: ['', Validators.required],
+      branchLocation : ['', Validators.required],
+      NotListedFinancier: ['', Validators.required],
+
       // Customer Details
       customerType: ['individual', Validators.required],
 
@@ -82,6 +93,9 @@ insuranceForm!: FormGroup;
       firstName: ['', Validators.required],
       lastName: ['', Validators.required],
       dob: ['', Validators.required],
+      customerAadhar: [null, Validators.required], // Regex for a valid 12-digit Aadhaar number
+      customerPAN: [null], // Regex for a valid PAN number
+      customerForm16: [null],
       
       companyName: ['', Validators.required],
       dateOfIncorporation: ['', Validators.required],
@@ -101,6 +115,8 @@ insuranceForm!: FormGroup;
       nomineeRelation: [null, Validators.required],
       nomineeAge: [null, Validators.required],
       nomineeGender: [null, Validators.required],
+    },{
+      validators: this.panOrForm16RequiredValidator.bind(this)
     });
 
     // Initialize collapse states
@@ -115,14 +131,75 @@ insuranceForm!: FormGroup;
   }
   
   /**
+   * Custom validator to check if either PAN or Form16 is provided for individuals.
+   */
+  panOrForm16RequiredValidator(group: AbstractControl): ValidationErrors | null {
+    const customerType = group.get('customerType')?.value;
+    const pan = group.get('customerPAN');
+    const form16 = group.get('customerForm16');
+  
+    // Only apply logic if customer is 'individual' and controls exist
+    if (customerType === 'individual' && pan && form16) {
+      // This validator runs when controls are enabled.
+      // The `customerType$` logic will disable them for 'company', so this is safe.
+      const panValue = pan.value;
+      const form16Value = form16.value;
+  
+      if (!panValue && !form16Value) {
+        // Both are empty. Return a group-level error.
+        return { eitherOrRequired: true };
+      }
+    }
+  
+    // Not individual, or at least one has a value.
+    return null;
+  }
+
+  /**
    * Sets up listeners for form controls that have conditional visibility logic.
    */
   setupConditionalLogic(): void {
     const isNewVehicle$ = this.insuranceForm.get('isNewVehicle')!.valueChanges;
     const claimInPreviousYear$ = this.insuranceForm.get('claimInPreviousYear')!.valueChanges;
-    const isHypothecated$ = this.insuranceForm.get('isHypothecated')!.valueChanges;
     const customerType$ = this.insuranceForm.get('customerType')!.valueChanges;
-    const ifFinancierNotListed$ = this.insuranceForm.get('ifFinancierNotListed')!.valueChanges;
+    const isHypothecated$ = this.insuranceForm.get('isHypothecated')!.valueChanges;
+    const financier$ = this.insuranceForm.get('financier')!.valueChanges;
+    const exShowroomPrice$ = this.insuranceForm.get('exShowroomPrice')!.valueChanges;
+    const vehicleClass$ = this.insuranceForm.get('vehicleClass')!.valueChanges;
+
+    vehicleClass$.subscribe(value => {
+      if (value === 'goodsCarryingVehicle') {
+        this.insuranceForm.get('gvw')?.enable();
+        this.insuranceForm.get('noOfWheels')?.enable();
+
+      } else {
+        this.insuranceForm.get('gvw')?.setValue(null);
+        this.insuranceForm.get('gvw')?.disable();
+        this.insuranceForm.get('noOfWheels')?.setValue(null);
+        this.insuranceForm.get('noOfWheels')?.disable();
+      }
+
+      if (value === 'passengerCarryingVehicle') {
+        this.insuranceForm.get('seatingCapacity')?.enable();
+      } else {
+        this.insuranceForm.get('seatingCapacity')?.setValue(null);
+        this.insuranceForm.get('seatingCapacity')?.disable();
+      }
+
+      
+    });
+
+    exShowroomPrice$.subscribe(value => {
+      if (value) {
+        const idv = value ? value * 0.05 : null; // Example: IDV is 5% of ex-showroom price
+        this.insuranceForm.get('idv')?.setValue(idv);
+        this.insuranceForm.get('idv')?.disable();
+
+      } else {
+        this.insuranceForm.get('idv')?.setValue(null);
+        this.insuranceForm.get('idv')?.enable();
+      }
+    });
 
     isNewVehicle$.subscribe(value => {
         // this.updateControl('policyType', value === 'Yes');
@@ -135,24 +212,42 @@ insuranceForm!: FormGroup;
         this.updateControl('previousYearNCB', this.insuranceForm.get('isNewVehicle')?.value === 'No' && value === 'no');
     });
 
-    
+  
+
+
     customerType$.subscribe(value => {
-      this.updateControl('individualName', value === 'individual');
-      this.updateControl('dob', value === 'individual');
-      this.updateControl('companyName', value === 'company');
-      this.updateControl('dateOfIncorporation', value === 'company');
+      const isIndividual = (value === 'individual');
+      const isCompany = (value === 'company');
+
+      // Individual fields
+      ['gender', 'salutation', 'firstName', 'lastName', 'dob', 'customerAadhar'] // Removed PAN/Form16
+        .forEach(name => this.updateControl(name, isIndividual));
+
+      // UPDATED: Handle PAN/Form16 separately to not add Validators.required
+      this.updateControl('customerPAN', isIndividual, false); // isRequired = false
+      this.updateControl('customerForm16', isIndividual, false); // isRequired = false
+
+      // // Company fields
+      ['companyName', 'dateOfIncorporation', 'gstin']
+        .forEach(name => this.updateControl(name, isCompany, name === 'gstin' ? false : true)); // gstin is optional
+
+      // Re-validate the whole form to apply the new custom validator status
+      this.insuranceForm.updateValueAndValidity();
     });
-    
-    // isHypothecated$.subscribe(value => {
-    //     this.updateControl('financier', value === 'Yes');
-    // });
 
-    // ifFinancierNotListed$.subscribe(value => {
-    //     this.updateControl('financier', this.insuranceForm.get('ifFinancierNotListed')?.value.trim() === '');
-    //             // this.insuranceForm.get('financier')?.setValue('not Listed');
 
-    // });
+    isHypothecated$.subscribe(value => {
+        this.updateControl('financier', value === 'Yes');
+        this.updateControl('branchLocation', value === 'Yes');
 
+      });
+
+    financier$.subscribe(value => {
+        // this.updateControl('branchLocation', this.insuranceForm.get('isHypothecated')?.value === 'Yes');
+        this.updateControl('NotListedFinancier', value === 'notListed');
+    });
+
+    // this.updateControl('NotListedFinancier', value === 'Yes' && this.insuranceForm.get('financier')?.value === 'notListed');
 
     // Initial check
     this.insuranceForm.get('isNewVehicle')?.updateValueAndValidity({ emitEvent: true });
@@ -160,17 +255,42 @@ insuranceForm!: FormGroup;
     this.insuranceForm.get('isHypothecated')?.updateValueAndValidity({ emitEvent: true });
     this.insuranceForm.get('customerType')?.updateValueAndValidity({ emitEvent: true });
     // this.insuranceForm.get('ifFinancierNotListed')?.updateValueAndValidity({ emitEvent: true });
+    this.insuranceForm.get('financier')?.updateValueAndValidity({ emitEvent: true });
+    
+
   }
 
   /**
    * Updates the validation and enabled/disabled state of a control.
    */
-  updateControl(controlName: string, isEnabled: boolean) {
+  // updateControl(controlName: string, isEnabled: boolean, isRequired: boolean = true): void {
+  //   const control = this.insuranceForm.get(controlName);
+  //   if (control) {
+  //       if (isEnabled) {
+  //           control.enable();
+  //           control.setValidators(isRequired ? Validators.required : null); // or more complex validators if needed
+  //       } else {
+  //           control.disable();
+  //           control.clearValidators();
+  //           control.reset();
+  //       }
+  //       control.updateValueAndValidity();
+  //   }
+  // }
+
+  /**
+   * Updates the validation and enabled/disabled state of a control.
+   */
+  updateControl(controlName: string, isEnabled: boolean, isRequired: boolean = true) {
     const control = this.insuranceForm.get(controlName);
     if (control) {
         if (isEnabled) {
             control.enable();
-            control.setValidators(Validators.required); // or more complex validators if needed
+            if (isRequired) {
+              control.setValidators(Validators.required);
+            } else {
+              control.clearValidators(); // Clear validators if enabled but not required (like PAN)
+            }
         } else {
             control.disable();
             control.clearValidators();
@@ -179,6 +299,8 @@ insuranceForm!: FormGroup;
         control.updateValueAndValidity();
     }
   }
+
+
 
   /**
    * Toggles the collapsed state of a form section.
@@ -196,7 +318,7 @@ insuranceForm!: FormGroup;
     this.premiumStatus = null;
     setTimeout(() => {
         this.premiumAmount = Math.random() * 5000 + 2000;
-        this.premiumStatus = 'Quote Generated Successfully';
+        this.premiumStatus = 'Quote Calculated Successfully';
         this.isCalculating = false;
     }, 1500);
   }
@@ -216,17 +338,45 @@ insuranceForm!: FormGroup;
     }
   }
 
-  /**
-   * Handles the form submission event.
-   */
+  // /**
+  //  * Handles the form submission event.
+  //  */
+  // onSubmit(): void {
+  //   if (this.insuranceForm.valid) {
+  //     console.log('Form Submitted!', this.insuranceForm.getRawValue());
+  //     // In a real app, you would replace this alert with a modal or toast notification.
+  //     alert('Form submitted successfully! Check the console for the form data.');
+  //   } else {
+  //     // Show which fields are invalid
+  //     const invalidFields = Object.keys(this.insuranceForm.controls).filter(field => this.insuranceForm.get(field)?.invalid);
+  //     console.log('Invalid Fields:', invalidFields);
+
+
+  //     console.error('Form is invalid.');
+  //     this.insuranceForm.markAllAsTouched();
+  //   }
+  // }
+
+
   onSubmit(): void {
     if (this.insuranceForm.valid) {
-      console.log('Form Submitted!', this.insuranceForm.getRawValue());
-      // In a real app, you would replace this alert with a modal or toast notification.
-      alert('Form submitted successfully! Check the console for the form data.');
+      // It's best to preprocess fields locally, e.g. convert value types if needed,
+      // but the backend code provided already handles conversion for Yes/No, etc.
+      this.insuranceService.createTwoWheelerInsurance(this.insuranceForm.getRawValue())
+        .subscribe({
+          next: res => {
+            alert('Submitted successfully! Insurance ID: ' + res.insurance_id);
+            this.insuranceForm.reset();
+          },
+          error: err => {
+            alert('Could not submit insurance: ' + (err.error?.error || err.message));
+          }
+        });
     } else {
-      console.error('Form is invalid.');
+      const invalidFields = Object.keys(this.insuranceForm.controls).filter(field => this.insuranceForm.get(field)?.invalid);
+      console.log('Invalid Fields:', invalidFields);
       this.insuranceForm.markAllAsTouched();
+      alert('Form is invalid. Please check your entries.');
     }
   }
 }

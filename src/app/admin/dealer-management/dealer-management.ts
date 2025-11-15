@@ -12,7 +12,7 @@ import { AuthService } from '../../core/Services/auth.service';
 
 // Base interface provided by the (mock) service
 export interface Dealer {
-  user_id: number;
+  id: number;
   name: string;
   role: string;
   email: string;
@@ -50,44 +50,13 @@ export interface ExpandedDealer extends Dealer {
     };
   };
   // File properties
-  pan_file: File | null;
-  aadhaar_file: File | null;
-  gst_file: File | null;
+  pan_file_url: File | null;
+  aadhaar_file_url: File | null;
+  gst_file_url: File | null;
+  bank_details_file_url: File | null;
 }
 
-// --- MOCK SERVICE ---
-// A mock service to make the component runnable
-// class DealerService1 {
-//     private baseUrl = `${environment.apiUrl}`;
 
-//   constructor(private http: HttpClient) {}
-
-//   // Register/create dealer (usually POST to /auth/register)
-//   addDealer(dealerData: any): Observable<any> {
-//     return this.http.post(`${this.baseUrl}/auth/register`, dealerData);
-//   }
-
-//   // Get all dealers
-//   getDealers(): Observable<any[]> {
-//     return this.http.get<any[]>(`${this.baseUrl}/dealers/alldealers`);
-//   }
-
-//   // Update dealer
-//   updateDealer(dealer: any): Observable<any> {
-//     return this.http.put(`${this.baseUrl}/dealers/updatedealer/${dealer.user_id}`, dealer);
-//   }
-
-//   // Delete dealer
-//   deleteDealer(id: number): Observable<void> {
-//     return this.http.delete<void>(`${this.baseUrl}/dealers/deletedealer/${id}`);
-//   }
-
-//   // Get details by id
-//   getDealerById(id: number): Observable<any> {
-  //     return this.http.get<any>(`${this.baseUrl}/dealers/${id}`);
-  //   }
-  
-  // }
   @Component({
     selector: 'app-dealer-management',
     imports: [CommonModule, ReactiveFormsModule, FormsModule],
@@ -102,6 +71,59 @@ export class DealerManagement {
   viewingDealer: WritableSignal<ExpandedDealer | null> = signal(null); // For Details Popup
   isEditing = signal(false);
   isloadingDealers: boolean = true;
+
+  /**
+   * Converts the ExpandedDealer object into FormData for file uploads.
+   */
+  private buildDealerFormData(dealer: ExpandedDealer): FormData {
+    const formData = new FormData();
+
+    // 1. Append simple text fields
+    formData.append('name', dealer.name);
+    formData.append('email', dealer.email);
+    formData.append('phone', dealer.phone);
+    formData.append('location', dealer.location);
+    formData.append('role', dealer.role);
+    formData.append('status', dealer.status);
+    formData.append('owner_name', dealer.owner_name);
+    formData.append('owner_contact', dealer.owner_contact);
+    formData.append('oem', dealer.oem);
+    formData.append('pan_number', dealer.pan_number);
+    formData.append('aadhaar_number', dealer.aadhaar_number);
+    formData.append('gst_number', dealer.gst_number);
+    formData.append('bank_name', dealer.bank_name);
+    formData.append('bank_branch', dealer.bank_branch);
+    formData.append('ifsc_code', dealer.ifsc_code);
+
+    // 2. Append password ONLY if it's a new dealer (isEditing is false)
+    if (!this.isEditing() && dealer.password) {
+      formData.append('password', dealer.password);
+    }
+    
+    // 3. Stringify nested JSON objects
+    // Multer (backend) cannot parse nested objects in FormData.
+    // The standard practice is to stringify them.
+    formData.append('payouts', JSON.stringify(dealer.payouts));
+
+    // 4. Append files ONLY if they are new File objects (not null)
+    // This matches the keys your backend Multer route is expecting.
+    if (dealer.pan_file_url instanceof File) {
+      formData.append('pan_file_url', dealer.pan_file_url, dealer.pan_file_url.name);
+    }
+    if (dealer.aadhaar_file_url instanceof File) {
+      formData.append('aadhaar_file_url', dealer.aadhaar_file_url, dealer.aadhaar_file_url.name);
+    }
+    if (dealer.gst_file_url instanceof File) {
+      formData.append('gst_file_url', dealer.gst_file_url, dealer.gst_file_url.name);
+    }
+    if (dealer.bank_details_file_url instanceof File) {
+      // Note: Your backend route didn't list this key.
+      // You may need to add it to your Multer fields array.
+      formData.append('bank_details_file_url', dealer.bank_details_file_url, dealer.bank_details_file_url.name);
+    }
+
+    return formData;
+  }
 
   // --- Computed Signals ---
   isFormValid: Signal<boolean> = computed(() => {
@@ -118,7 +140,7 @@ export class DealerManagement {
     if (!dealer.owner_name || !dealer.owner_contact || !dealer.pan_number || !dealer.aadhaar_number || !dealer.gst_number) return false;
 
     // Files (only for new)
-    if (!this.isEditing() && (!dealer.pan_file || !dealer.aadhaar_file || !dealer.gst_file)) {
+    if (!this.isEditing() && (!dealer.pan_file_url || !dealer.aadhaar_file_url || !dealer.gst_file_url)) {
       return false;
     }
 
@@ -144,6 +166,9 @@ export class DealerManagement {
     this.isPageReady.set(true);
   }
 
+  openImagePopup(imageUrl: string): void {
+  window.open(imageUrl, '_blank');
+}
   // --- Data Methods ---
   loadDealers(): void {
     this.dealerService.getDealers().subscribe(data => {
@@ -161,7 +186,7 @@ export class DealerManagement {
       // [user_id, owner_name, owner_contact, oem, pan_number, aadhaar_number, 
       //   gst_number, bank_name, bank_branch, ifsc_code, pan_file_url, aadhaar_file_url, gst_file_url, status]
 
-      user_id: 0, // Temporary ID
+      id: 0, // Temporary ID
       name: '',
       role: 'Dealer', // Default role
       email: '',
@@ -194,9 +219,11 @@ export class DealerManagement {
           out: { '0-150': 0, '150-350': 0, '350+': 0 }
         }
       },
-      pan_file: null,
-      aadhaar_file: null,
-      gst_file: null,
+
+      pan_file_url: null,
+      aadhaar_file_url: null,
+      gst_file_url: null,
+      bank_details_file_url: null,
     });
   }
 
@@ -207,7 +234,7 @@ export class DealerManagement {
   }
 
   onSave(): void {
-    const currentDealer = this.selectedDealer();
+      const currentDealer = this.selectedDealer();
     if (!currentDealer || !this.isFormValid()) {
       //show all invalid fields in the form
       console.log("invalid fields names:", Object.keys(currentDealer || {}).filter(key => {
@@ -218,31 +245,80 @@ export class DealerManagement {
       return;
     }
 
-    // In a real app, you would handle file uploads here,
-    // get back URLs, and add them to the dealer object.
-    console.log("File Upload Logic would go here...");
+    console.log("Saving dealer:", currentDealer);
     
-    if (this.isEditing()) {
-      // Update existing dealer
-      this.dealerService.updateDealer(currentDealer).subscribe(() => {
-        this.resetForm();
-        this.loadDealers();
-      });
+    // 1. Convert the signal's data into FormData
+    const formData = this.buildDealerFormData(currentDealer);
 
+    if (this.isEditing()) {
+      // 2. Call update service with ID and FormData
+      this.dealerService.updateDealer(currentDealer.id, formData).subscribe({
+        next: () => {
+          this.resetForm();
+          this.loadDealers();
+        },
+        error: (err) => console.error("Error updating dealer:", err)
+      });
+      
     } else {
-      // Add new dealer
-      const { user_id, ...newDealerData } = currentDealer;
-      this.authService.addDealer(newDealerData).subscribe(() => {
-        this.resetForm();
-        this.loadDealers();
+      // 3. Call add service with FormData
+      // Note: Your authService.addDealer must also accept FormData
+      this.authService.addDealer(formData).subscribe({
+        next: () => {
+          this.resetForm();
+          this.loadDealers();
+        },
+        error: (err) => console.error("Error adding dealer:", err)
       });
     }
   }
 
+
+  // onSave(): void {
+  //   console.log("Saving dealer:", this.selectedDealer());
+  //   // temporarily skip further processing
+  //   // return;
+    
+  //   const currentDealer = this.selectedDealer();
+  //   if (!currentDealer || !this.isFormValid()) {
+  //     //show all invalid fields in the form
+  //     console.log("invalid fields names:", Object.keys(currentDealer || {}).filter(key => {
+  //       const value = (currentDealer as any)[key];
+  //       return value === null || value === undefined || value === '';
+  //     }));
+  //     console.error("Form is invalid or no dealer selected.");
+  //     return;
+  //   }
+
+    
+  //   // In a real app, you would handle file uploads here,
+  //   // get back URLs, and add them to the dealer object.
+  //   console.log("File Upload Logic would go here...");
+    
+
+    
+  //   if (this.isEditing()) {
+  //     // Update existing dealer
+  //     this.dealerService.updateDealer(currentDealer).subscribe(() => {
+  //       this.resetForm();
+  //       this.loadDealers();
+  //     });
+      
+  //   } else {
+  //     // Add new dealer
+  //     const { user_id, ...newDealerData } = currentDealer!;
+  //     this.authService.addDealer(newDealerData).subscribe(() => {
+  //       this.resetForm();
+  //       this.loadDealers();
+  //     });
+  //   }
+  // }
+
   onDelete(id: number): void {
     // We should not use window.confirm
     // This is a placeholder for a custom modal confirmation
-    const confirmed = true; // Bypassing confirmation
+    // const confirmed = true; // Bypassing confirmation
+    const confirmed = window.confirm("Are you sure you want to delete this dealer?");
     if (confirmed) {
       this.dealerService.deleteDealer(id).subscribe(() => {
         this.loadDealers();
@@ -298,10 +374,10 @@ export class DealerManagement {
   /**
    * Handles file input changes
    */
-  handleFile(event: Event, field: 'pan_file' | 'aadhaar_file' | 'gst_file'): void {
+  handleFile(event: Event, field: 'pan_file_url' | 'aadhaar_file_url' | 'gst_file_url' | 'bank_details_file_url'): void {
     const target = event.target as HTMLInputElement;
     const file = target.files ? target.files[0] : null;
-
+    console.log('Selected file for', field, ':', file);
     if (file) {
       this.selectedDealer.update(dealer => {
         if (!dealer) return null;

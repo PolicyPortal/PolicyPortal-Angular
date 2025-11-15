@@ -7,7 +7,7 @@
           <div class="card shadow-sm rounded-3 border-0 h-100">
             <div class="card-body p-4">
               <span class="text-muted small d-block text-uppercase fw-medium">Today's Policy</span>
-              <span class="h3 fw-bold text-dark d-block mt-1">22</span>
+              <span class="h3 fw-bold text-dark d-block mt-1">{{ counts().todayPolicies }}</span>
             </div>
           </div>
         </div>
@@ -16,7 +16,7 @@
           <div class="card shadow-sm rounded-3 border-0 h-100">
             <div class="card-body p-4">
               <span class="text-muted small d-block text-uppercase fw-medium">This Month's Policy</span>
-              <span class="h3 fw-bold text-dark d-block mt-1">120</span>
+              <span class="h3 fw-bold text-dark d-block mt-1">{{ counts().monthPolicies }}</span>
             </div>
           </div>
         </div>
@@ -25,7 +25,7 @@
           <div class="card shadow-sm rounded-3 border-0 h-100">
             <div class="card-body p-4">
               <span class="text-muted small d-block text-uppercase fw-medium">This Year's Policy</span>
-              <span class="h3 fw-bold text-dark d-block mt-1">1,450</span>
+              <span class="h3 fw-bold text-dark d-block mt-1">{{ counts().yearPolicies }}</span>
             </div>
           </div>
         </div>
@@ -34,7 +34,7 @@
           <div class="card shadow-sm rounded-3 border-0 h-100">
             <div class="card-body p-4">
               <span class="text-muted small d-block text-uppercase fw-medium">Total Earning</span>
-              <span class="h3 fw-bold text-dark d-block mt-1">₹ 8,76,500</span>
+              <span class="h3 fw-bold text-dark d-block mt-1">₹ {{ counts().totalEarning }}</span>
             </div>
           </div>
         </div>
@@ -43,7 +43,7 @@
           <div class="card shadow-sm rounded-3 border-0 h-100">
             <div class="card-body p-4">
               <span class="text-muted small d-block text-uppercase fw-medium">This Month's Earning</span>
-              <span class="h3 fw-bold text-dark d-block mt-1">₹ 72,300</span>
+              <span class="h3 fw-bold text-dark d-block mt-1">₹ {{ counts().monthEarning }}</span>
             </div>
           </div>
         </div>
@@ -101,7 +101,7 @@
                 <th class="p-3 text-start text-uppercase small fw-semibold text-muted text-nowrap">Status</th>
                 <th class="p-3 text-start text-uppercase small fw-semibold text-muted text-nowrap">Policy No.</th>
                 <th class="p-3 text-start text-uppercase small fw-semibold text-muted text-nowrap">Date</th>
-                <th class="p-3 text-start text-uppercase small fw-semibold text-muted text-nowrap">Time</th>
+                <!-- <th class="p-3 text-start text-uppercase small fw-semibold text-muted text-nowrap">Time</th> -->
                 <th class="p-3 text-start text-uppercase small fw-semibold text-muted text-nowrap">Insurer</th>
                 <th class="p-3 text-start text-uppercase small fw-semibold text-muted text-nowrap">Risk Start Date</th>
                 <th class="p-3 text-start text-uppercase small fw-semibold text-muted text-nowrap">Policy Holder</th>
@@ -114,7 +114,7 @@
                 <th class="p-3 text-start text-uppercase small fw-semibold text-muted text-nowrap">IDV</th>
                 <th class="p-3 text-start text-uppercase small fw-semibold text-muted text-nowrap">Premium</th>
                 <th class="p-3 text-start text-uppercase small fw-semibold text-muted text-nowrap">Dealership</th>
-                <th class="p-3 text-start text-uppercase small fw-semibold text-muted text-nowrap">View</th>
+                <!-- <th class="p-3 text-start text-uppercase small fw-semibold text-muted text-nowrap">View</th> -->
               </tr>
             </thead>
             <tbody>
@@ -129,32 +129,41 @@
                     <!-- Bootstrap 5.3+ subtle badges -->
                     <span class="status-badge badge rounded-pill px-3 py-2 small fw-medium "
                           [class]="getStatusClass(policy.status)">
-                      {{ policy.status }}
+                      {{ policy.status  |camelCase }}
                     </span>
                   </td>
-                  <td class="p-3 text-nowrap fw-medium">{{ policy.policyNo }}</td>
-                  <td class="p-3 text-nowrap">{{ policy.date }}</td>
-                  <td class="p-3 text-nowrap">{{ policy.time }}</td>
-                  <td class="p-3 text-nowrap">{{ policy.insurer }}</td>
-                  <td class="p-3 text-nowrap">{{ policy.riskStartDate }}</td>
-                  <td class="p-3 text-nowrap">{{ policy.holderName }}</td>
-                  <td class="p-3 text-nowrap">{{ policy.engineNo }}</td>
-                  <td class="p-3 text-nowrap">{{ policy.chassisNo }}</td>
-                  <td class="p-3 text-nowrap">{{ policy.vehicle }}</td>
-                  <td class="p-3 text-nowrap">{{ policy.bodyType }}</td>
-                  <td class="p-3 text-nowrap">{{ policy.policyType }}</td>
-                  <td class="p-3 text-nowrap">{{ policy.newVehicle }}</td>
-                  <td class="p-3 text-nowrap fw-medium">{{ policy.idv }}</td>
-                  <td class="p-3 text-nowrap fw-medium">{{ policy.premium }}</td>
-                  <td class="p-3 text-nowrap">{{ policy.dealership }}</td>
+                  <td class="p-3 text-nowrap fw-medium">{{ policy.policyno.toUpperCase() }}</td>
                   <td class="p-3 text-nowrap">
+                    <span class="date-text d-block">{{ policy.date | date: 'MM-dd-yyyy' }}</span>
+                    <span class="time-text small text-muted d-block">{{ policy.date | date: 'HH:mm:ss' }}</span>
+                    <!-- {{ policy.date }} -->
+                  </td>
+                  <!-- <td class="p-3 text-nowrap">{{ policy.time }}</td> -->
+                  <td class="p-3 text-nowrap">{{ policy.insurer | camelCase }}</td>
+                  <td class="p-3 text-nowrap">
+                    <span class="date-text d-block"> {{ policy.riskstartdate | date: 'MM-dd-yyyy' }}</span>
+                    <span class="time-text small text-muted d-block"> {{ policy.riskstartdate | date: 'HH:mm:ss' }}</span>
+                      
+                    <!-- {{ policy.riskstartdate }} -->
+                  </td>
+                  <td class="p-3 text-nowrap">{{ policy.holdername | camelCase  }}</td>
+                  <td class="p-3 text-nowrap">{{ policy.engineno | camelCase }}</td>
+                  <td class="p-3 text-nowrap">{{ policy.chassisno | camelCase }}</td>
+                  <td class="p-3 text-nowrap">{{ policy.vehicle | camelCase }}</td>
+                  <td class="p-3 text-nowrap">{{ policy.bodytype | camelCase }}</td>
+                  <td class="p-3 text-nowrap">{{ policy.policytype | camelCase }}</td>
+                  <td class="p-3 text-nowrap">{{ policy.newvehicle | camelCase }}</td>
+                  <td class="p-3 text-nowrap fw-medium">{{ policy.idv | camelCase }}</td>
+                  <td class="p-3 text-nowrap fw-medium">{{ policy.premium | camelCase }}</td>
+                  <td class="p-3 text-nowrap">{{ policy.dealership | camelCase }}</td>
+                  <!-- <td class="p-3 text-nowrap">
                     <button class="btn btn-link btn-sm p-0 text-primary">
                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16">
                         <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0"/>
                         <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8m8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7"/>
                       </svg>
                     </button>
-                  </td>
+                  </td> -->
                 </tr>
               }
               <!-- No Data Row -->
