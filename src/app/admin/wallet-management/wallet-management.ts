@@ -12,6 +12,8 @@ import { WalletService, TopupRequest } from '../../core/Services/wallet.service'
 })
 export class WalletManagement {
   // Signals for state
+      isLoading = signal(true);
+
   transactions = signal<TopupRequest[]>([]);
   dealerBalances = signal<{ dealers: { name: string; balance: number; }[] }>({ dealers: [] });
 
@@ -28,6 +30,7 @@ export class WalletManagement {
   selectedDealerBalance = signal('All');
 
   constructor(private walletService: WalletService) {
+    this.isLoading.set(true);
     // Fetch all dealer balances on init
     this.walletService.getAllDealerWithBalance().subscribe({
       next: (data) => {
@@ -102,10 +105,12 @@ export class WalletManagement {
       next: (data) => {
         const txs = Array.isArray(data) ? data : data?.transactions || [];
         this.transactions.set(txs);
+        this.isLoading.set(false);
       },
       error: (err) => {
         console.error('Failed to load transactions:', err);
         this.transactions.set([]);
+        this.isLoading.set(false);
       }
     });
   }

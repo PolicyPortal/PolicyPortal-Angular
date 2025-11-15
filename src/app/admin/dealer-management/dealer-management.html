@@ -5,7 +5,7 @@
         @if (!selectedDealer() && !viewingDealer()) {
           <div>
             <div class="d-flex justify-content-between align-items-center mb-3">
-              <h3 class="dealer-header">Dealer Management</h3>
+              <h3 class="heading">Dealer Management</h3>
               <button class="btn btn-primary" (click)="onAddNewDealer()">
                 <i class="bi bi-plus-circle me-2"></i>Add New Dealer
               </button>
@@ -28,7 +28,7 @@
                     </tr>
                   </thead>
                   <tbody>
-                    @for (dealer of dealers(); track dealer.user_id) {
+                    @for (dealer of dealers(); track dealer.id) {
                       <tr>
                         <td>
                           <button class="btn-link" (click)="onViewDetails(dealer)">
@@ -53,7 +53,7 @@
                           <button class="btn btn-sm btn-outline-primary me-2" (click)="onEdit(dealer)" title="Edit">
                             <i class="bi bi-pencil-square"></i>
                           </button>
-                          <button class="btn btn-sm btn-outline-danger" (click)="onDelete(dealer.user_id)" title="Delete">
+                          <button class="btn btn-sm btn-outline-danger" (click)="onDelete(dealer.id)" title="Delete">
                             <i class="bi bi-trash"></i>
                           </button>
                         </td>
@@ -201,20 +201,20 @@
                       <div class="col-md-4 mb-3">
                         <label for="panFile" class="form-label">PAN File</label>
                         <input type="file" id="panFile" class="form-control" 
-                               (change)="handleFile($event, 'pan_file')" required>
-                        @if(dealer.pan_file) { <span class="file-info">{{ dealer.pan_file.name }}</span> }
+                               (change)="handleFile($event, 'pan_file_url')" required>
+                        @if(dealer.pan_file_url) { <span class="file-info">{{ dealer.pan_file_url.name }}</span> }
                       </div>
                       <div class="col-md-4 mb-3">
                         <label for="aadhaarFile" class="form-label">Aadhaar File</label>
                         <input type="file" id="aadhaarFile" class="form-control" 
-                               (change)="handleFile($event, 'aadhaar_file')" required>
-                        @if(dealer.aadhaar_file) { <span class="file-info">{{ dealer.aadhaar_file.name }}</span> }
+                               (change)="handleFile($event, 'aadhaar_file_url')" required>
+                        @if(dealer.aadhaar_file_url) { <span class="file-info">{{ dealer.aadhaar_file_url.name }}</span> }
                       </div>
                       <div class="col-md-4 mb-3">
                         <label for="gstFile" class="form-label">GST File</label>
                         <input type="file" id="gstFile" class="form-control" 
-                               (change)="handleFile($event, 'gst_file')" required>
-                        @if(dealer.gst_file) { <span class="file-info">{{ dealer.gst_file.name }}</span> }
+                               (change)="handleFile($event, 'gst_file_url')" required>
+                        @if(dealer.gst_file_url) { <span class="file-info">{{ dealer.gst_file_url.name }}</span> }
                       </div>
                     </div>
                   </fieldset>
@@ -240,6 +240,14 @@
                                [value]="dealer.ifsc_code"
                                (input)="updateField($event, 'ifsc_code')" required>
                       </div>
+
+                      <div class="col-md-4 mb-3">
+                        <label for="bankDetailsFile" class="form-label">Bank Details</label>
+                        <input type="file" id="bankDetailsFile" class="form-control" 
+                               (change)="handleFile($event, 'bank_details_file_url')" required>
+                        @if(dealer.bank_details_file_url) { <span class="file-info">{{ dealer.bank_details_file_url.name }}</span> }
+                      </div>
+
                     </div>
                   </fieldset>
 
@@ -496,9 +504,38 @@
                   <div class="details-section">
                     <h5 class="details-header">Uploaded Files</h5>
                     <dl>
-                      <dt>PAN File</dt><dd>{{ dealer.pan_file?.name || 'Not Uploaded' }}</dd>
-                      <dt>Aadhaar File</dt><dd>{{ dealer.aadhaar_file?.name || 'Not Uploaded' }}</dd>
-                      <dt>GST File</dt><dd>{{ dealer.gst_file?.name || 'Not Uploaded' }}</dd>
+                      <dt>PAN File</dt>
+                      <dd>
+                        @if (dealer.pan_file_url) {
+                          <a href="http://localhost:5001/{{ dealer.pan_file_url }}" target="_blank" rel="noopener noreferrer">View File</a>
+                        } @else {
+                          Not Uploaded
+                        }
+                      </dd>
+                      <dt>Aadhaar File</dt>
+                      <dd>
+                        @if (dealer.aadhaar_file_url) {
+                          <a href="http://localhost:5001/{{ dealer.aadhaar_file_url }}" target="_blank" rel="noopener noreferrer">View File</a>
+                        } @else {
+                          Not Uploaded
+                        }
+                      </dd>
+                      <dt>GST File</dt>
+                      <dd>
+                        @if (dealer.gst_file_url) {
+                          <a href="http://localhost:5001/{{ dealer.gst_file_url }}" target="_blank" rel="noopener noreferrer">View File</a>
+                        } @else {
+                          Not Uploaded
+                        }
+                      </dd>
+                      <dt>Bank Details File</dt>
+                      <dd>
+                        @if (dealer.bank_details_file_url) {
+                          <a href="http://localhost:5001/{{ dealer.bank_details_file_url }}" target="_blank" rel="noopener noreferrer">View File</a>
+                        } @else {
+                          Not Uploaded
+                        }
+                      </dd>
                     </dl>
                   </div>
                 </div>

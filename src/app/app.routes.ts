@@ -92,6 +92,12 @@ export const routes: Routes = [
                     data: { roles: ['Dealer'] }
                },
                {
+                    path: 'invoice',
+                    loadComponent: () => import('./dealer/invoice/invoice').then(m => m.InvoiceComponent),
+                    canActivate: [roleGuard],
+                    data: { roles: ['Dealer'] }
+               },
+               {
                     path: 'tickets',
                     loadComponent: () => import('./dealer/tickets/tickets').then(m => m.Tickets),
                     canActivate: [roleGuard],
@@ -112,6 +118,12 @@ export const routes: Routes = [
                {
                     path: 'wallet-management',
                     loadComponent: () => import('./admin/wallet-management/wallet-management').then(m => m.WalletManagement),
+                    canActivate: [roleGuard],
+                    data: { roles: ['Admin'] }
+               },
+               {
+                    path: 'invoice-management',
+                    loadComponent: () => import('./admin/invoice-management/invoice-management').then(m => m.InvoiceManagement),
                     canActivate: [roleGuard],
                     data: { roles: ['Admin'] }
                },

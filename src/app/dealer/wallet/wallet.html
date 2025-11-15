@@ -105,6 +105,28 @@
               </tr>
             </thead>
             <tbody>
+               @if (isLoading()) {
+          <tr>
+            <td [attr.colspan]="18" class="text-center p-5">
+              <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading </span>
+              </div>
+              <div class="text-muted mt-2">Loading transactions...</div>
+            </td>
+          </tr>
+        }
+
+        <!-- @if (errorMessage()) {
+          <tr>
+            <td [attr.colspan]="18" class="text-center p-5">
+              <div class="text-danger">
+                <strong>Error:</strong> {{ errorMessage() }}
+              </div>
+            </td>
+          </tr>
+        }-->
+
+    
               <!-- Updated @for to use filteredTransactions() -->
               @for (tx of filteredTransactions(); track tx.transaction_ref_no) {
                 <tr>

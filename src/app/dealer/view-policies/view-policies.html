@@ -55,7 +55,7 @@
                 <th class="p-3 text-start text-uppercase small fw-semibold text-muted text-nowrap">Status</th>
                 <th class="p-3 text-start text-uppercase small fw-semibold text-muted text-nowrap">Policy No.</th>
                 <th class="p-3 text-start text-uppercase small fw-semibold text-muted text-nowrap">Date</th>
-                <th class="p-3 text-start text-uppercase small fw-semibold text-muted text-nowrap">Time</th>
+                <!-- <th class="p-3 text-start text-uppercase small fw-semibold text-muted text-nowrap">Time</th> -->
                 <th class="p-3 text-start text-uppercase small fw-semibold text-muted text-nowrap">Insurer</th>
                 <th class="p-3 text-start text-uppercase small fw-semibold text-muted text-nowrap">Risk Start Date</th>
                 <th class="p-3 text-start text-uppercase small fw-semibold text-muted text-nowrap">Policy Holder</th>
@@ -68,15 +68,36 @@
                 <th class="p-3 text-start text-uppercase small fw-semibold text-muted text-nowrap">IDV</th>
                 <th class="p-3 text-start text-uppercase small fw-semibold text-muted text-nowrap">Premium</th>
                 <th class="p-3 text-start text-uppercase small fw-semibold text-muted text-nowrap">Dealership</th>
-                <th class="p-3 text-start text-uppercase small fw-semibold text-muted text-nowrap">View</th>
+                <!-- <th class="p-3 text-start text-uppercase small fw-semibold text-muted text-nowrap">View</th> -->
               </tr>
             </thead>
             <tbody>
-              @for (policy of paginatedPolicies(); track policy.uid) {
-                <tr class="border-top">
-                  <td class="p-3 text-nowrap">
-                    <span class="status-badge badge rounded-pill px-3 py-2 small fw-medium text-bg-info-subtle border border-info-subtle">
-                    {{ policy.uid }}
+              @if (isLoading()) {
+          <tr>
+            <td [attr.colspan]="18" class="text-center p-5">
+              <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading policies...</span>
+              </div>
+              <div class="text-muted mt-2">Loading policies...</div>
+            </td>
+          </tr>
+        }
+
+        @if (errorMessage()) {
+          <tr>
+            <td [attr.colspan]="18" class="text-center p-5">
+              <div class="text-danger">
+                <strong>Error:</strong> {{ errorMessage() }}
+              </div>
+            </td>
+          </tr>
+        }
+
+        @for (policy of paginatedPolicies(); track policy.uid) {
+          <tr class="border-top">
+            <td class="p-3 text-nowrap">
+              <span class="status-badge badge rounded-pill px-3 py-2 small fw-medium text-bg-info-subtle border border-info-subtle">
+                {{ policy.uid }}
                     </span>
                 </td>
                   <td class="p-3 text-nowrap">
@@ -86,33 +107,40 @@
                       {{ policy.status }}
                     </span>
                   </td>
-                  <td class="p-3 text-nowrap fw-medium">{{ policy.policyNo }}</td>
-                  <td class="p-3 text-nowrap">{{ policy.date }}</td>
-                  <td class="p-3 text-nowrap">{{ policy.time }}</td>
+                  <td class="p-3 text-nowrap fw-medium">{{ policy.policyno }}</td>
+                  <td class="p-3 text-nowrap">
+                    <span class="date-text d-block">{{ policy.date | date: 'MM-dd-yyyy' }}</span>
+                    <span class="time-text small text-muted d-block">{{ policy.date | date: 'HH:mm:ss' }}</span>
+                  </td>
+                  <!-- <td class="p-3 text-nowrap">{{ policy.time }}</td> -->
                   <td class="p-3 text-nowrap">{{ policy.insurer }}</td>
-                  <td class="p-3 text-nowrap">{{ policy.riskStartDate }}</td>
-                  <td class="p-3 text-nowrap">{{ policy.holderName }}</td>
-                  <td class="p-3 text-nowrap">{{ policy.engineNo }}</td>
-                  <td class="p-3 text-nowrap">{{ policy.chassisNo }}</td>
+                  <td class="p-3 text-nowrap">
+                    <span class="date-text d-block">{{ policy.riskstartdate | date: 'MM-dd-yyyy' }}</span>
+                    <!-- <span class="time-text small text-muted d-block">{{ policy.riskstartdate | date: 'HH:mm:ss' }}</span> -->
+                    <!-- {{ policy.riskstartdate }} -->
+                  </td>
+                  <td class="p-3 text-nowrap">{{ policy.holdername }}</td>
+                  <td class="p-3 text-nowrap">{{ policy.engineno }}</td>
+                  <td class="p-3 text-nowrap">{{ policy.chassisno }}</td>
                   <td class="p-3 text-nowrap">{{ policy.vehicle }}</td>
-                  <td class="p-3 text-nowrap">{{ policy.bodyType }}</td>
-                  <td class="p-3 text-nowrap">{{ policy.policyType }}</td>
-                  <td class="p-3 text-nowrap">{{ policy.newVehicle }}</td>
+                  <td class="p-3 text-nowrap">{{ policy.bodytype }}</td>
+                  <td class="p-3 text-nowrap">{{ policy.policytype }}</td>
+                  <td class="p-3 text-nowrap">{{ policy.newvehicle }}</td>
                   <td class="p-3 text-nowrap fw-medium">{{ policy.idv }}</td>
                   <td class="p-3 text-nowrap fw-medium">{{ policy.premium }}</td>
                   <td class="p-3 text-nowrap">{{ policy.dealership }}</td>
-                  <td class="p-3 text-nowrap">
+                  <!-- <td class="p-3 text-nowrap">
                     <button class="btn btn-link btn-sm p-0 text-primary">
                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16">
                         <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0"/>
                         <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8m8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7"/>
                       </svg>
                     </button>
-                  </td>
+                  </td> -->
                 </tr>
               }
               <!-- No Data Row -->
-              @if (filteredPolicies().length === 0) {
+              @if (filteredPolicies().length === 0 && !isLoading() && !errorMessage()) {
                 <tr>
                   <td [attr.colspan]="18" class="text-center p-5 text-muted">
                     No policies found matching your search criteria.
@@ -160,3 +188,4 @@
           </nav>
         </div>
       </div>
+

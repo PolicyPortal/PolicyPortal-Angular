@@ -11,6 +11,7 @@ import { WalletService, TopupRequest } from '../../core/Services/wallet.service'
   imports: [CommonModule, ReactiveFormsModule]
 })
 export class WalletComponent implements OnInit {
+  isLoading = signal(false);
   paymentModes: string[] = ['Cash Deposit', 'Cheque', 'UPI', 'Net Banking'];
 
   filterRefNo = signal('');
@@ -37,6 +38,7 @@ export class WalletComponent implements OnInit {
 
 
   ngOnInit(): void {
+    this.isLoading.set(true);
     this.fetchBalance();
     this.fetchTransactions();
   }
@@ -55,10 +57,12 @@ export class WalletComponent implements OnInit {
       next: (data: { transactions?: TopupRequest[] } | TopupRequest[]) => {
         const txData = Array.isArray(data) ? data : data?.transactions || [];
         this.transactions.set(txData);
+        this.isLoading.set(false);
       },
       error: (err) => {
         console.error('Error fetching transactions:', err);
         this.transactions.set([]);
+        this.isLoading.set(false);
       }
     });
   }
