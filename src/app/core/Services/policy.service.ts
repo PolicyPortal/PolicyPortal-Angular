@@ -3,6 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Policy } from '../../dealer/view-policies/view-policies';
 import { PolicyAtAdmin } from '../../admin/admin-dashboard/admin-dashboard';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -10,14 +11,15 @@ import { PolicyAtAdmin } from '../../admin/admin-dashboard/admin-dashboard';
 export class PolicyService {
   private http = inject(HttpClient);
   
-  private apiUrl = 'http://localhost:5001/api/policies'; 
+  private serviceApiUrl = `${environment.apiUrl}/policies`;
+  // private apiUrl = 'http://localhost:5001/api/policies'; 
 
   getAllPolicies(): Observable<PolicyAtAdmin[]> {
-    return this.http.get<PolicyAtAdmin[]>(this.apiUrl);
+    return this.http.get<PolicyAtAdmin[]>(this.serviceApiUrl);
   }
 
   getPoliciesByDealer(dealerId: number): Observable<Policy[]> {
-    const url = `${this.apiUrl}/dealer/${dealerId}`;
+    const url = `${this.serviceApiUrl}/dealer/${dealerId}`;
     return this.http.get<Policy[]>(url);
   }
 
@@ -30,7 +32,7 @@ getDashboardCounts() {
     yearPolicies: number;
     totalEarning: number;
     monthEarning: number;
-  }>(`${this.apiUrl}/dashboard-counts`);
+  }>(`${this.serviceApiUrl}/dashboard-counts`);
 }
 
 }
