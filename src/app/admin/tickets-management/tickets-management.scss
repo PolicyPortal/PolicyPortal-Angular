@@ -1,0 +1,30 @@
+.ticket-page .container {
+            max-width: 1200px;
+        }
+
+        .card {
+            background-color: #ffffff;
+            border-radius: 0.75rem;
+            border: none;
+            box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.07);
+            flex: 1; /* Make cards grow equally */
+        }
+        
+        .count-blue { color: #0d6efd; }
+        .count-green { color: #198754; }
+        .count-yellow { color: #ffc107; }
+        .count-red { color: #dc3545; }
+        
+        .btn-blue { background-color: #0d6efd; }
+        .btn-green { background-color: #198754; }
+        .btn-yellow { background-color: #ffc107; }
+        .btn-red { background-color: #dc3545; }
+        
+        .btn {
+             font-weight: 600;
+             transition: opacity 0.2s ease;
+        }
+        
+        .btn:hover {
+            opacity: 0.9;
+        }

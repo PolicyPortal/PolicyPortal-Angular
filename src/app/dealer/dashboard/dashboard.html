@@ -26,24 +26,24 @@
         <!-- Loop through paginated policies -->
         @for (policy of paginatedPolicies(); track policy.previousPolicyId) {
           <tr class="border-top">
-            <td class=" p-3 text-nowrap">
+            <td class="  text-nowrap">
               {{ policy.previousPolicyId }}
             </td>
-            <td class=" p-3 text-nowrap">
+            <td class="  text-nowrap">
               {{ policy.customerName }}
             </td>
-            <td class=" p-3 text-nowrap">
+            <td class="  text-nowrap">
               {{ policy.previousPolicyType }}
             </td>
-            <td class=" p-3 text-nowrap">
-              <span class="p-3 text-nowrap">{{ policy.odExpiryDate }}</span>
+            <td class="  text-nowrap">
+              <span class="  text-nowrap">{{ policy.odExpiryDate }}</span>
               <!-- {{ policy.odExpiryDate | date:'mediumDate' }} -->
             </td>
-            <td class=" p-3 text-nowrap" >
+            <td class="  text-nowrap" >
             <span class=" status-badge badge rounded-pill px-3 py-2 small fw-medium border-danger-subtle">Expired</span>
                                   <!-- <span class="badge border-danger-subtle">Expiring Soon</span> -->
             </td>
-            <td class=" p-3 text-nowrap">
+            <td class="  text-nowrap">
               <button class="renew-button px-3 py-2">Renew</button>
             </td>
           </tr>

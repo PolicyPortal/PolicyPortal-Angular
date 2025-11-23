@@ -10,6 +10,7 @@ import { MENU_ITEMS_ADMIN, MENU_ITEMS_DEALER } from '../constants/menu.constants
 })
 export class AuthService {
   private readonly TOKEN_KEY = 'authToken';
+  private readonly TOKEN_EXPIRATION_KEY = 'tokenExpiration';
   private readonly USER_DATA_KEY = 'userData';
   private serviceApiUrl = `${environment.apiUrl}/auth`;
 
@@ -22,7 +23,50 @@ export class AuthService {
   }
 
   isLoggedIn(): boolean {
+    debugger;
     const token = localStorage.getItem(this.TOKEN_KEY);
+    // if the token is expired, consider the user as logged out
+    if (token) {
+      const expiration = localStorage.getItem(this.TOKEN_EXPIRATION_KEY);
+      console.log('Token expiration from localStorage:', expiration);
+
+
+
+      if( expiration === null ||expiration === "undefined" || expiration === undefined) 
+      {
+        this.logout();
+        localStorage.removeItem(this.TOKEN_KEY);
+          localStorage.removeItem(this.TOKEN_EXPIRATION_KEY);
+          localStorage.removeItem(this.USER_DATA_KEY);
+        return false;
+      }
+      else {
+        const now = Date.now();
+        const expiresAt = parseInt(expiration!, 10);
+
+        console.log('now:', now);
+        console.log('Expiration time:', expiresAt);
+
+        console.log('Current time:', now);
+        console.log('Token expiration time:', expiresAt);
+
+        if (now >= expiresAt) {
+          // Token has expired
+          this.logout(); // Optionally log out the user
+          localStorage.removeItem(this.TOKEN_KEY);
+          localStorage.removeItem(this.TOKEN_EXPIRATION_KEY);
+          localStorage.removeItem(this.USER_DATA_KEY);
+
+          return false;
+        }
+      }
+
+      
+    } 
+    else {
+      console.log('No token found in localStorage.');
+    }
+
     return !!token;
   }
 
@@ -44,8 +88,12 @@ export class AuthService {
         if (response && response.token) {
           // 1. Store the token and user data
           localStorage.setItem(this.TOKEN_KEY, response.token.token);
+          localStorage.setItem(this.TOKEN_EXPIRATION_KEY, response.token.tokenExpiresAt);
           localStorage.setItem(this.USER_DATA_KEY, JSON.stringify(response.token.userDetails));
 
+          console.log('Login response:', response);
+          console.log('Stored token:', response.token.token);
+          console.log('TOKEN_EXPIRATION_KEY', response.token.tokenExpiresAt);
           // --- FIX 1: UPDATE THE MENU RIGHT AFTER LOGIN ---
           // This tells the rest of the application that the menu has changed.
           this.loadMenuForCurrentUser();
