@@ -124,12 +124,12 @@
                                     <select [id]="field.id" class="form-select" [required]="field.required">
                                       <option value="">Select...</option>
                                       @for (opt of field.options; track opt) {
-                                        <option [value]="opt.toLowerCase()">{{ opt }}</option>
+                                        <option [value]="opt.toLowerCase()" [selected]="field.value === opt">{{ opt }}</option>
                                       }
                                     </select>
                                   }
                                   @case ('textarea') {
-                                    <textarea [id]="field.id" class="form-control" rows="3" [placeholder]="field.placeholder || ''" [required]="field.required"></textarea>
+                                    <textarea [id]="field.id" class="form-control" rows="3" [value]="field.value" [placeholder]="field.placeholder || ''" [required]="field.required"></textarea>
                                   }
                                   @case ('radio') {
                                     <div>
@@ -151,7 +151,7 @@
                                   }
                                   @default {
                                     <!-- <input [id]="field.id" [type]="field.type" class="form-control" [placeholder]="field.placeholder || ''" [required]="field.required" disabled> -->
-                                    <input [id]="field.id" [type]="field.type" class="form-control" [placeholder]="field.placeholder || ''" [required]="field.required" [disabled]="field.disabled">
+                                    <input [id]="field.id" [type]="field.type" class="form-control" [value]="field.value" [placeholder]="field.placeholder || ''" [required]="field.required" [disabled]="field.disabled">
                                   }
                                 }
                               </div>
