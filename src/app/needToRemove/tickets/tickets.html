@@ -1,0 +1,611 @@
+    <main class="container-fluid p-0" style="background-color: #f3f4f6; min-height: 100vh;">
+      <div class="container-xl p-0">
+        <!-- Tab Navigation -->
+        <ul class="nav nav-tabs" id="ticketTabs" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button
+              class="nav-link"
+              [class.active]="activeTab() === 'endorsement'"
+              (click)="activeTab.set('endorsement')">
+              Endorsement
+            </button>
+          </li>
+          <!-- <li class="nav-item" role="presentation">
+            <button
+              class="nav-link"
+              [class.active]="activeTab() === 'finance'"
+              (click)="activeTab.set('finance')">
+              Finance
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button
+              class="nav-link"
+              [class.active]="activeTab() === 'cancellation'"
+              (click)="activeTab.set('cancellation')">
+              Cancellation
+            </button>
+          </li> -->
+          <li class="nav-item" role="presentation">
+            <button
+              class="nav-link"
+              [class.active]="activeTab() === 'claims'"
+              (click)="activeTab.set('claims')">
+              Claims
+            </button>
+          </li>
+        </ul>
+
+        <!-- Tab Panels -->
+        <div class="tab-content mt-4">
+          <!-- ================================== -->
+          <!--     1. ENDORSEMENT PANEL           -->
+          <!-- ================================== -->
+          <div
+            class="tab-pane fade"
+            [class.show]="activeTab() === 'endorsement'"
+            [class.active]="activeTab() === 'endorsement'">
+            <div class="card shadow-sm">
+              <form id="endorsementForm" class="card-body p-4 p-md-5">
+                
+                <div class="row">
+
+                  <h2 class="card-title h2 pb-3 border-bottom mb-4">Insurance Endorsement</h2>
+                </div>
+
+
+
+                <!-- Policy Info -->
+                <div class="row g-3">
+                  <div class="col-md-4">
+                    <label for="endoPolicyNumber" class="form-label">Policy Number *</label>
+                    <select id="endoPolicyNumber" class="form-select" [value]="selectedPolicyId()" (change)="onPolicyChange($event)">
+                      @for (policy of policies; track policy.id) {
+                        <option [value]="policy.id">{{ policy.policyNumber }}</option>
+                      }
+                    </select>
+                  </div>
+                  <div class="col-md-4">
+                    <label for="endoCustomerName" class="form-label">Customer Name</label>
+                    <input type="text" id="endoCustomerName" class="form-control bg-light" [value]="selectedPolicyData().customerName" readonly>
+                  </div>
+                  <div class="col-md-4">
+                    <label for="endoVehicleReg" class="form-label">Vehicle Reg. No.</label>
+                    <input type="text" id="endoVehicleReg" class="form-control bg-light" [value]="selectedPolicyData().vehicleRegNo" readonly>
+                  </div>
+                </div>
+
+                <!-- Endorsement Reason Dropdown -->
+                <div class="mt-4">
+                  <label for="endorsementReason" class="form-label">Endorsement Reason *</label>
+                  <select id="endorsementReason" class="form-select" required (change)="onEndorsementReasonChange($event)">
+                    <option value="">Choose endorsement reason...</option>
+                    @for (reason of endorsementOptions(); track reason.key) {
+                      <option [value]="reason.key">{{ reason.label }}</option>
+                    }
+                  </select>
+                </div>
+
+                <!-- Dynamic Sections -->
+                @if (currentEndorsementConfig(); as config) {
+                  <div class="mt-4 pt-4 border-top">
+                    @if (config.fields.length > 0) {
+                      <div class="row g-3">
+                        @for (field of config.fields; track field.id) {
+                          <div [class]="getColClass(field.colSpan)">
+                            <label [for]="field.id" class="form-label">{{ field.label }} {{ field.required ? '*' : '' }}</label>
+                            @switch (field.type) {
+                              @case ('select') {
+                                <select [id]="field.id" class="form-select" [required]="field.required">
+                                  <option value="">Select {{ field.label.toLowerCase() }}...</option>
+                                  @for (opt of field.options; track opt) {
+                                    <option [value]="opt.toLowerCase()">{{ opt }}</option>
+                                  }
+                                </select>
+                              }
+                              @case ('textarea') {
+                                <textarea [id]="field.id" class="form-control" rows="3" [placeholder]="field.placeholder || ''" [required]="field.required"></textarea>
+                              }
+                              @default {
+                                <input [id]="field.id" class="form-control" [type]="field.type" [placeholder]="field.placeholder || ''" [required]="field.required">
+                              }
+                            }
+                          </div>
+                        }
+                      </div>
+                    }
+                  </div>
+                  <div class="mt-4 pt-4 border-top">
+                    @if (config.documents.length > 0) {
+                      <h3 class="h5 mb-3">Required Documents</h3>
+                      <div class="row g-3">
+                        @for (doc of config.documents; track doc.id) {
+                          <div class="col-md-4">
+                            <label [for]="doc.id" class="form-label">
+                              {{ doc.label }} {{ doc.required ? '*' : '' }}
+                              <span class="tooltip-icon" [attr.data-tooltip]="doc.tooltip">
+                                <svg class="icon" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
+                              </span>
+                            </label>
+                            <input [id]="doc.id" type="file" class="form-control" [required]="doc.required">
+                          </div>
+                        }
+                      </div>
+                    }
+                  </div>
+                  @if (config.guidance) {
+                    <div [innerHTML]="config.guidance" class="alert mt-4"></div>
+                  }
+                }
+
+                <!-- Admin Section -->
+                <!-- @if (isAdmin()) {
+                  <div class="mt-4 pt-4 border-top">
+                    <label for="endoAdminNotes" class="form-label">Admin Notes (Internal)</label>
+                    <textarea id="endoAdminNotes" class="form-control" rows="3" placeholder="Add internal notes for this request..."></textarea>
+                  </div>
+                } -->
+
+                <!-- Submission -->
+                <div class="mt-4 pt-4 border-top d-flex justify-content-end">
+                  <button id="endorsementSubmit" type="submit" class="btn btn-primary" [disabled]="!selectedEndorsementReason()">Request Endorsement</button>
+                </div>
+              </form>
+            </div>
+          </div>
+          
+          <!-- ================================== -->
+          <!--       2. FINANCE PANEL             -->
+          <!-- ================================== -->
+          <div
+            class="tab-pane fade"
+            [class.show]="activeTab() === 'finance'"
+            [class.active]="activeTab() === 'finance'">
+            <div class="card shadow-sm">
+              <form id="financeForm" class="card-body p-4 p-md-5">
+                <h2 class="card-title h2 pb-3 border-bottom mb-4">Finance Ticket</h2>
+                
+                <!-- Policy Info -->
+                <div class="row g-3">
+                  <div class="col-md-4">
+                    <label for="finPolicyNumber" class="form-label">Policy Number *</label>
+                    <select id="finPolicyNumber" class="form-select" [value]="selectedPolicyId()" (change)="onPolicyChange($event)">
+                      @for (policy of policies; track policy.id) {
+                        <option [value]="policy.id">{{ policy.policyNumber }}</option>
+                      }
+                    </select>
+                  </div>
+                  <div class="col-md-4">
+                    <label for="finCustomerName" class="form-label">Customer Name</label>
+                    <input type="text" id="finCustomerName" class="form-control bg-light" [value]="selectedPolicyData().customerName" readonly>
+                  </div>
+                  <div class="col-md-4">
+                    <label for="finVehicleReg" class="form-label">Vehicle Reg. No.</label>
+                    <input type="text" id="finVehicleReg" class="form-control bg-light" [value]="selectedPolicyData().vehicleRegNo" readonly>
+                  </div>
+                </div>
+
+                <!-- Finance Ticket Type Dropdown -->
+                <div class="mt-4">
+                  <label for="financeType" class="form-label">Finance Action Type *</label>
+                  <select id="financeType" class="form-select" required (change)="onFinanceTypeChange($event)">
+                    <option value="">Select finance action...</option>
+                    @for (reason of financeOptions(); track reason.key) {
+                      <option [value]="reason.key">{{ reason.label }}</option>
+                    }
+                  </select>
+                </div>
+
+                <!-- Dynamic Sections -->
+                @if (currentFinanceConfig(); as config) {
+                  <div class="mt-4 pt-4 border-top">
+                    @if (config.fields.length > 0) {
+                      <div class="row g-3">
+                        @for (field of config.fields; track field.id) {
+                          <div [class]="getColClass(field.colSpan)">
+                            <label [for]="field.id" class="form-label">{{ field.label }} {{ field.required ? '*' : '' }}</label>
+                            @switch (field.type) {
+                              @case ('select') {
+                                <select [id]="field.id" class="form-select" [required]="field.required">
+                                  <option value="">Select {{ field.label.toLowerCase() }}...</option>
+                                  @for (opt of field.options; track opt) {
+                                    <option [value]="opt.toLowerCase()">{{ opt }}</option>
+                                  }
+                                </select>
+                              }
+                              @case ('textarea') {
+                                <textarea [id]="field.id" class="form-control" rows="3" [placeholder]="field.placeholder || ''" [required]="field.required"></textarea>
+                              }
+                              @default {
+                                <input [id]="field.id" class="form-control" [type]="field.type" [placeholder]="field.placeholder || ''" [required]="field.required">
+                              }
+                            }
+                          </div>
+                        }
+                      </div>
+                    }
+                  </div>
+                  <div class="mt-4 pt-4 border-top">
+                    @if (config.documents.length > 0) {
+                      <h3 class="h5 mb-3">Required Documents</h3>
+                      <div class="row g-3">
+                        @for (doc of config.documents; track doc.id) {
+                          <div class="col-md-4">
+                            <label [for]="doc.id" class="form-label">
+                              {{ doc.label }} {{ doc.required ? '*' : '' }}
+                              <span class="tooltip-icon" [attr.data-tooltip]="doc.tooltip">
+                                <svg class="icon" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
+                              </span>
+                            </label>
+                            <input [id]="doc.id" type="file" class="form-control" [required]="doc.required">
+                          </div>
+                        }
+                      </div>
+                    }
+                  </div>
+                  @if (config.guidance) {
+                    <div [innerHTML]="config.guidance" class="alert mt-4"></div>
+                  }
+                }
+
+                <!-- Admin Section -->
+                <!-- @if (isAdmin()) {
+                  <div class="mt-4 pt-4 border-top">
+                    <label for="finAdminNotes" class="form-label">Admin Notes (Internal)</label>
+                    <textarea id="finAdminNotes" class="form-control" rows="3" placeholder="Add internal notes for this request..."></textarea>
+                  </div>
+                } -->
+
+                <!-- Submission -->
+                <div class="mt-4 pt-4 border-top d-flex justify-content-end">
+                  <button id="financeSubmit" type="submit" class="btn btn-primary" [disabled]="!selectedFinanceType()">Submit Finance Request</button>
+                </div>
+              </form>
+            </div>
+          </div>
+          
+          <!-- ================================== -->
+          <!--     3. CANCELLATION PANEL          -->
+          <!-- ================================== -->
+          <div
+            class="tab-pane fade"
+            [class.show]="activeTab() === 'cancellation'"
+            [class.active]="activeTab() === 'cancellation'">
+            <div class="card shadow-sm">
+              <form id="cancellationForm" class="card-body p-4 p-md-5">
+                <h2 class="card-title h2 pb-3 border-bottom mb-4">Policy Cancellation</h2>
+
+                <!-- Policy Info -->
+                <div class="row g-3">
+                  <div class="col-md-4">
+                    <label for="canPolicyNumber" class="form-label">Policy Number *</label>
+                    <select id="canPolicyNumber" class="form-select" [value]="selectedPolicyId()" (change)="onPolicyChange($event)">
+                      @for (policy of policies; track policy.id) {
+                        <option [value]="policy.id">{{ policy.policyNumber }}</option>
+                      }
+                    </select>
+                  </div>
+                  <div class="col-md-4">
+                    <label for="canCustomerName" class="form-label">Customer Name</label>
+                    <input type="text" id="canCustomerName" class="form-control bg-light" [value]="selectedPolicyData().customerName" readonly>
+                  </div>
+                  <div class="col-md-4">
+                    <label for="canVehicleReg" class="form-label">Vehicle Reg. No.</label>
+                    <input type="text" id="canVehicleReg" class="form-control bg-light" [value]="selectedPolicyData().vehicleRegNo" readonly>
+                  </div>
+                </div>
+
+                <!-- Cancellation Reason Dropdown -->
+                <div class="mt-4">
+                  <label for="cancellationReason" class="form-label">Cancellation Reason *</label>
+                  <select id="cancellationReason" class="form-select" required (change)="onCancellationReasonChange($event)">
+                    <option value="">Select cancellation reason...</option>
+                    @for (reason of cancellationOptions(); track reason.key) {
+                      <option [value]="reason.key">{{ reason.label }}</option>
+                    }
+                  </select>
+                </div>
+
+                <!-- Dynamic Sections -->
+                @if (currentCancellationConfig(); as config) {
+                  <div class="mt-4 pt-4 border-top">
+                    @if (config.fields.length > 0) {
+                      <div class="row g-3">
+                        @for (field of config.fields; track field.id) {
+                          <div [class]="getColClass(field.colSpan)">
+                            <label [for]="field.id" class="form-label">{{ field.label }} {{ field.required ? '*' : '' }}</label>
+                            @switch (field.type) {
+                              @case ('select') {
+                                <select [id]="field.id" class="form-select" [required]="field.required">
+                                  <option value="">Select {{ field.label.toLowerCase() }}...</option>
+                                  @for (opt of field.options; track opt) {
+                                    <option [value]="opt.toLowerCase()">{{ opt }}</option>
+                                  }
+                                </select>
+                              }
+                              @case ('textarea') {
+                                <textarea [id]="field.id" class="form-control" rows="3" [placeholder]="field.placeholder || ''" [required]="field.required"></textarea>
+                              }
+                              @default {
+                                <input [id]="field.id" class="form-control" [type]="field.type" [placeholder]="field.placeholder || ''" [required]="field.required">
+                              }
+                            }
+                          </div>
+                        }
+                      </div>
+                    }
+
+                    <!-- Refund Details (for all cancellation types) -->
+                    <div class="row g-3 mt-4 pt-4 border-top">
+                      <h3 class="h5 mb-0 col-12">Refund Details</h3>
+                      <div class="col-md-4">
+                        <label for="refundBankName" class="form-label">Bank Name *</label>
+                        <input id="refundBankName" type="text" class="form-control" placeholder="Enter bank name" required>
+                      </div>
+                      <div class="col-md-4">
+                        <label for="refundAccountNo" class="form-label">Account Number *</label>
+                        <input id="refundAccountNo" type="text" class="form-control" placeholder="Enter account number" required>
+                      </div>
+                      <div class="col-md-4">
+                        <label for="refundIfsc" class="form-label">IFSC Code *</label>
+                        <input id="refundIfsc" type="text" class="form-control" placeholder="Enter IFSC code" required>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="mt-4 pt-4 border-top">
+                    @if (config.documents.length > 0) {
+                      <h3 class="h5 mb-3">Required Documents</h3>
+                      <div class="row g-3">
+                        @for (doc of config.documents; track doc.id) {
+                          <div class="col-md-4">
+                            <label [for]="doc.id" class="form-label">
+                              {{ doc.label }} {{ doc.required ? '*' : '' }}
+                              <span class="tooltip-icon" [attr.data-tooltip]="doc.tooltip">
+                                <svg class="icon" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
+                              </span>
+                            </label>
+                            <input [id]="doc.id" type="file" class="form-control" [required]="doc.required">
+                          </div>
+                        }
+                      </div>
+                    }
+                  </div>
+                  @if (config.guidance) {
+                    <div [innerHTML]="config.guidance" class="alert mt-4"></div>
+                  }
+                }
+
+                <!-- Admin Section -->
+                <!-- @if (isAdmin()) {
+                  <div class="mt-4 pt-4 border-top">
+                    <label for="canAdminNotes" class="form-label">Admin Notes (Internal)</label>
+                    <textarea id="canAdminNotes" class="form-control" rows="3" placeholder="Add internal notes for this request..."></textarea>
+                    <button type="button" class="btn btn-danger mt-2">Force Decline</button>
+                  </div>
+                } -->
+
+                <!-- Submission -->
+                <div class="mt-4 pt-4 border-top d-flex justify-content-end">
+                  <button id="cancellationSubmit" type="submit" class="btn btn-primary" [disabled]="!selectedCancellationReason()">Request Cancellation</button>
+                </div>
+              </form>
+            </div>
+          </div>
+          
+          <!-- ================================== -->
+          <!--         4. CLAIMS PANEL            -->
+          <!-- ================================== -->
+          <div
+            class="tab-pane fade"
+            [class.show]="activeTab() === 'claims'"
+            [class.active]="activeTab() === 'claims'">
+            <div class="card shadow-sm">
+              <form id="claimsForm" class="card-body p-4 p-md-5">
+                <div class="row">
+                <h2 class="card-title h2 pb-3 border-bottom mb-4">Claims Ticketing</h2>
+                </div>
+                <!-- Policy Info -->
+                <div class="row g-3">
+                  <div class="col-md-4">
+                    <label for="claimPolicyNumber" class="form-label">Policy Number *</label>
+                    <select id="claimPolicyNumber" class="form-select" [value]="selectedPolicyId()" (change)="onPolicyChange($event)">
+                      @for (policy of policies; track policy.id) {
+                        <option [value]="policy.id">{{ policy.policyNumber }}</option>
+                      }
+                    </select>
+                  </div>
+                  <div class="col-md-4">
+                    <label for="claimCustomerName" class="form-label">Customer Name</label>
+                    <input type="text" id="claimCustomerName" class="form-control bg-light" [value]="selectedPolicyData().customerName" readonly>
+                  </div>
+                  <div class="col-md-4">
+                    <label for="claimVehicleReg" class="form-label">Vehicle Reg. No.</label>
+                    <input type="text" id="claimVehicleReg" class="form-control bg-light" [value]="selectedPolicyData().vehicleRegNo" readonly>
+                  </div>
+                </div>
+                
+                <!-- Base Claim Details -->
+                <div class="row g-3 mt-4 pt-4 border-top">
+                  <div class="col-md-4">
+                    <label for="claimType" class="form-label">Type of loss *</label>
+                    <select id="claimType" class="form-select" required (change)="onClaimTypeChange($event)">
+                      <option value="">Select type of loss...</option>
+                      @for (reason of claimOptions(); track reason.key) {
+                        <option [value]="reason.key">{{ reason.label }}</option>
+                      }
+                    </select>
+                  </div>
+                  <div class="col-md-4">
+                    <label for="claimSubType" class="form-label">Select sub-type of loss *</label>
+                    <select id="claimSubType" class="form-select" required>
+                      <option value="">Select sub-type...</option>
+                      <option value="partial">Partial Loss</option>
+                      <option value="total">Total Loss</option>
+                    </select>
+                  </div>
+                </div>
+                
+                <!-- Dynamic Sections -->
+                @if (currentClaimConfig(); as config) {
+                  <div class="mt-4 pt-4 border-top">
+                    @if (config.fields.length > 0) {
+                      <div class="row g-3">
+                        @for (field of config.fields; track field.id) {
+                          <div [class]="getColClass(field.colSpan)">
+                            <label [for]="field.id" class="form-label">{{ field.label }} {{ field.required ? '*' : '' }}</label>
+                            @switch (field.type) {
+                              @case ('select') {
+                                <select [id]="field.id" class="form-select" [required]="field.required" (change)="onClaimPaymentTypeChange($event, field.id)">
+                                  <option value="">Select {{ field.label.toLowerCase() }}...</option>
+                                  @for (opt of field.options; track opt) {
+                                    <option [value]="opt.toLowerCase()">{{ opt }}</option>
+                                  }
+                                </select>
+                              }
+                              @case ('textarea') {
+                                <textarea [id]="field.id" class="form-control" rows="3" [placeholder]="field.placeholder || ''" [required]="field.required"></textarea>
+                              }
+                              @default {
+                                <input [id]="field.id" class="form-control" [type]="field.type" [placeholder]="field.placeholder || ''" [required]="field.required">
+                              }
+                            }
+                          </div>
+                        }
+                      </div>
+                    }
+
+                    <!-- Bank Details (for reimbursement) -->
+                    @if (showClaimBankDetails()) {
+                      <div class="row g-3 mt-4 pt-4 border-top">
+                        <h3 class="h5 mb-0 col-12">Bank Details (for Reimbursement)</h3>
+                        <div class="col-md-4">
+                          <label for="claimRefundBankName" class="form-label">Bank Name *</label>
+                          <input id="claimRefundBankName" type="text" class="form-control" placeholder="Enter bank name" required>
+                        </div>
+                        <div class="col-md-4">
+                          <label for="claimRefundAccountNo" class="form-label">Account Number *</label>
+                          <input id="claimRefundAccountNo" type="text" class="form-control" placeholder="Enter account number" required>
+                        </div>
+                        <div class="col-md-4">
+                          <label for="claimRefundIfsc" class="form-label">IFSC Code *</label>
+                          <input id="claimRefundIfsc" type="text" class="form-control" placeholder="Enter IFSC code" required>
+                        </div>
+                      </div>
+                    }
+                  </div>
+
+                  <div class="mt-4 pt-4 border-top">
+                    @if (config.documents.length > 0) {
+                      <h3 class="h5 mb-3">Required Documents</h3>
+                      <div class="row g-3">
+                        @for (doc of config.documents; track doc.id) {
+                          <div class="col-md-4">
+                            <label [for]="doc.id" class="form-label">
+                              {{ doc.label }} {{ doc.required ? '*' : '' }}
+                              <span class="tooltip-icon" [attr.data-tooltip]="doc.tooltip">
+                                <svg class="icon" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
+                              </span>
+                            </label>
+                            <input [id]="doc.id" type="file" class="form-control" [required]="doc.required">
+                          </div>
+                        }
+                      </div>
+                    }
+                  </div>
+                  @if (config.guidance) {
+                    <div [innerHTML]="config.guidance" class="alert mt-4"></div>
+                  }
+                }
+
+                <!-- Admin Section -->
+                <!-- @if (isAdmin()) {
+                  <div class="mt-4 pt-4 border-top">
+                    <label for="claimsAdminNotes" class="form-label">Admin Notes (Internal)</label>
+                    <textarea id="claimsAdminNotes" class="form-control" rows="3" placeholder="Add internal notes for this claim..."></textarea>
+                  </div>
+                } -->
+
+                <!-- Submission -->
+                <div class="mt-4 pt-4 border-top d-flex justify-content-end">
+                  <button id="claimsSubmit" type="submit" class="btn btn-primary" [disabled]="!selectedClaimType()">Submit Claim</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================================== -->
+        <!--     TICKET STATUS & HISTORY        -->
+        <!-- ================================== -->
+        <!-- <div class="mt-5">
+          <div class="form-check mb-4">
+            <input type="checkbox" id="adminToggle" class="form-check-input" (change)="onAdminToggle($event)">
+            <label for="adminToggle" class="form-check-label">Admin Mode</label>
+          </div>
+
+          <h2 class="h2 mb-4">Recent Ticket Status</h2>
+          <div class="card shadow-sm">
+            <div class="table-responsive">
+              <table class="table table-striped mb-0">
+                <thead>
+                  <tr>
+                    <th>Ticket ID</th>
+                    <th>Type</th>
+                    <th>Reason/Type</th>
+                    <th>Status</th>
+                    <th>Last Updated</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>T-1026</td>
+                    <td>Claim</td>
+                    <td>OD Claim (Partial)</td>
+                    <td>
+                      <span class="badge text-bg-info">
+                        Pending Docs
+                      </span>
+                    </td>
+                    <td>2025-11-10</td>
+                  </tr>
+                  <tr>
+                    <td>T-1025</td>
+                    <td>Endorsement</td>
+                    <td>Nominee Details</td>
+                    <td>
+                      <span class="badge text-bg-success">
+                        Processed
+                      </span>
+                    </td>
+                    <td>2025-11-09</td>
+                  </tr>
+                  <tr>
+                    <td>T-1024</td>
+                    <td>Finance</td>
+                    <td>Hypothecation Removal</td>
+                    <td>
+                      <span class="badge text-bg-warning">
+                        In Review
+                      </span>
+                    </td>
+                    <td>2025-11-10</td>
+                  </tr>
+                  <tr>
+                    <td>T-1023</td>
+                    <td>Cancellation</td>
+                    <td>Sale of Vehicle</td>
+                    <td>
+                      <span class="badge text-bg-danger">
+                        Declined
+                      </span>
+                    </td>
+                    <td>2025-11-08</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div> -->
+      </div>
+    </main>

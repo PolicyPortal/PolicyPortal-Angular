@@ -1,1 +1,71 @@
-<p>tickets-management works!</p>
+<div class="ticket-page py-5">
+  <div class="container">
+    <h1 class="h3 fw-bold text-dark mb-4">Ticket Categories</h1>
+    
+    <!-- Cards Container -->
+    <div class="row g-4">
+      
+      <!-- Claim Tickets Card -->
+      <div class="col-md-6 col-lg-3">
+        <div class="card p-4 shadow-sm h-100">
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <h2 class="h5 fw-semibold text-secondary">Claim Tickets</h2>
+            <div id="claimCount" class="h5 fw-bold count-blue">12</div>
+          </div>
+          <p class="small text-muted">View and manage all claim-related tickets.</p>
+          <button class="btn btn-blue text-white w-100 mt-auto">
+            View Details
+          </button>
+        </div>
+      </div>
+      
+      <!-- Finance Tickets Card -->
+      <div class="col-md-6 col-lg-3">
+          <div class="card p-4 shadow-sm h-100">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+              <h2 class="h5 fw-semibold text-secondary">Finance Tickets</h2>
+              <div id="financeCount" class="h5 fw-bold count-green">8</div>
+            </div>
+            <p class="small text-muted">Manage financial and payment-related tickets.</p>
+            <button class="btn btn-green text-white w-100 mt-auto">
+              View Details
+            </button>
+          </div>
+      </div>
+      
+      <!-- Endorsement Tickets Card -->
+      <div class="col-md-6 col-lg-3">
+          <div class="card p-4 shadow-sm h-100">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+              <h2 class="h5 fw-semibold text-secondary">Endorsement Tickets</h2>
+              <div id="endorsementCount" class="h5 fw-bold count-yellow">5</div>
+            </div>
+            <p class="small text-muted">Handle policy endorsement requests.</p>
+            <button class="btn btn-yellow text-white w-100 mt-auto">
+              View Details
+            </button>
+          </div>
+      </div>
+      
+      <!-- Cancellation Tickets Card -->
+      <div class="col-md-6 col-lg-3">
+          <div class="card p-4 shadow-sm h-100">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+              <h2 class="h5 fw-semibold text-secondary">Cancellation Tickets</h2>
+              <div id="cancellationCount" class="h5 fw-bold count-red">3</div>
+            </div>
+            <p class="small text-muted">Process policy cancellation requests.</p>
+            <button class="btn btn-red text-white w-100 mt-auto">
+              View Details
+            </button>
+          </div>
+      </div>
+    </div>
+
+    <!-- Chart Section -->
+    <div class="card p-4 shadow-sm mt-4">
+        <h2 class="h5 fw-semibold text-secondary mb-3">Ticket Count Overview</h2>
+        <canvas id="ticketChart" style="max-height: 320px;"></canvas>
+    </div>
+  </div>
+</div>

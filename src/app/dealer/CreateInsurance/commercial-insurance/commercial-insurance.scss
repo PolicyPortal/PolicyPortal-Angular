@@ -133,3 +133,31 @@
   font-size: 1em; // Adjust size as needed
   margin-left: 2px;
 }
+
+    /* Standard Text Inputs, Date Pickers, etc. */
+    // .form-control {
+    //     background-color: #ffffff; 
+    //     border: 1px solid #ced4da;
+    //     border-radius: 0.5rem; /* Match the rounded corners of cards */
+    //     transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    // }
+    
+    /* Highlight Dropdowns */
+    .form-select {
+        /* Distinct look: Light gray background */
+        background-color: #f8f9fa; 
+        /* Distinct look: Blue strip on the left */
+        border-left: 4px solid #007bff; 
+        border-radius: 0.5rem;
+        padding-left: 10px; /* Adjust padding due to the new border */
+        /* Use a standard, easily visible chevron icon */
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+        border-color: #ced4da; /* Keep side and bottom borders light */
+    }
+    
+    /* Ensure all inputs and selects have uniform styling on focus */
+    .form-control:focus, .form-select:focus {
+        border-color: #80bdff;
+        box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
+    }
